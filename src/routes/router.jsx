@@ -3,11 +3,12 @@ import HomeLayout from "../layouts/HomeLayout";
 import AuthLayout from "../layouts/AuthLayout";
 import Login from "../pages/Login";
 import Register from "../pages/Register";
+import PrivateRoute from "../providers/PrivateRoute";
 
 const router = createBrowserRouter([
     {
         path: '/',
-        element: <HomeLayout></HomeLayout>
+        element: <PrivateRoute><HomeLayout></HomeLayout></PrivateRoute>
     },
     {
         path: '/auth',

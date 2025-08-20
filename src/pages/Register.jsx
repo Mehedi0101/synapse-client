@@ -1,12 +1,76 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useContext, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import AuthContext from "../contexts/AuthContext";
+import { CiWarning } from "react-icons/ci";
+import toast from "react-hot-toast";
 
 const Register = () => {
 
-  const [role,setRole] = useState("");
+  const { createUser, setUser } = useContext(AuthContext);
 
-  const onSubmit = (e) => {
+  const [role, setRole] = useState("");
+
+  const navigate = useNavigate();
+
+  // errors
+  const [passwordError, setPasswordError] = useState(null);
+  const [confirmPasswordError, setConfirmPasswordError] = useState(null);
+
+
+
+  const handleSubmit = (e) => {
     e.preventDefault();
+
+    // error reset
+    setPasswordError(null);
+    setConfirmPasswordError(null);
+
+    const form = e.target;
+
+    const email = form.email.value;
+    const password = form.password.value;
+    const confirmPassword = form.confirmPassword.value;
+
+
+    // password error
+    if (password.length < 8) {
+      setPasswordError("Password should be at least 8 character");
+      return;
+    }
+
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+    if (!passwordRegex.test(password)) {
+      setPasswordError("Password should contain at least one uppercase[A-Z], one lower case[a-z], one digit[0-9], and a special symbol");
+      return;
+    }
+
+
+    // confirm password error
+    if (password !== confirmPassword) {
+      setConfirmPasswordError("Passwords don't match");
+      return;
+    }
+
+    // toast -> loading
+    const toastId = toast.loading('Creating account...');
+
+    createUser(email, password)
+      .then((result) => {
+        navigate('/');
+        // toast -> success
+        toast.success('Signed up successfully', { id: toastId });
+      })
+      .catch((error) => {
+        if (error.code === "auth/email-already-in-use") {
+          // toast -> email already in use error
+          toast.error('Email is already in use', { id: toastId });
+          return;
+        }
+        setUser(null);
+      })
+
+
   };
 
   return (
@@ -14,8 +78,7 @@ const Register = () => {
       <div className="w-full max-w-md">
         <div className="bg-[#ffffffe3] rounded-2xl shadow-xl p-8">
           {/* Form */}
-          <form onSubmit={onSubmit} className="space-y-5">
-
+          <form onSubmit={handleSubmit} className="space-y-5">
             {/* Full Name */}
             <div>
               <input
@@ -50,6 +113,15 @@ const Register = () => {
                 className="mt-1 w-full px-3 py-2 border-b-2 border-gray-300 text-gray-900 focus:outline-none"
                 placeholder="Password"
               />
+
+              {/* password error display */}
+              {passwordError &&
+                <p className="text-red-600 text-xs sm:text-sm">
+                  <CiWarning className="text-sm sm:text-base inline mr-1" />
+                  <span>
+                    {passwordError}
+                  </span>
+                </p>}
             </div>
 
             {/* Confirm Password */}
@@ -62,6 +134,15 @@ const Register = () => {
                 className="mt-1 w-full px-3 py-2 border-b-2 border-gray-300 text-gray-900 focus:outline-none"
                 placeholder="Confirm Password"
               />
+
+              {/* confirm password error display */}
+              {confirmPasswordError &&
+                <p className="text-red-600 text-xs sm:text-sm">
+                  <CiWarning className="text-sm sm:text-base inline mr-1" />
+                  <span>
+                    {confirmPasswordError}
+                  </span>
+                </p>}
             </div>
 
             {/* Role */}
@@ -180,7 +261,7 @@ const Register = () => {
             {/* Submit */}
             <button
               type="submit"
-              className="w-full rounded-lg bg-primary px-4 py-2.5 text-white font-medium hover:bg-primary focus:outline-none focus:scale-95 transition-all ease-linear cursor-pointer"
+              className="w-full rounded-lg bg-primary px-4 py-2.5 text-white font-medium focus:outline-none active:scale-95 transition-all ease-linear cursor-pointer"
             >
               Create your account
             </button>
