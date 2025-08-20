@@ -2,12 +2,10 @@ import { useContext } from "react";
 import AuthContext from "../contexts/AuthContext";
 
 const HomeLayout = () => {
-    const { user, logOut } = useContext(AuthContext);
-
-    console.log(user);
+    const { user, logout } = useContext(AuthContext);
 
     const handleLogOut = () => {
-        logOut()
+        logout()
         .then(() => {
 
         })
