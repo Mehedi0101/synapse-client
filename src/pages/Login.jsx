@@ -1,9 +1,44 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useContext, useState } from "react";
+import { CiWarning } from "react-icons/ci";
+import AuthContext from "../contexts/AuthContext";
+import toast from "react-hot-toast";
 
 const Login = () => {
 
+    const { login, setUser } = useContext(AuthContext);
+
+    const navigate = useNavigate();
+
+    // errors
+    const [credentialError, setCredentialError] = useState(null);
+
     const onSubmit = (e) => {
         e.preventDefault();
+
+        // error reset
+        setCredentialError(null);
+
+        const form = e.target;
+
+        const email = form.email.value;
+        const password = form.password.value;
+
+        // toast -> loading
+        const toastId = toast.loading('Logging in...');
+
+        login(email, password)
+            .then((result) => {
+                navigate('/');
+                toast.success('Logged in successfully', { id: toastId });
+            })
+            .catch((error) => {
+                if (error.code === 'auth/invalid-credential') {
+                    setCredentialError("Invalid email and password")
+                }
+                toast.error('Login failed', { id: toastId });
+                setUser(null);
+            })
     };
 
     return (
@@ -35,6 +70,14 @@ const Login = () => {
                                 className="mt-1 w-full px-3 py-2 border-b-2 border-gray-300 text-gray-900 focus:outline-none"
                                 placeholder="Password"
                             />
+                            {/* invalid email and password error display */}
+                            {credentialError &&
+                                <p className="text-red-600 text-xs sm:text-sm">
+                                    <CiWarning className="text-sm sm:text-base inline mr-1" />
+                                    <span>
+                                        {credentialError}
+                                    </span>
+                                </p>}
                         </div>
 
                         <div className="flex flex-col gap-3 sm:gap-0 sm:flex-row justify-between">
