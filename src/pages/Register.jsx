@@ -5,14 +5,15 @@ import { CiWarning } from "react-icons/ci";
 import toast from "react-hot-toast";
 
 const Register = () => {
-
+  // ---------- data from auth provider ----------
   const { createUser, setUser } = useContext(AuthContext);
 
+  // ---------- role(admin,student) state ----------
   const [role, setRole] = useState("");
 
   const navigate = useNavigate();
 
-  // errors
+  // ---------- error states ----------
   const [passwordError, setPasswordError] = useState(null);
   const [confirmPasswordError, setConfirmPasswordError] = useState(null);
 
@@ -21,10 +22,11 @@ const Register = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // error reset
+    // ---------- error states reset ----------
     setPasswordError(null);
     setConfirmPasswordError(null);
 
+    // ---------- form data ----------
     const form = e.target;
 
     const email = form.email.value;
@@ -32,12 +34,13 @@ const Register = () => {
     const confirmPassword = form.confirmPassword.value;
 
 
-    // password error
+    // ---------- password length error ----------
     if (password.length < 8) {
       setPasswordError("Password should be at least 8 character");
       return;
     }
 
+    // ---------- password pattern error ----------
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
     if (!passwordRegex.test(password)) {
@@ -46,30 +49,30 @@ const Register = () => {
     }
 
 
-    // confirm password error
+    // ---------- password confirmation error ----------
     if (password !== confirmPassword) {
       setConfirmPasswordError("Passwords don't match");
       return;
     }
 
-    // toast -> loading
+    // ---------- loading toast ----------
     const toastId = toast.loading('Creating account...');
 
+    // ---------- register function ----------
     createUser(email, password)
       .then((result) => {
         navigate('/');
-        // toast -> success
+        // ---------- success toast ----------
         toast.success('Signed up successfully', { id: toastId });
       })
       .catch((error) => {
         if (error.code === "auth/email-already-in-use") {
-          // toast -> email already in use error
+          // ---------- error toast ----------
           toast.error('Email is already in use', { id: toastId });
           return;
         }
         setUser(null);
       })
-
 
   };
 
@@ -77,9 +80,11 @@ const Register = () => {
     <div className="flex items-center justify-center px-4 text-sm md:text-base">
       <div className="w-full max-w-md">
         <div className="bg-[#ffffffe3] rounded-2xl shadow-xl p-8">
-          {/* Form */}
+
+          {/*---------- Form ----------*/}
           <form onSubmit={handleSubmit} className="space-y-5">
-            {/* Full Name */}
+
+            {/*---------- Full Name ----------*/}
             <div>
               <input
                 id="name"
@@ -91,7 +96,7 @@ const Register = () => {
               />
             </div>
 
-            {/* Email */}
+            {/*---------- Email ----------*/}
             <div>
               <input
                 id="email"
@@ -103,7 +108,7 @@ const Register = () => {
               />
             </div>
 
-            {/* Password */}
+            {/*---------- Password ----------*/}
             <div>
               <input
                 id="password"
@@ -114,7 +119,7 @@ const Register = () => {
                 placeholder="Password"
               />
 
-              {/* password error display */}
+              {/*---------- password error display ----------*/}
               {passwordError &&
                 <p className="text-red-600 text-xs sm:text-sm">
                   <CiWarning className="text-sm sm:text-base inline mr-1" />
@@ -124,7 +129,7 @@ const Register = () => {
                 </p>}
             </div>
 
-            {/* Confirm Password */}
+            {/*---------- Confirm Password ----------*/}
             <div>
               <input
                 id="confirmPassword"
@@ -135,7 +140,7 @@ const Register = () => {
                 placeholder="Confirm Password"
               />
 
-              {/* confirm password error display */}
+              {/*---------- confirm password error display ----------*/}
               {confirmPasswordError &&
                 <p className="text-red-600 text-xs sm:text-sm">
                   <CiWarning className="text-sm sm:text-base inline mr-1" />
@@ -145,7 +150,7 @@ const Register = () => {
                 </p>}
             </div>
 
-            {/* Role */}
+            {/*---------- Role ----------*/}
             <div>
               <select
                 id="role"
@@ -161,9 +166,11 @@ const Register = () => {
               </select>
             </div>
 
-            {/* Student Fields */}
+            {/*---------- Student Fields ----------*/}
             {role === "student" && (
               <div className="space-y-5">
+
+                {/*---------- student id ----------*/}
                 <div>
                   <input
                     id="studentId"
@@ -173,6 +180,8 @@ const Register = () => {
                     placeholder="Student ID"
                   />
                 </div>
+
+                {/*---------- department ----------*/}
                 <div>
                   <input
                     id="department"
@@ -182,6 +191,8 @@ const Register = () => {
                     placeholder="Department"
                   />
                 </div>
+
+                {/*---------- semester ----------*/}
                 <div>
                   <input
                     id="semester"
@@ -191,6 +202,8 @@ const Register = () => {
                     placeholder="Current Year / Semester"
                   />
                 </div>
+
+                {/*---------- expected graduation year ----------*/}
                 <div>
                   <input
                     id="graduationYear"
@@ -205,9 +218,11 @@ const Register = () => {
               </div>
             )}
 
-            {/* Alumni Fields */}
+            {/*---------- Alumni Fields ----------*/}
             {role === "alumni" && (
               <div className="space-y-5">
+
+                {/*---------- department ----------*/}
                 <div>
                   <input
                     id="alumniDepartment"
@@ -217,6 +232,8 @@ const Register = () => {
                     placeholder="Department"
                   />
                 </div>
+
+                {/*---------- graduation year ----------*/}
                 <div>
                   <input
                     id="graduationYearAlumni"
@@ -228,6 +245,8 @@ const Register = () => {
                     placeholder="Graduation Year"
                   />
                 </div>
+
+                {/*---------- job title ----------*/}
                 <div>
                   <input
                     id="jobTitle"
@@ -237,6 +256,8 @@ const Register = () => {
                     placeholder="Current Job Title"
                   />
                 </div>
+
+                {/*---------- company ----------*/}
                 <div>
                   <input
                     id="company"
@@ -246,6 +267,8 @@ const Register = () => {
                     placeholder="Current Company / Organization"
                   />
                 </div>
+
+                {/*---------- linkedIn profile link ----------*/}
                 <div>
                   <input
                     id="linkedin"
@@ -258,7 +281,7 @@ const Register = () => {
               </div>
             )}
 
-            {/* Submit */}
+            {/*---------- Register button ----------*/}
             <button
               type="submit"
               className="w-full rounded-lg bg-primary px-4 py-2.5 text-white font-medium focus:outline-none active:scale-95 transition-all ease-linear cursor-pointer"
@@ -267,13 +290,14 @@ const Register = () => {
             </button>
           </form>
 
+          {/*---------- divider ----------*/}
           <div className="my-6 flex items-center">
             <div className="h-px flex-1 bg-gray-400" />
             <span className="px-3 text-xs uppercase tracking-wide text-gray-600">or</span>
             <div className="h-px flex-1 bg-gray-400" />
           </div>
 
-          {/* Login link */}
+          {/*---------- Login link ----------*/}
           <div className="text-center text-sm">
             <span className="text-gray-600">Already have an account? </span>
             <Link to="/auth/login" className="font-medium text-primary hover:underline">
