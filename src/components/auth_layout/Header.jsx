@@ -5,6 +5,8 @@ const Header = () => {
   return (
     <Link to="/">
       <div className="p-5">
+
+        {/* ---------- logo ----------*/}
         <img src={logo} className="w-32 sm:w-40" alt="Synapse logo" />
       </div>
     </Link>
