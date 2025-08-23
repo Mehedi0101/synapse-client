@@ -12,7 +12,6 @@ const AuthLayout = () => {
         >
             <section className="max-w-7xl w-11/12 mx-auto">
                 <Header></Header>
-                <WelcomeText></WelcomeText>
 
                 <Outlet></Outlet>
 

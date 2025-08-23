@@ -1,9 +1,10 @@
 import { createBrowserRouter } from "react-router-dom";
 import HomeLayout from "../layouts/HomeLayout";
 import AuthLayout from "../layouts/AuthLayout";
-import Login from "../pages/Login";
-import Register from "../pages/Register";
+import Login from "../pages/auth_layout/Login";
+import Register from "../pages/auth_layout/Register";
 import PrivateRoute from "../providers/PrivateRoute";
+import ResetPassword from "../pages/auth_layout/ResetPassword";
 
 const router = createBrowserRouter([
     {
@@ -20,6 +21,11 @@ const router = createBrowserRouter([
                 // login
                 path: '/auth/login',
                 element: <Login></Login>
+            },
+            {
+                // reset password
+                path: '/auth/reset-password',
+                element: <ResetPassword></ResetPassword>
             },
             {
                 // register
