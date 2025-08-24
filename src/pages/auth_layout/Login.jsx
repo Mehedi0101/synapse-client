@@ -32,7 +32,7 @@ const Login = () => {
 
         // ---------- login function ----------
         login(email, password)
-            .then((result) => {
+            .then(() => {
                 navigate('/');
 
                 // ---------- toast success ----------

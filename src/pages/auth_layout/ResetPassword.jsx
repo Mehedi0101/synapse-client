@@ -1,18 +1,38 @@
 import ButtonWide from "../../components/shared/ButtonWide";
-import ButtonPrimary from "../../components/shared/ButtonWide";
+import { getAuth, sendPasswordResetEmail } from "firebase/auth";
+import app from "../../firebase/firebase.config";
+import toast from "react-hot-toast";
+
+const auth = getAuth(app);
 
 const ResetPassword = () => {
 
+    // ---------- reset password function ----------
     const handleResetPassword = e => {
         e.preventDefault();
 
+        // ---------- form data ----------
+        const email = e.target.email.value;
+
+        // ---------- loading toast ----------
+        const toastId = toast.loading('Sending request...');
+
+        sendPasswordResetEmail(auth, email)
+            .then(() => {
+                // ---------- loading success ----------
+                toast.success('Request sent. Check your email.', { id: toastId });
+            })
+            .catch(() => {
+                // ---------- error toast ----------
+                toast.error('Something went wrong. Try again later.', { id: toastId });
+            })
     }
 
     return (
         <>
             <div className='max-w-96 text-center mx-auto my-10'>
                 <h2 className='font-poppins text-2xl xl:text-3xl font-semibold text-white'>Reset your password</h2>
-                <p className='text-sm xl:text-base text-gray-300 mt-4'>Check your email. We will send a link to reset your password</p>
+                <p className='text-sm xl:text-base text-gray-300 mt-4'>Check your email. We will send a link to reset your password. If you can't find it in the inbox then check the spam folder as well.</p>
             </div>
 
             <div className="flex items-center justify-center px-4 text-sm md:text-base">
