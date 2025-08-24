@@ -7,6 +7,7 @@ import WelcomeText from "../../components/auth_layout/WelcomeText";
 import ButtonWide from "../../components/shared/ButtonWide";
 
 const Register = () => {
+  
   // ---------- data from auth provider ----------
   const { createUser, setUser } = useContext(AuthContext);
 
@@ -62,7 +63,7 @@ const Register = () => {
 
     // ---------- register function ----------
     createUser(email, password)
-      .then((result) => {
+      .then(() => {
         navigate('/');
         // ---------- success toast ----------
         toast.success('Signed up successfully', { id: toastId });
