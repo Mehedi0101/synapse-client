@@ -3,13 +3,14 @@ import title from '../../assets/synapse_title_white.png';
 import NavButtonLg from './NavButtonLg';
 import defaultUser from '../../assets/default_user.jpg';
 import ButtonWide from './ButtonWide';
+import { Link } from 'react-router-dom';
 
 const NavbarLg = () => {
     return (
         <div className="">
             <div className="bg-ash flex flex-col gap-3 justify-center items-center pt-6 pb-40">
-                <img src={logo} className="w-10" alt="Synapse logo" />
-                <img src={title} className="w-20" alt="Synapse logo" />
+                <Link to="/"><img src={logo} className="w-10" alt="Synapse logo" /></Link>
+                <Link to="/"><img src={title} className="w-20" alt="Synapse logo" /></Link>
             </div>
             <div className='-mt-36 p-4'>
                 <div className='flex flex-col items-center justify-center space-y-2 text-ash px-4 py-8 bg-white rounded-xl'>
