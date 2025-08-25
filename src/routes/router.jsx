@@ -1,5 +1,5 @@
 import { createBrowserRouter } from "react-router-dom";
-import HomeLayout from "../layouts/HomeLayout";
+import StudentLayout from "../layouts/StudentLayout";
 import AuthLayout from "../layouts/AuthLayout";
 import Login from "../pages/auth_layout/Login";
 import Register from "../pages/auth_layout/Register";
@@ -10,7 +10,7 @@ const router = createBrowserRouter([
     {
         // homepage
         path: '/',
-        element: <PrivateRoute><HomeLayout></HomeLayout></PrivateRoute>
+        element: <PrivateRoute><StudentLayout></StudentLayout></PrivateRoute>
     },
     {
         // auth layout
