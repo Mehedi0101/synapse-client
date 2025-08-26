@@ -1,14 +1,14 @@
-import logo from '../../assets/synapse_logo.png';
-import title from '../../assets/synapse_title_white.png';
-import NavButtonLg from './NavButtonLg';
-import defaultUser from '../../assets/default_user.jpg';
-import ButtonWide from './ButtonWide';
+import logo from '../../../assets/synapse_logo.png';
+import title from '../../../assets/synapse_title_white.png';
+import NavButtonLg from '../buttons/NavButtonLg';
+import defaultUser from '../../../assets/default_user.jpg';
+import ButtonWide from '../buttons/ButtonWide';
 import { Link } from 'react-router-dom';
 
-const NavbarLg = () => {
+const NavBarLg = () => {
     return (
-        <div className="">
-            <div className="bg-ash flex flex-col gap-3 justify-center items-center pt-6 pb-40">
+        <div>
+            <div className="bg-dark-ash flex flex-col gap-3 justify-center items-center pt-6 pb-40">
                 <Link to="/"><img src={logo} className="w-10" alt="Synapse logo" /></Link>
                 <Link to="/"><img src={title} className="w-20" alt="Synapse logo" /></Link>
             </div>
@@ -17,11 +17,11 @@ const NavbarLg = () => {
                     <img className='w-24 h-24 rounded-full object-cover' src={defaultUser} alt="" />
                     <p className='font-bold'>Display Name</p>
                     <p className='text-xs font-poppins -mt-2'>@UserName</p>
-                    <ButtonWide text='Profile'></ButtonWide>
-                    <ButtonWide text='Logout'></ButtonWide>
+                    <ButtonWide text='Profile' className='text-sm'></ButtonWide>
+                    <ButtonWide text='Logout' className='text-sm'></ButtonWide>
                 </div>
             </div>
-            <div className='flex flex-col gap-10 px-14 pb-14'>
+            <div className='flex flex-col gap-10 px-14 pb-14 justify-center items-center'>
                 <div className='flex gap-10'>
                     <NavButtonLg></NavButtonLg>
                     <NavButtonLg></NavButtonLg>
@@ -43,4 +43,4 @@ const NavbarLg = () => {
     );
 };
 
-export default NavbarLg;
+export default NavBarLg;

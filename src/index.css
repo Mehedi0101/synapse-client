@@ -11,5 +11,10 @@
     /* colors */
     --color-primary: #6f16d7;
     --color-btn-secondary: #9b4dff;
-    --color-ash : #4a4c56;
+    --color-ash: #4a4c56;
+    --color-dark-ash: #3a3c47;
+}
+
+.bm-menu {
+    @apply overflow-y-scroll scrollbar-none;
 }
