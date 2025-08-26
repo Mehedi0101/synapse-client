@@ -1,7 +1,7 @@
-import ButtonWide from "../../components/shared/ButtonWide";
 import { getAuth, sendPasswordResetEmail } from "firebase/auth";
 import app from "../../firebase/firebase.config";
 import toast from "react-hot-toast";
+import ButtonWide from "../../components/shared/buttons/ButtonWide";
 
 const auth = getAuth(app);
 

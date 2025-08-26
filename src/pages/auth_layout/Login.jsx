@@ -4,7 +4,7 @@ import { CiWarning } from "react-icons/ci";
 import AuthContext from "../../contexts/AuthContext";
 import toast from "react-hot-toast";
 import WelcomeText from "../../components/auth_layout/WelcomeText";
-import ButtonWide from "../../components/shared/ButtonWide";
+import ButtonWide from "../../components/shared/buttons/ButtonWide";
 
 const Login = () => {
 
