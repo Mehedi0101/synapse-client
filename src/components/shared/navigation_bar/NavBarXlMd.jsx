@@ -1,6 +1,7 @@
 import logo from '../../../assets/synapse_logo.png';
-import { Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import NavButtonXlMd from '../buttons/NavButtonXlMd';
+import { userLinks } from '../../../navigation_links/userLinks';
 
 const NavBarXlMd = () => {
     return (
@@ -9,15 +10,13 @@ const NavBarXlMd = () => {
                 <Link to="/"><img src={logo} className="w-6" alt="Synapse logo" /></Link>
             </div>
             <div className='flex flex-col gap-10 px-8 py-14'>
-                <NavButtonXlMd></NavButtonXlMd>
-                <NavButtonXlMd></NavButtonXlMd>
-                <NavButtonXlMd></NavButtonXlMd>
-                <NavButtonXlMd></NavButtonXlMd>
-                <NavButtonXlMd></NavButtonXlMd>
-                <NavButtonXlMd></NavButtonXlMd>
-                <NavButtonXlMd></NavButtonXlMd>
-                <NavButtonXlMd></NavButtonXlMd>
-                <NavButtonXlMd></NavButtonXlMd>
+                {
+                    userLinks.map((item, idx) => {
+                        return (
+                            <NavLink key={idx} className={'text-ash'} to={item.link} title={item.name}><NavButtonXlMd icon={item.icon}></NavButtonXlMd></NavLink>
+                        );
+                    })
+                }
             </div>
         </div>
     );

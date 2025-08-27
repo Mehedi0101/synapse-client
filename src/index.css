@@ -15,6 +15,12 @@
     --color-dark-ash: #3a3c47;
 }
 
+/* ---------- style of active link of the navbar ---------- */
+a.active {
+    @apply text-primary;
+}
+
+/* ---------- for removing scrollbar from menu of small device ---------- */
 .bm-menu {
     @apply overflow-y-scroll scrollbar-none;
 }
