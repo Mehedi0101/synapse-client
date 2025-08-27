@@ -11,13 +11,13 @@ const AuthLayout = () => {
         >
             <div className="max-w-screen-2xl w-11/12 mx-auto">
 
-                {/* fixed header of auth layout */}
+                {/* header of auth layout */}
                 <Header></Header>
 
                 {/* dynamic content of auth layout*/}
                 <Outlet></Outlet>
 
-                {/* fixed footer of auth layout */}
+                {/* footer of auth layout */}
                 <Footer></Footer>
 
             </div>
