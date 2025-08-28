@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-const Footer = () => {
+const AuthFooter = () => {
   return (
     <footer className="text-center text-gray-400 text-xs sm:text-sm py-4 mt-10">
 
@@ -23,4 +23,4 @@ const Footer = () => {
   );
 };
 
-export default Footer;
+export default AuthFooter;

@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import logo from "../../assets/synapse_title_logo_variant_2.png";
 
-const Header = () => {
+const AuthHeader = () => {
   return (
     <Link to="/">
       <div className="p-5">
@@ -13,4 +13,4 @@ const Header = () => {
   );
 };
 
-export default Header;
+export default AuthHeader;

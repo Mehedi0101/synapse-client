@@ -1,7 +1,7 @@
 import { Outlet } from "react-router-dom";
 import bgImg from "../assets/auth-bg-img.jpg";
-import Header from "../components/auth_layout/Header";
-import Footer from "../components/auth_layout/Footer";
+import AuthHeader from "../components/auth_layout/AuthHeader";
+import AuthFooter from "../components/auth_layout/AuthFooter";
 
 const AuthLayout = () => {
     return (
@@ -12,13 +12,13 @@ const AuthLayout = () => {
             <div className="max-w-screen-2xl w-11/12 mx-auto">
 
                 {/* header of auth layout */}
-                <Header></Header>
+                <AuthHeader></AuthHeader>
 
                 {/* dynamic content of auth layout*/}
                 <Outlet></Outlet>
 
                 {/* footer of auth layout */}
-                <Footer></Footer>
+                <AuthFooter></AuthFooter>
 
             </div>
         </div>
