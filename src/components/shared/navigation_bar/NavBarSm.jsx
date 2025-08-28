@@ -1,11 +1,10 @@
 import { push as Menu } from "react-burger-menu";
 import NavButtonLg from '../buttons/NavButtonLg';
 import LogoSection from "./LogoSection";
-import defaultUser from '../../../assets/default_user.jpg';
 import { menuItemsLgSm } from "../../../navigation_links/userLinks";
-import { Link, NavLink } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { useState } from "react";
-import ButtonWide from "../buttons/ButtonWide";
+import UserBasicInfo from "./UserBasicInfo";
 
 // ---------- Hamburger styles ----------
 const menuStyles = {
@@ -55,14 +54,15 @@ const menuItems = menuItemsLgSm();
 
 const NavBarSm = () => {
 
+    // ---------- menu bar toggle state ----------
     const [isOpen, setIsOpen] = useState(false);
 
-    // Handle state changes (cross button, overlay, etc.)
+    // ---------- function for changing the toggle state of menu bar ----------
     const handleStateChange = (state) => {
         setIsOpen(state.isOpen);
     };
 
-    // Close the menu when a link is clicked
+    // ---------- function for closing menu ----------
     const closeMenu = () => {
         setIsOpen(false);
     };
@@ -77,13 +77,7 @@ const NavBarSm = () => {
 
             {/* ---------- basic user information ---------- */}
             <div className='-mt-40 p-4 text-center'>
-                <div className='flex flex-col items-center justify-center space-y-2 text-ash px-4 py-8 bg-white rounded-xl'>
-                    <img className='w-24 h-24 rounded-full object-cover' src={defaultUser} alt="user image" />
-                    <p className='font-bold'>Display Name</p>
-                    <p className='text-xs font-poppins -mt-2'>@UserName</p>
-                    <Link to='/profile' onClick={closeMenu} className='w-full'><ButtonWide text='Profile' className='text-sm'></ButtonWide></Link>
-                    <ButtonWide text='Logout' className='text-sm' onClick={closeMenu}></ButtonWide>
-                </div>
+                <UserBasicInfo></UserBasicInfo>
             </div>
 
             {/* ---------- menu button section ---------- */}

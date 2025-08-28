@@ -1,5 +1,3 @@
-import React from 'react';
-
 const WelcomeText = () => {
     return (
         // ---------- texts above login and registration form ----------
