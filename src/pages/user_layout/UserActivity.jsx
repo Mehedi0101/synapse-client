@@ -1,6 +1,6 @@
 const UserActivity = () => {
     return (
-        <div>
+        <div className="min-h-[1000px]">
             UserActivity
         </div>
     );
