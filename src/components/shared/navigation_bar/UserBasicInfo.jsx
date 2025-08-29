@@ -11,7 +11,7 @@ const UserBasicInfo = () => {
             <p className='text-lg font-bold'>Display Name</p>
 
             {/* ---------- role ---------- */}
-            <p className='text-sm font-poppins -mt-2'>Student</p>
+            <p className='text-sm font-poppins -mt-2 mb-4'>Student</p>
 
             {/* ---------- Session ---------- */}
             <p><span className='font-semibold'>Session:</span> 2019-20</p>

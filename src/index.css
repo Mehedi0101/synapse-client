@@ -24,3 +24,8 @@ a.active {
 .bm-menu {
     @apply overflow-y-scroll scrollbar-none;
 }
+
+/* ---------- default scrollbar design ---------- */
+html {
+  @apply scrollbar-thin scrollbar-thumb-ash scrollbar-track-gray-200;
+}
