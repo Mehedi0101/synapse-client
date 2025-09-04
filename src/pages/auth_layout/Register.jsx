@@ -5,14 +5,20 @@ import { CiWarning } from "react-icons/ci";
 import toast from "react-hot-toast";
 import WelcomeText from "../../components/auth_layout/WelcomeText";
 import ButtonWide from "../../components/shared/buttons/ButtonWide";
+import { IoEyeOffOutline, IoEyeOutline } from "react-icons/io5";
+import axios from "axios";
 
 const Register = () => {
-  
+
   // ---------- data from auth provider ----------
   const { createUser, setUser } = useContext(AuthContext);
 
   // ---------- role(admin,student) state ----------
   const [role, setRole] = useState("");
+
+  // ---------- password show or hide toggling state ----------
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const navigate = useNavigate();
 
@@ -32,10 +38,18 @@ const Register = () => {
     // ---------- form data ----------
     const form = e.target;
 
+    const name = form.name.value;
     const email = form.email.value;
     const password = form.password.value;
     const confirmPassword = form.confirmPassword.value;
-
+    const department = form.department.value;
+    const role = form.role.value;
+    const studentId = form?.studentId?.value;
+    const semester = form?.semester?.value;
+    const session = form?.session?.value;
+    const graduationYear = form?.graduationYear?.value;
+    const jobTitle = form?.jobTitle?.value;
+    const company = form?.company?.value;
 
     // ---------- password length error ----------
     if (password.length < 8) {
@@ -64,9 +78,21 @@ const Register = () => {
     // ---------- register function ----------
     createUser(email, password)
       .then(() => {
+        let userData;
+        form.role.value === "student" ? userData = { name, email, role, department, studentId, semester, session } : userData = { name, email, role, department, graduationYear, jobTitle, company };
+
+        axios.post("http://localhost:5000/users", userData)
+          .then((data) => {
+            if(data?.data?.acknowledged){
+              // ---------- success toast ----------
+              toast.success('Signed up successfully', { id: toastId });
+            }
+            else{
+              // ---------- error toast ----------
+              toast.error('Something went wrong', { id: toastId });
+            }
+          })
         navigate('/');
-        // ---------- success toast ----------
-        toast.success('Signed up successfully', { id: toastId });
       })
       .catch((error) => {
         if (error.code === "auth/email-already-in-use") {
@@ -116,14 +142,25 @@ const Register = () => {
 
               {/*---------- Password ----------*/}
               <div>
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  required
-                  className="mt-1 w-full px-3 py-2 border-b-2 border-gray-300 text-gray-900 focus:outline-none"
-                  placeholder="Password"
-                />
+                <div className="relative">
+                  <input
+                    id="password"
+                    name="password"
+                    type={showPassword ? "text" : "password"}
+                    required
+                    className="mt-1 w-full px-3 py-2 border-b-2 border-gray-300 text-gray-900 focus:outline-none pr-10"
+                    placeholder="Password"
+                  />
+
+                  {/*---------- Password show or hide toggle button ----------*/}
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-primary cursor-pointer"
+                  >
+                    {showPassword ? <IoEyeOffOutline className="text-lg md:text-xl" /> : <IoEyeOutline className="text-lg md:text-xl" />}
+                  </button>
+                </div>
 
                 {/*---------- password error display ----------*/}
                 {passwordError &&
@@ -137,14 +174,25 @@ const Register = () => {
 
               {/*---------- Confirm Password ----------*/}
               <div>
-                <input
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  type="password"
-                  required
-                  className="mt-1 w-full px-3 py-2 border-b-2 border-gray-300 text-gray-900 focus:outline-none"
-                  placeholder="Confirm Password"
-                />
+                <div className="relative">
+                  <input
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    type={showConfirmPassword ? "text" : "password"}
+                    required
+                    className="mt-1 w-full px-3 py-2 border-b-2 border-gray-300 text-gray-900 focus:outline-none pr-10"
+                    placeholder="Password"
+                  />
+
+                  {/*----------Confirm password show or hide toggle button ----------*/}
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-primary cursor-pointer"
+                  >
+                    {showConfirmPassword ? <IoEyeOffOutline className="text-lg md:text-xl" /> : <IoEyeOutline className="text-lg md:text-xl" />}
+                  </button>
+                </div>
 
                 {/*---------- confirm password error display ----------*/}
                 {confirmPasswordError &&
@@ -154,6 +202,30 @@ const Register = () => {
                       {confirmPasswordError}
                     </span>
                   </p>}
+              </div>
+
+              {/*---------- department ----------*/}
+              <div>
+                <select
+                  id="department"
+                  name="department"
+                  required
+                  defaultValue=""
+                  className="mt-1 w-full px-3 py-2 border-b-2 border-gray-300 text-gray-900 focus:outline-none bg-transparent"
+                >
+                  <option value="" disabled>
+                    Select Department
+                  </option>
+                  <option value="Computer Science & Engineering">Computer Science & Engineering</option>
+                  <option value="Business Administration">Business Administration</option>
+                  <option value="Accounting">Accounting</option>
+                  <option value="Bangla">Bangla</option>
+                  <option value="Economics">Economics</option>
+                  <option value="English">English</option>
+                  <option value="Management">Management</option>
+                  <option value="Marketing">Marketing</option>
+                  <option value="Finance and Banking">Finance and Banking</option>
+                </select>
               </div>
 
               {/*---------- Role ----------*/}
@@ -166,7 +238,7 @@ const Register = () => {
                   onChange={(e) => setRole(e.target.value)}
                   className="mt-1 w-full px-3 py-2 border-b-2 border-gray-300 text-gray-900 focus:outline-none bg-transparent"
                 >
-                  <option value="">Select Role</option>
+                  <option value="" disabled>Select Role</option>
                   <option value="student">Student</option>
                   <option value="alumni">Alumni</option>
                 </select>
@@ -187,39 +259,50 @@ const Register = () => {
                     />
                   </div>
 
-                  {/*---------- department ----------*/}
-                  <div>
-                    <input
-                      id="department"
-                      name="department"
-                      type="text"
-                      className="mt-1 w-full px-3 py-2 border-b-2 border-gray-300 text-gray-900 focus:outline-none"
-                      placeholder="Department"
-                    />
-                  </div>
-
                   {/*---------- semester ----------*/}
                   <div>
-                    <input
+                    <select
                       id="semester"
                       name="semester"
-                      type="text"
-                      className="mt-1 w-full px-3 py-2 border-b-2 border-gray-300 text-gray-900 focus:outline-none"
-                      placeholder="Current Year / Semester"
-                    />
+                      required
+                      defaultValue=""
+                      className="mt-1 w-full px-3 py-2 border-b-2 border-gray-300 text-gray-900 focus:outline-none bg-transparent"
+                    >
+                      <option value="" disabled>
+                        Select Current Semester
+                      </option>
+                      <option value="1st">1st</option>
+                      <option value="2nd">2nd</option>
+                      <option value="3rd">3rd</option>
+                      <option value="4th">4th</option>
+                      <option value="5th">5th</option>
+                      <option value="6th">6th</option>
+                      <option value="7th">7th</option>
+                      <option value="8th">8th</option>
+                    </select>
                   </div>
 
-                  {/*---------- expected graduation year ----------*/}
+                  {/*---------- session ----------*/}
                   <div>
-                    <input
-                      id="graduationYear"
-                      name="graduationYear"
-                      type="number"
-                      min="2000"
-                      max="2100"
-                      className="mt-1 w-full px-3 py-2 border-b-2 border-gray-300 text-gray-900 focus:outline-none"
-                      placeholder="Expected Graduation Year"
-                    />
+                    <select
+                      id="session"
+                      name="session"
+                      required
+                      defaultValue=""
+                      className="mt-1 w-full px-3 py-2 border-b-2 border-gray-300 text-gray-900 focus:outline-none bg-transparent"
+                    >
+                      <option value="" disabled>
+                        Select Session
+                      </option>
+                      <option value="2024-25">2024-25</option>
+                      <option value="2023-24">2023-24</option>
+                      <option value="2022-23">2022-23</option>
+                      <option value="2021-22">2021-22</option>
+                      <option value="2020-21">2020-21</option>
+                      <option value="2019-20">2019-20</option>
+                      <option value="2018-19">2018-19</option>
+                      <option value="2017-18">2017-18</option>
+                    </select>
                   </div>
                 </div>
               )}
@@ -228,22 +311,11 @@ const Register = () => {
               {role === "alumni" && (
                 <div className="space-y-5">
 
-                  {/*---------- department ----------*/}
-                  <div>
-                    <input
-                      id="alumniDepartment"
-                      name="alumniDepartment"
-                      type="text"
-                      className="mt-1 w-full px-3 py-2 border-b-2 border-gray-300 text-gray-900 focus:outline-none"
-                      placeholder="Department"
-                    />
-                  </div>
-
                   {/*---------- graduation year ----------*/}
                   <div>
                     <input
-                      id="graduationYearAlumni"
-                      name="graduationYearAlumni"
+                      id="graduationYear"
+                      name="graduationYear"
                       type="number"
                       min="1980"
                       max="2100"
@@ -271,17 +343,6 @@ const Register = () => {
                       type="text"
                       className="mt-1 w-full px-3 py-2 border-b-2 border-gray-300 text-gray-900 focus:outline-none"
                       placeholder="Current Company / Organization"
-                    />
-                  </div>
-
-                  {/*---------- linkedIn profile link ----------*/}
-                  <div>
-                    <input
-                      id="linkedin"
-                      name="linkedin"
-                      type="url"
-                      className="mt-1 w-full px-3 py-2 border-b-2 border-gray-300 text-gray-900 focus:outline-none"
-                      placeholder="LinkedIn Profile (optional)"
                     />
                   </div>
                 </div>

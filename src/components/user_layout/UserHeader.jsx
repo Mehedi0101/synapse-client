@@ -99,7 +99,7 @@ const UserHeader = () => {
 
                             {/* ---------- logout ---------- */}
                             <button
-                                className="flex items-center gap-1 w-full text-left px-4 py-2 hover:text-primary"
+                                className="flex items-center gap-1 w-full text-left px-4 py-2 hover:text-primary cursor-pointer"
                                 onClick={() => {
                                     setOpen(false);
                                     console.log("Logged out");
