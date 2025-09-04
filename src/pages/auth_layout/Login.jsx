@@ -5,6 +5,7 @@ import AuthContext from "../../contexts/AuthContext";
 import toast from "react-hot-toast";
 import WelcomeText from "../../components/auth_layout/WelcomeText";
 import ButtonWide from "../../components/shared/buttons/ButtonWide";
+import { IoEyeOffOutline, IoEyeOutline } from "react-icons/io5";
 
 const Login = () => {
 
@@ -15,6 +16,9 @@ const Login = () => {
 
     // ---------- error states ----------
     const [credentialError, setCredentialError] = useState(null);
+
+    // ---------- show or hide password toggling state ----------
+    const [showPassword, setShowPassword] = useState(false);
 
     const handleLogin = (e) => {
         e.preventDefault();
@@ -74,15 +78,25 @@ const Login = () => {
 
                             {/*---------- password ----------*/}
                             <div>
-                                <input
-                                    id="password"
-                                    name="password"
-                                    type="password"
-                                    autoComplete="current-password"
-                                    required
-                                    className="mt-1 w-full px-3 py-2 border-b-2 border-gray-300 text-gray-900 focus:outline-none"
-                                    placeholder="Password"
-                                />
+                                <div className="relative">
+                                    <input
+                                        id="password"
+                                        name="password"
+                                        type={showPassword ? "text" : "password"}
+                                        required
+                                        className="mt-1 w-full px-3 py-2 border-b-2 border-gray-300 text-gray-900 focus:outline-none pr-10"
+                                        placeholder="Password"
+                                    />
+
+                                    {/*---------- Password show or hide toggle button ----------*/}
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-primary cursor-pointer"
+                                    >
+                                        {showPassword ? <IoEyeOffOutline className="text-lg md:text-xl" /> : <IoEyeOutline className="text-lg md:text-xl" />}
+                                    </button>
+                                </div>
 
                                 {/*---------- invalid email and password error display ----------*/}
                                 {credentialError &&

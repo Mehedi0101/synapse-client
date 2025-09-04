@@ -85,7 +85,7 @@ const Register = () => {
           .then((data) => {
             if(data?.data?.acknowledged){
               // ---------- success toast ----------
-              toast.success('Signed up successfully', { id: toastId });
+              toast.success('Registered successfully', { id: toastId });
             }
             else{
               // ---------- error toast ----------
