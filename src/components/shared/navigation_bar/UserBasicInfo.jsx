@@ -1,26 +1,41 @@
+import { useContext } from 'react';
 import defaultUser from '../../../assets/default_user.jpg';
+import AuthContext from '../../../contexts/AuthContext';
 
 const UserBasicInfo = () => {
+
+    // ---------- user details from auth provider ----------
+    const { userDetails } = useContext(AuthContext);
+
+    console.log(userDetails);
+
     return (
-        <div className='flex flex-col items-center justify-center space-y-2 text-ash px-4 py-8 bg-white rounded-xl'>
+        <div className='flex flex-col items-center justify-center space-y-2 text-ash px-4 py-8 bg-white rounded-xl text-center'>
 
             {/* ---------- user image ---------- */}
-            <img className='w-24 h-24 rounded-full object-cover' src={defaultUser} alt="user image" />
+            <img className='w-24 h-24 rounded-full object-cover' src={userDetails?.userImage ? userDetails.userImage : defaultUser} alt="user image" />
 
             {/* ---------- display name ---------- */}
-            <p className='text-lg font-bold'>Display Name</p>
+            <p className='max-w-[200px] break-words text-lg font-bold'>{userDetails?.name}</p>
 
             {/* ---------- role ---------- */}
-            <p className='text-sm font-poppins -mt-2 mb-4'>Student</p>
+            <p className='text-sm font-poppins -mt-2 mb-4'>{userDetails?.role}</p>
 
-            {/* ---------- Session ---------- */}
-            <p><span className='font-semibold'>Session:</span> 2019-20</p>
+            {/* ---------- Session (Student) ---------- */}
+            {userDetails?.role === "Student" &&
+                <p><span className='font-semibold'>Session:</span> {userDetails?.session}</p>
+            }
+
+            {/* ---------- Graduation (Alumni) ---------- */}
+            {userDetails?.role === "Alumni" &&
+                <p><span className='font-semibold'>Year of Graduation:</span> {userDetails?.graduationYear}</p>
+            }
 
             {/* ---------- Department ---------- */}
-            <p><span className='font-semibold'>Department:</span> CSE</p>
-            <div></div>
+            <p className='max-w-[200px] break-words'><span className='font-semibold'>Department:</span> {userDetails?.department}</p>
         </div>
     );
 };
+// 
 
 export default UserBasicInfo;

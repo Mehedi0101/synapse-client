@@ -2,6 +2,7 @@ import { createUserWithEmailAndPassword, getAuth, onAuthStateChanged, signInWith
 import app from "../firebase/firebase.config";
 import AuthContext from "../contexts/AuthContext";
 import { useEffect, useState } from "react";
+import axios from "axios";
 
 const auth = getAuth(app);
 
@@ -9,7 +10,7 @@ const AuthProvider = ({ children }) => {
 
     // ---------- user state ----------
     const [user, setUser] = useState(null);
-    console.log(user);
+    const [userDetails, setUserDetails] = useState(null);
 
     // ---------- loading state ----------
     const [loading, setLoading] = useState(true);
@@ -17,13 +18,13 @@ const AuthProvider = ({ children }) => {
     // ---------- register function ----------
     const createUser = (email, password) => {
         setLoading(true);
-        return createUserWithEmailAndPassword(auth,email,password);
+        return createUserWithEmailAndPassword(auth, email, password);
     }
 
     // ---------- login function ----------
     const login = (email, password) => {
         setLoading(true);
-        return signInWithEmailAndPassword(auth,email,password);
+        return signInWithEmailAndPassword(auth, email, password);
     }
 
     // ---------- logout function ----------
@@ -33,20 +34,34 @@ const AuthProvider = ({ children }) => {
     }
 
     // ---------- user observer ----------
-    useEffect(()=>{
+    useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
             setLoading(false);
             setUser(currentUser);
         });
 
         return () => unsubscribe();
-    },[])
+    }, [])
+
+    // ---------- fetch user data from database if current user is not null ----------
+    useEffect(() => {
+        if (user?.email) {
+            axios.post("http://localhost:5000/users/email", { email: user.email })
+                .then((data) => {
+                    setUserDetails(data.data);
+                })
+        }
+        else {
+            setUserDetails(null);
+        }
+    }, [user])
 
     // ---------- data available to children ----------
     const authData = {
         loading,
         user,
         setUser,
+        userDetails,
         createUser,
         login,
         logout
