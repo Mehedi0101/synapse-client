@@ -79,20 +79,22 @@ const Register = () => {
     createUser(email, password)
       .then(() => {
         let userData;
-        form.role.value === "student" ? userData = { name, email, role, department, studentId, semester, session } : userData = { name, email, role, department, graduationYear, jobTitle, company };
+        form.role.value === "Student" ? userData = { name, email, role, department, studentId, semester, session } : userData = { name, email, role, department, graduationYear, jobTitle, company };
 
         axios.post("http://localhost:5000/users", userData)
           .then((data) => {
             if(data?.data?.acknowledged){
               // ---------- success toast ----------
               toast.success('Registered successfully', { id: toastId });
+
+              // ---------- go to homepage ----------
+              navigate('/');
             }
             else{
               // ---------- error toast ----------
               toast.error('Something went wrong', { id: toastId });
             }
           })
-        navigate('/');
       })
       .catch((error) => {
         if (error.code === "auth/email-already-in-use") {
@@ -239,13 +241,13 @@ const Register = () => {
                   className="mt-1 w-full px-3 py-2 border-b-2 border-gray-300 text-gray-900 focus:outline-none bg-transparent"
                 >
                   <option value="" disabled>Select Role</option>
-                  <option value="student">Student</option>
-                  <option value="alumni">Alumni</option>
+                  <option value="Student">Student</option>
+                  <option value="Alumni">Alumni</option>
                 </select>
               </div>
 
               {/*---------- Student Fields ----------*/}
-              {role === "student" && (
+              {role === "Student" && (
                 <div className="space-y-5">
 
                   {/*---------- student id ----------*/}
@@ -308,7 +310,7 @@ const Register = () => {
               )}
 
               {/*---------- Alumni Fields ----------*/}
-              {role === "alumni" && (
+              {role === "Alumni" && (
                 <div className="space-y-5">
 
                   {/*---------- graduation year ----------*/}
