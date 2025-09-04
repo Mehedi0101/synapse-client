@@ -9,6 +9,7 @@ const AuthProvider = ({ children }) => {
 
     // ---------- user state ----------
     const [user, setUser] = useState(null);
+    console.log(user);
 
     // ---------- loading state ----------
     const [loading, setLoading] = useState(true);
@@ -27,6 +28,7 @@ const AuthProvider = ({ children }) => {
 
     // ---------- logout function ----------
     const logout = () => {
+        setLoading(true);
         return signOut(auth);
     }
 

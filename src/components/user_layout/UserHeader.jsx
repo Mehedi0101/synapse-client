@@ -1,15 +1,36 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useContext } from "react";
 import { IoIosNotificationsOutline } from "react-icons/io";
 import { MdOutlineLogout, MdOutlineNotifications, MdOutlineSearch } from "react-icons/md";
 import { Link } from "react-router-dom";
 import defaultUser from "../../assets/default_user.jpg";
 import { CgProfile } from "react-icons/cg";
+import AuthContext from "../../contexts/AuthContext";
+import toast from "react-hot-toast";
 
 const UserHeader = () => {
+    // ---------- data from auth provider ----------
+    const { logout } = useContext(AuthContext);
 
     // ---------- state of the dropdown ----------
     const [open, setOpen] = useState(false);
     const dropdownRef = useRef(null);
+
+    // ---------- logout function ----------
+    const handleLogOut = () => {
+
+        // ---------- loading toast ----------
+        const toastId = toast.loading('Creating account...');
+
+        logout()
+            .then(() => {
+                // ---------- success toast ----------
+                toast.success('Logged out', { id: toastId });
+            })
+            .catch(() => {
+                // ---------- error toast ----------
+                toast.error('Something went wrong', { id: toastId });
+            })
+    }
 
     // ---------- click outside to close ----------
     useEffect(() => {
@@ -102,7 +123,7 @@ const UserHeader = () => {
                                 className="flex items-center gap-1 w-full text-left px-4 py-2 hover:text-primary cursor-pointer"
                                 onClick={() => {
                                     setOpen(false);
-                                    console.log("Logged out");
+                                    handleLogOut();
                                 }}
                             >
                                 {/*---------- logout icon ----------*/}
