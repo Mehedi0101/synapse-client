@@ -7,7 +7,7 @@ import { CgProfile } from "react-icons/cg";
 import AuthContext from "../../contexts/AuthContext";
 import toast from "react-hot-toast";
 
-const UserHeader = () => {
+const UserHeader = ({searchBar = ""}) => {
     // ---------- data from auth provider ----------
     const { logout } = useContext(AuthContext);
 
@@ -47,10 +47,10 @@ const UserHeader = () => {
 
     return (
         // ---------- header container ----------
-        <div className={"sticky top-0 right-0 flex sm:gap-4 gap-2 items-center justify-between text-sm lg:text-base pr-2 md:pr-5 pl-12 md:pl-5 py-1 md:py-3 bg-white border-b-1 border-b-gray-200"}>
+        <div className={"sticky top-0 right-0 flex sm:gap-4 gap-2 items-center justify-between text-sm lg:text-base pr-2 md:pr-5 pl-12 md:pl-5 py-1 md:py-3 bg-white border-b-1 border-b-gray-200 z-20"}>
 
             {/* ---------- search bar ---------- */}
-            <div className="flex items-center w-full">
+            <div className={`flex items-center w-full ${searchBar}`}>
 
                 {/*---------- search icon ----------*/}
                 <MdOutlineSearch className="text-lg lg:text-xl text-ash" />
@@ -85,7 +85,7 @@ const UserHeader = () => {
 
                     {/* ---------- avatar ---------- */}
                     <img
-                        className="w-8 md:w-10 lg:w-12 h-8 md:h-10 lg:h-12 rounded-full object-cover cursor-pointer"
+                        className="w-10 lg:w-12 h-10 lg:h-12 rounded-full object-cover cursor-pointer"
                         src={defaultUser}
                         alt="user"
                         onClick={() => setOpen(!open)}

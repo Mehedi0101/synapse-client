@@ -12,7 +12,7 @@ const menuStyles = {
         position: "fixed",
         width: "24px",
         height: "16px",
-        left: "16px",
+        left: "10px",
         top: "16px",
     },
     bmBurgerBars: {

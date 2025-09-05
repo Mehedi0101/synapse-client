@@ -12,7 +12,7 @@ const UserLayout = () => {
         >
 
             {/* ---------- Navigation bar container ---------- */}
-            <section className="sticky top-0 left-0 h-screen overflow-y-scroll scrollbar-none min-w-fit z-10">
+            <section className="sticky top-0 left-0 h-screen overflow-y-scroll scrollbar-none min-w-fit z-30">
 
                 {/*---------- Navigation bar for small device ----------*/}
                 <div className="block md:hidden">
@@ -33,7 +33,6 @@ const UserLayout = () => {
 
             {/* ---------- Dynamic content of User Layout ---------- */}
             <div className="max-w-screen-2xl mx-auto w-full">
-                <UserHeader></UserHeader>
                 <Outlet></Outlet>
             </div>
         </div>
