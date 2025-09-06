@@ -7,9 +7,9 @@ import { CgProfile } from "react-icons/cg";
 import AuthContext from "../../contexts/AuthContext";
 import toast from "react-hot-toast";
 
-const UserHeader = ({searchBar = ""}) => {
+const UserHeader = ({ searchBar = "" }) => {
     // ---------- data from auth provider ----------
-    const { logout } = useContext(AuthContext);
+    const { userDetails, logout } = useContext(AuthContext);
 
     // ---------- state of the dropdown ----------
     const [open, setOpen] = useState(false);
@@ -86,7 +86,7 @@ const UserHeader = ({searchBar = ""}) => {
                     {/* ---------- avatar ---------- */}
                     <img
                         className="w-10 lg:w-12 h-10 lg:h-12 rounded-full object-cover cursor-pointer"
-                        src={defaultUser}
+                        src={userDetails?.userImage || defaultUser}
                         alt="user"
                         onClick={() => setOpen(!open)}
                     />

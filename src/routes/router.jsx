@@ -14,6 +14,7 @@ import UserJobs from "../pages/user_layout/UserJobs";
 import UserEvents from "../pages/user_layout/UserEvents";
 import UserResources from "../pages/user_layout/UserResources";
 import UserProfile from "../pages/user_layout/UserProfile";
+import UpdateUserProfile from "../pages/user_layout/UpdateUserProfile";
 
 const router = createBrowserRouter([
     {
@@ -66,6 +67,11 @@ const router = createBrowserRouter([
                 path: '/profile',
                 element: <UserProfile></UserProfile>
             },
+            {
+                // ---------- update user profile ----------
+                path: '/update-profile',
+                element: <UpdateUserProfile></UpdateUserProfile>
+            }
         ]
     },
     {
