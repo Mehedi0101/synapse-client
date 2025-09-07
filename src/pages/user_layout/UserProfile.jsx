@@ -18,7 +18,7 @@ const UserProfile = () => {
     return (
         <>
             {/* ---------- header without searchbar ---------- */}
-            <UserHeader searchBar=""></UserHeader>
+            <UserHeader searchBar="invisible"></UserHeader>
 
             {/* ---------- Main Section of Profile Page ---------- */}
             <div className="grid grid-cols-1 sm:grid-cols-12 gap-8 text-semi-dark mx-2 md:mx-5 my-8 text-sm lg:text-base">
