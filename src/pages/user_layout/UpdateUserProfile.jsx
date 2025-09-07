@@ -2,45 +2,49 @@ import { useContext, useEffect, useState } from "react";
 import AuthContext from "../../contexts/AuthContext";
 import UserHeader from "../../components/user_layout/UserHeader";
 import PurpleButton from "../../components/shared/buttons/PurpleButton";
-import BlueButton from "../../components/shared/buttons/BlueButton";
-import RedButton from "../../components/shared/buttons/RedButton";
 import { MdOutlineCancel } from "react-icons/md";
-import Swal from 'sweetalert2'
+import Swal from 'sweetalert2';
 import toast from "react-hot-toast";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 const UpdateUserProfile = () => {
 
-    const { userDetails } = useContext(AuthContext);
+    // ---------- user details from auth provider ----------
+    const { userDetails, refetchUserDetails } = useContext(AuthContext);
 
+    // ---------- hooks ----------
     const navigate = useNavigate();
 
+    // ---------- role and skill tracking states ---------- 
     const [formRole, setFormRole] = useState("");
     const [formSkills, setFormSkills] = useState([]);
 
+    // ---------- setting role and skills when userDetails state is changed ---------- 
     useEffect(() => {
         setFormRole(userDetails?.role);
         setFormSkills(userDetails?.skills || []);
     }, [userDetails])
 
+    // ---------- skill add function ---------- 
     const handleSkillAdd = (e) => {
         if (e.key === "Enter" && e.target.value.trim() !== "") {
             e.preventDefault();
-
-            console.log(e.target.value);
             setFormSkills([...formSkills, e.target.value]);
             e.target.value = "";
         }
     };
 
+    // ---------- skill remove function ---------- 
     const handleSkillRemove = (idx) => {
         setFormSkills(formSkills?.filter((_, index) => index != idx));
     };
 
-    const handleSubmit = (e) => {
+    // ---------- profile update function ---------- 
+    const handleUpdateProfile = (e) => {
         e.preventDefault();
 
+        // ---------- sweet alert for confirmation ---------- 
         Swal.fire({
             title: 'Do you want to proceed with saving the changes?',
             confirmButtonText: 'Yes',
@@ -55,9 +59,14 @@ const UpdateUserProfile = () => {
                 confirmButton: 'order-1 right-gap',
             },
         }).then((result) => {
+
+            // ---------- actions after confirming change ---------- 
             if (result.isConfirmed) {
+
+                // ---------- toast loading ---------- 
                 const toastId = toast.loading('Updating Profile...');
 
+                // ---------- form data ---------- 
                 const form = e.target;
 
                 const role = formRole;
@@ -83,6 +92,7 @@ const UpdateUserProfile = () => {
                 const zip = form?.zip?.value;
                 const skills = formSkills;
 
+                // ---------- object for sending data to the backend ---------- 
                 const updatedData = {
                     role, userImage, bio, phone, facebook, linkedIn, github, department, session, semester, birthday, graduationYear, jobTitle, company, companyLocation, resume, skills,
                     address: {
@@ -94,19 +104,32 @@ const UpdateUserProfile = () => {
                     }
                 }
 
-                axios.patch('http://localhost:5000/users/email', { email: userDetails.email, updatedData })
+                // ---------- patch ---------- 
+                axios.patch(`http://localhost:5000/users/${userDetails._id}`, updatedData)
                     .then((data) => {
+
+                        // ---------- if successful ---------- 
                         if (data?.data?.acknowledged) {
+                            // ---------- toast success ---------- 
                             toast.success('Changes Saved Successfully', { id: toastId });
+                            
+                            // ---------- navigate to profile page ---------- 
                             navigate('/profile');
-                            window.location.reload();
-                        }
-                        else {
-                            toast.error('Something went wrong', { id: toastId });
+
+                            // ---------- refetching user details after completing the update ----------
+                            refetchUserDetails();
                         }
 
+                        // ---------- if failed ---------- 
+                        else {
+
+                            // ---------- toast error ---------- 
+                            toast.error('Something went wrong', { id: toastId });
+                        }
                     })
                     .catch(() => {
+
+                        // ---------- toast error ---------- 
                         toast.error('Something went wrong', { id: toastId });
                     })
             }
@@ -115,13 +138,16 @@ const UpdateUserProfile = () => {
 
     return (
         <>
+            {/* ---------- user header (search bar invisible) ---------- */}
             <UserHeader searchBar="invisible" />
 
+            {/* ---------- main content ---------- */}
             <form
+                // ---------- this is used for preventing form submission when pressing enter ----------
                 onKeyDown={(e) => {
                     if (e.key === "Enter") e.preventDefault();
                 }}
-                onSubmit={handleSubmit}
+                onSubmit={handleUpdateProfile}
                 className="grid grid-cols-1 sm:grid-cols-12 gap-8 text-semi-dark mx-2 md:mx-5 my-8 text-sm lg:text-base"
             >
                 {/* ---------- Left Grid ---------- */}
@@ -183,7 +209,6 @@ const UpdateUserProfile = () => {
                         <div className="space-y-3 mt-6">
 
                             {/* ---------- Phone ---------- */}
-
                             <input
                                 type="text"
                                 name="phone"
@@ -194,7 +219,6 @@ const UpdateUserProfile = () => {
 
 
                             {/* ---------- Email(disabled) ---------- */}
-
                             <input
                                 type="email"
                                 name="email"
@@ -236,12 +260,17 @@ const UpdateUserProfile = () => {
 
                 {/* ---------- Right Grid ---------- */}
                 <div className="col-span-1 sm:col-span-7 lg:col-span-8 space-y-6 flex flex-col justify-between">
-                    {/* Academic / Career Info */}
+
+                    {/* ---------- Academic/Career Information ---------- */}
                     <h2 className="text-base lg:text-lg font-bold text-dark font-poppins border-b-2 pb-2">
                         Academic / Career Information
                     </h2>
+
+                    {/* ---------- Student's only field ---------- */}
                     {formRole === "Student" ? (
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+
+                            {/* ---------- student id(disabled) ---------- */}
                             <input
                                 type="text"
                                 name="studentId"
@@ -251,6 +280,7 @@ const UpdateUserProfile = () => {
                                 disabled
                             />
 
+                            {/* ---------- department ---------- */}
                             <select
                                 name="department"
                                 defaultValue={userDetails?.department}
@@ -267,6 +297,7 @@ const UpdateUserProfile = () => {
                                 <option value="Finance and Banking">Finance and Banking</option>
                             </select>
 
+                            {/* ---------- session ---------- */}
                             <input
                                 type="text"
                                 name="session"
@@ -275,6 +306,7 @@ const UpdateUserProfile = () => {
                                 className="border-b outline-none border-slate-400"
                             />
 
+                            {/* ---------- semester ---------- */}
                             <input
                                 type="text"
                                 name="semester"
@@ -283,6 +315,7 @@ const UpdateUserProfile = () => {
                                 className="border-b outline-none border-slate-400"
                             />
 
+                            {/* ---------- birthday ---------- */}
                             <input
                                 type="text"
                                 name="birthday"
@@ -291,6 +324,7 @@ const UpdateUserProfile = () => {
                                 placeholder="Date of Birth (dd-mm-yyyy)"
                             />
 
+                            {/* ---------- resume ---------- */}
                             <input
                                 type="text"
                                 name="resume"
@@ -302,7 +336,10 @@ const UpdateUserProfile = () => {
 
                     ) : (
 
+                        // ---------- Alumni Only ---------- 
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+
+                            {/* ---------- department ---------- */}
                             <select
                                 name="department"
                                 defaultValue={userDetails?.department}
@@ -319,6 +356,7 @@ const UpdateUserProfile = () => {
                                 <option value="Finance and Banking">Finance and Banking</option>
                             </select>
 
+                            {/* ---------- graduation year ---------- */}
                             <input
                                 type="number"
                                 name="graduationYear"
@@ -326,6 +364,8 @@ const UpdateUserProfile = () => {
                                 placeholder="Graduation Year"
                                 className="border-b outline-none border-slate-400"
                             />
+
+                            {/* ---------- job title ---------- */}
                             <input
                                 type="text"
                                 name="jobTitle"
@@ -333,6 +373,8 @@ const UpdateUserProfile = () => {
                                 placeholder="Current Position"
                                 className="border-b outline-none border-slate-400"
                             />
+
+                            {/* ---------- company name ---------- */}
                             <input
                                 type="text"
                                 name="company"
@@ -340,6 +382,8 @@ const UpdateUserProfile = () => {
                                 placeholder="Company/Organization name"
                                 className="border-b outline-none border-slate-400"
                             />
+
+                            {/* ---------- company location ---------- */}
                             <input
                                 type="text"
                                 name="companyLocation"
@@ -350,11 +394,13 @@ const UpdateUserProfile = () => {
                         </div>
                     )}
 
-                    {/* Address */}
+                    {/* ---------- Address Section ---------- */}
                     <h2 className="text-base lg:text-lg font-bold text-dark font-poppins border-b-2 pb-2">
                         Address
                     </h2>
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+
+                        {/* ---------- street ---------- */}
                         <input
                             type="text"
                             name="street"
@@ -362,6 +408,8 @@ const UpdateUserProfile = () => {
                             placeholder="Street"
                             className="border-b outline-none col-span-2 border-slate-400"
                         />
+
+                        {/* ---------- city ---------- */}
                         <input
                             type="text"
                             name="city"
@@ -369,6 +417,8 @@ const UpdateUserProfile = () => {
                             placeholder="City"
                             className="border-b outline-none border-slate-400"
                         />
+
+                        {/* ---------- state ---------- */}
                         <input
                             type="text"
                             name="state"
@@ -376,6 +426,8 @@ const UpdateUserProfile = () => {
                             placeholder="State/Region"
                             className="border-b outline-none border-slate-400"
                         />
+
+                        {/* ---------- country ---------- */}
                         <input
                             type="text"
                             name="country"
@@ -383,6 +435,8 @@ const UpdateUserProfile = () => {
                             placeholder="Country"
                             className="border-b outline-none border-slate-400"
                         />
+
+                        {/* ---------- zip code ---------- */}
                         <input
                             type="text"
                             name="zip"
@@ -392,18 +446,22 @@ const UpdateUserProfile = () => {
                         />
                     </div>
 
-                    {/* Skills */}
+                    {/* ---------- skills section ---------- */}
                     <h2 className="text-base lg:text-lg font-bold text-dark font-poppins border-b-2 pb-2">
                         Skills
                     </h2>
                     <div>
                         <div className={`flex flex-wrap gap-2 ${formSkills.length > 0 && "mb-4"}`}>
                             {formSkills.map((skill, idx) => (
+
+                                // ---------- Each Skill ----------
                                 <span
                                     key={idx}
                                     className="px-3 py-1 bg-primary text-white text-xs lg:text-sm rounded-lg shadow flex items-center gap-1"
                                 >
                                     {skill}
+
+                                    {/* ---------- skill remove button ---------- */}
                                     <button
                                         type="button"
                                         onClick={() => handleSkillRemove(idx)}
@@ -414,6 +472,8 @@ const UpdateUserProfile = () => {
                                 </span>
                             ))}
                         </div>
+
+                        {/* ---------- skill add field ---------- */}
                         <div className="flex items-center">
                             <input
                                 type="text"
@@ -425,7 +485,7 @@ const UpdateUserProfile = () => {
 
                     </div>
 
-                    {/* Save / Cancel */}
+                    {/* ---------- save change button ---------- */}
                     <div className="">
                         <PurpleButton text="Save Changes" type="submit" />
                     </div>

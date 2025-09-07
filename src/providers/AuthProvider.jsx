@@ -33,6 +33,16 @@ const AuthProvider = ({ children }) => {
         return signOut(auth);
     }
 
+    // ---------- for refetching user details ----------
+    const refetchUserDetails = () => {
+        if (user?.email) {
+            axios.post("http://localhost:5000/users/email", { email: user.email })
+                .then((data) => {
+                    setUserDetails(data.data);
+                })
+        }
+    };
+
     // ---------- user observer ----------
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -62,9 +72,10 @@ const AuthProvider = ({ children }) => {
         user,
         setUser,
         userDetails,
+        refetchUserDetails,
         createUser,
         login,
-        logout
+        logout,
     };
 
     return (

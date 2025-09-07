@@ -11,7 +11,7 @@ import axios from "axios";
 const Register = () => {
 
   // ---------- data from auth provider ----------
-  const { createUser, setUser } = useContext(AuthContext);
+  const { createUser, setUser, refetchUserDetails } = useContext(AuthContext);
 
   // ---------- role(admin,student) state ----------
   const [role, setRole] = useState("");
@@ -89,6 +89,8 @@ const Register = () => {
 
               // ---------- go to homepage ----------
               navigate('/');
+
+              refetchUserDetails();
             }
             else{
               // ---------- error toast ----------
