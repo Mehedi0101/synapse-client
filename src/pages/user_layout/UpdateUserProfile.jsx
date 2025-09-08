@@ -1,12 +1,12 @@
 import { useContext, useEffect, useState } from "react";
 import AuthContext from "../../contexts/AuthContext";
-import UserHeader from "../../components/user_layout/UserHeader";
 import PurpleButton from "../../components/shared/buttons/PurpleButton";
 import { MdOutlineCancel } from "react-icons/md";
 import Swal from 'sweetalert2';
 import toast from "react-hot-toast";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import UserHeader from "../../components/user_layout/shared/UserHeader";
 
 const UpdateUserProfile = () => {
 

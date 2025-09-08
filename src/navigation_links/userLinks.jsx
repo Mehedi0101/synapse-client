@@ -22,7 +22,7 @@ export const userLinks = [
     },
     {
         name: 'Connect',
-        link: '/connect',
+        link: '/connections',
         icon: <MdPersonAddAlt />
     },
     {

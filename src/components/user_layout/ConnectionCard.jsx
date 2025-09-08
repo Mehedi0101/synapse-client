@@ -5,6 +5,7 @@ import AuthContext from "../../contexts/AuthContext";
 import axios from "axios";
 import toast from "react-hot-toast";
 import GrayButton from "../shared/buttons/GrayButton";
+import { Link } from "react-router-dom";
 
 const ConnectionCard = ({ user }) => {
     // ---------- user data from auth provider ----------
@@ -55,9 +56,12 @@ const ConnectionCard = ({ user }) => {
             />
 
             {/* ---------- User Name ---------- */}
-            <h3 className="text-lg font-bold text-dark font-poppins">
-                {user?.name || "Unknown"}
-            </h3>
+            <Link to={`/profile/${user?._id}`}>
+                <h3 className="font-bold text-dark font-poppins">
+                    {user?.name || "Unknown"}
+                </h3>
+            </Link>
+
 
             {/* ---------- Role | Department ---------- */}
             <p className="text-sm text-slate-600 mb-4">

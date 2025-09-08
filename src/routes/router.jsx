@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 import AuthLayout from "../layouts/AuthLayout";
 import Login from "../pages/auth_layout/Login";
 import Register from "../pages/auth_layout/Register";
@@ -8,13 +8,16 @@ import UserLayout from "../layouts/UserLayout";
 import UserActivity from "../pages/user_layout/UserActivity";
 import UserCreatePost from "../pages/user_layout/UserCreatePost";
 import UserMessages from "../pages/user_layout/UserMessages";
-import UserConnect from "../pages/user_layout/UserConnect";
+import UserConnections from "../pages/user_layout/UserConnections";
 import UserMentorship from "../pages/user_layout/UserMentorship";
 import UserJobs from "../pages/user_layout/UserJobs";
 import UserEvents from "../pages/user_layout/UserEvents";
 import UserResources from "../pages/user_layout/UserResources";
 import UserProfile from "../pages/user_layout/UserProfile";
 import UpdateUserProfile from "../pages/user_layout/UpdateUserProfile";
+import ErrorPage from "../pages/shared/ErrorPage";
+import PublicRoute from "../providers/PublicRoute";
+
 
 const router = createBrowserRouter([
     {
@@ -39,8 +42,8 @@ const router = createBrowserRouter([
             },
             {
                 // ---------- connection request ----------
-                path: '/connect',
-                element: <UserConnect></UserConnect>
+                path: '/connections',
+                element: <UserConnections></UserConnections>
             },
             {
                 // ---------- mentorship ----------
@@ -63,8 +66,13 @@ const router = createBrowserRouter([
                 element: <UserResources></UserResources>
             },
             {
-                // ---------- profile ----------
+                // ---------- current user profile ----------
                 path: '/profile',
+                element: <UserProfile></UserProfile>
+            },
+            {
+                // ---------- other user's profile ----------
+                path: '/profile/:id',
                 element: <UserProfile></UserProfile>
             },
             {
@@ -77,8 +85,13 @@ const router = createBrowserRouter([
     {
         // ---------- auth layout ----------
         path: '/auth',
-        element: <AuthLayout></AuthLayout>,
+        element: <PublicRoute><AuthLayout></AuthLayout></PublicRoute>,
         children: [
+            // ---------- automatic navigation to auth/login ----------
+            {
+                path: '',
+                element: <Navigate to='/auth/login'></Navigate>
+            },
             {
                 // ---------- login ----------
                 path: '/auth/login',
@@ -99,7 +112,7 @@ const router = createBrowserRouter([
     {
         // ---------- any other routes ----------
         path: '/*',
-        element: <div>Error 404 Not found</div>
+        element: <ErrorPage></ErrorPage>
     }
 ])
 
