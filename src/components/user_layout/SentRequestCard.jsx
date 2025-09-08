@@ -5,33 +5,38 @@ import toast from "react-hot-toast";
 import GrayButton from "../shared/buttons/GrayButton";
 import RedButton from "../shared/buttons/RedButton";
 import { formatDistanceToNow } from "date-fns";
+import { Link } from "react-router-dom";
 
 const SentRequestCard = ({ req }) => {
 
     // ---------- button status ----------
     const [clicked, setClicked] = useState(false);
+
+    // ---------- time when request was sent ----------
     let timeAgo = formatDistanceToNow(new Date(req.createdAt), { addSuffix: true });
     timeAgo = timeAgo.replace("less than a minute ago", "Just now");
 
     const handleCancelRequest = () => {
         // ---------- loading toast ----------
-        const toastId = toast.loading('Sending Request...');
+        const toastId = toast.loading('Cancelling Request...');
 
-        // ---------- post request to insert a connection request to database ----------
+        // ---------- request to delete a connection request based on it's id ----------
         axios.delete(`http://localhost:5000/connections/${req._id}`,)
             .then((data) => {
 
-                // ---------- post request successful ----------
-                console.log(data.data);
+                // ---------- delete request successful ----------
                 if (data?.data?.acknowledged) {
-                    toast.success('Request Sent', { id: toastId });
+                    toast.success('Request Cancelled', { id: toastId });
+                    setClicked(true);
                 }
 
-                // ---------- post request unsuccessful ----------
+                // ---------- delete request unsuccessful ----------
                 else {
                     toast.error('Something went wrong', { id: toastId });
                 }
             })
+
+            // ---------- delete request unsuccessful ----------
             .catch(() => {
                 toast.error('Something went wrong', { id: toastId });
             })
@@ -48,9 +53,11 @@ const SentRequestCard = ({ req }) => {
             />
 
             {/* ---------- User Name ---------- */}
-            <h3 className="text-lg font-bold text-dark font-poppins">
-                {req?.toUser?.name || "N/A"}
-            </h3>
+            <Link to={`/profile/${req?.toUser?._id}`}>
+                <h3 className="font-bold text-dark font-poppins">
+                    {req?.toUser?.name || "N/A"}
+                </h3>
+            </Link>
 
             {/* ---------- Role | Department ---------- */}
             <p className="text-sm text-slate-600 mb-4">
@@ -58,10 +65,12 @@ const SentRequestCard = ({ req }) => {
             </p>
 
             <div className="w-full">
+
+                {/* ---------- time ago ---------- */}
                 <p className="text-xs text-slate-500 mb-3">
                     {timeAgo}
                 </p>
-                {/* ---------- Connection Button ---------- */}
+
                 {
                     clicked ?
                         // ---------- if clicked then show the disabled gray button ----------
@@ -70,11 +79,11 @@ const SentRequestCard = ({ req }) => {
                             className="w-full text-sm"
                         ></GrayButton>
                         :
-                        // ---------- if not clicked then show the connect button ----------
+                        // ---------- if not clicked then show the cancel button ----------
                         <RedButton
                             text="Cancel Request"
                             className="w-full text-sm"
-                            clickFunction={() => { handleCancelRequest(); setClicked(true) }}
+                            clickFunction={() => { handleCancelRequest(); }}
                         />
                 }
             </div>

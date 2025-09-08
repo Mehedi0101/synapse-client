@@ -2,9 +2,9 @@ import { useState, useRef, useEffect, useContext } from "react";
 import { IoIosNotificationsOutline } from "react-icons/io";
 import { MdOutlineLogout, MdOutlineNotifications, MdOutlineSearch } from "react-icons/md";
 import { Link } from "react-router-dom";
-import defaultUser from "../../assets/default_user.jpg";
+import defaultUser from "../../../assets/default_user.jpg";
 import { CgProfile } from "react-icons/cg";
-import AuthContext from "../../contexts/AuthContext";
+import AuthContext from "../../../contexts/AuthContext";
 import toast from "react-hot-toast";
 
 const UserHeader = ({ searchBar = "" }) => {
