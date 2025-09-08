@@ -7,25 +7,34 @@ import toast from "react-hot-toast";
 import GrayButton from "../shared/buttons/GrayButton";
 
 const ConnectionCard = ({ user }) => {
+    // ---------- user data from auth provider ----------
     const { userDetails } = useContext(AuthContext);
 
+    // ---------- button status ----------
     const [clicked, setClicked] = useState(false);
 
     const handleConnect = () => {
         // ---------- loading toast ----------
         const toastId = toast.loading('Sending Request...');
 
+        // ---------- connection request data ----------
         const from = userDetails?._id;
         const to = user?._id;
         const status = "pending";
 
         const data = { from, to, status };
 
+        // ---------- post request to insert a connection request to database ----------
         axios.post("http://localhost:5000/connections", data)
             .then((data) => {
+
+                // ---------- post request successful ----------
                 if (data?.data?.acknowledged) {
                     toast.success('Request Sent', { id: toastId });
+                    setClicked(true)
                 }
+
+                // ---------- post request unsuccessful ----------
                 else {
                     toast.error('Something went wrong', { id: toastId });
                 }
@@ -58,15 +67,17 @@ const ConnectionCard = ({ user }) => {
             {/* ---------- Connection Button ---------- */}
             {
                 clicked ?
+                    // ---------- if clicked then show the disabled gray button ----------
                     <GrayButton
                         text="Request Sent"
                         className="w-full text-sm"
                     ></GrayButton>
                     :
+                    // ---------- if not clicked then show the connect button ----------
                     <PurpleButton
                         text="Connect"
                         className="w-full text-sm"
-                        clickFunction={() => { handleConnect(); setClicked(true) }}
+                        clickFunction={() => { handleConnect() }}
                     />
             }
 

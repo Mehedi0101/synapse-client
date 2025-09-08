@@ -3,6 +3,7 @@ import UserHeader from "../../components/user_layout/UserHeader";
 import ConnectionCard from "../../components/user_layout/ConnectionCard";
 import AuthContext from "../../contexts/AuthContext";
 import axios from "axios";
+import SentRequestCard from "../../components/user_layout/SentRequestCard";
 
 const UserConnect = () => {
 
@@ -29,7 +30,7 @@ const UserConnect = () => {
             .catch(() => {
                 setSentRequests([]);
             })
-    }, [userDetails])
+    }, [userDetails, tabState])
 
     return (
         <div>
@@ -49,17 +50,11 @@ const UserConnect = () => {
                         <span onClick={() => setTabState("Sent")} className={`px-2 pb-3 cursor-pointer ${tabState === "Sent" && "text-primary border-b-2 border-primary"}`}>Sent</span>
                     </div>
 
-                    <div>
+                    <div className="grid min-[400px]:grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-x-4 gap-y-8 min-[400px]:gap-y-6 mt-6">
                         {
                             tabState === "Received" ? ""
-                            :
-                            sentRequests.map(request => {
-                                return(
-                                    <div>
-                                        
-                                    </div>
-                                )
-                            })
+                                :
+                                sentRequests.map(req => <SentRequestCard key={req._id} req={req}></SentRequestCard>)
                         }
                     </div>
                 </div>

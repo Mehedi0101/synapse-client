@@ -1,10 +1,10 @@
-const RedButton = ({ text, className='', type=''}) => {
+const RedButton = ({ text, className = '', type = '', clickFunction = () => { } }) => {
   return (
-    <button type={`${type}`} className={`group relative w-full rounded-lg px-4 py-2.5 text-white font-medium focus:outline-none transition-all ease-linear cursor-pointer overflow-hidden ${className}`}>
+    <button onClick={clickFunction} type={`${type}`} className={`group relative w-full rounded-lg px-4 py-2.5 text-white font-medium focus:outline-none transition-all ease-linear cursor-pointer overflow-hidden ${className}`}>
       {/*---------- Background wrapper that scales on click ----------*/}
       <span className="absolute inset-0 transition-transform duration-150 group-active:scale-95">
-        <span className="absolute rounded-lg inset-0 bg-gradient-to-r from-[#dc2626] to-[#ef4444] transition-opacity duration-500 opacity-100 group-hover:opacity-100"></span>
-        <span className="absolute rounded-lg inset-0 bg-gradient-to-r from-[#ef4444] to-[#dc2626] transition-opacity duration-500 opacity-0 group-hover:opacity-100"></span>
+        <span className="absolute rounded-lg inset-0 bg-gradient-to-r from-[#dc2626] to-[#d55454] transition-opacity duration-500 opacity-100 group-hover:opacity-100"></span>
+        <span className="absolute rounded-lg inset-0 bg-gradient-to-r from-[#d55454] to-[#dc2626] transition-opacity duration-500 opacity-0 group-hover:opacity-100"></span>
       </span>
 
       {/*---------- Text always stays the same size ----------*/}
