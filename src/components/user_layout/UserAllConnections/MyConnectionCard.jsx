@@ -78,14 +78,14 @@ const MyConnectionCard = ({ connection }) => {
 
             <div className="w-full">
                 {/* ---------- User Name ---------- */}
-                <Link to={`/profile/${connection?.otherUser?._id}`} className="text-dark hover:underline hover:text-primary transition-all duration-200">
-                    <h3 className="font-bold font-poppins">
+                <Link to={`/profile/${connection?.otherUser?._id}`} className="w-fit">
+                    <h3 className="text-dark hover:underline hover:text-primary transition-all duration-200 font-bold font-poppins inline-block">
                         {connection?.otherUser?.name || "N/A"}
                     </h3>
                 </Link>
 
                 {/* ---------- Role | Department ---------- */}
-                <p className="text-sm text-slate-600 mt-1">
+                <p className="text-sm text-slate-600 mt-1 w-fit">
                     {connection?.otherUser?.role || "N/A"} | {connection?.otherUser?.department || "N/A"}
                 </p>
 
