@@ -74,6 +74,8 @@ const UserProfile = () => {
                             </div>
                         </div>
 
+                        {/* <Link className="text-primary underline font-semibold">View All Connections</Link> */}
+
                         {/* ---------- about ---------- */}
                         <div className="mt-5 space-y-2">
                             <h2 className="font-bold font-poppins text-base lg:text-lg text-dark">About</h2>
@@ -120,6 +122,12 @@ const UserProfile = () => {
 
                         </div>
                     </div>
+
+                    {/* ---------- view all users(my profile only) ---------- */}
+                    {
+                        !params?.id &&
+                        <Link to='/my-connections' className={`text-primary underline font-semibold block mt-5 ${params?.id && "hidden"}`}>View All Connections</Link>
+                    }
 
                     {/* ---------- Button container for large device ---------- */}
                     <div className={`mt-6 hidden sm:block space-y-2`}>

@@ -60,7 +60,7 @@ const UserConnections = () => {
 
     return (
         <div>
-            {/* ---------- header without searchbar ---------- */}
+            {/* ---------- user header with searchbar ---------- */}
             <UserHeader searchBar=""></UserHeader>
 
             {/* ---------- main section ---------- */}
@@ -87,7 +87,7 @@ const UserConnections = () => {
                                         receivedRequests.map(req => <ReceivedRequestCard key={req._id} req={req}></ReceivedRequestCard>)
                                         :
                                         // ---------- if receivedRequests is empty ---------- 
-                                        <div className="col-span-1 min-[400px]:col-span-2 sm:col-span-3 lg:col-span-4 2xl:col-span-5 min-h-40 flex justify-center items-center text-lg font-bold">
+                                        <div className="col-span-1 min-[400px]:col-span-2 sm:col-span-3 lg:col-span-4 2xl:col-span-5 min-h-40 flex justify-center items-center text-base sm:text-lg font-bold text-center">
                                             No connection requests received yet
                                         </div>
                                 )
@@ -99,7 +99,7 @@ const UserConnections = () => {
                                         sentRequests.map(req => <SentRequestCard key={req._id} req={req}></SentRequestCard>)
                                         :
                                         // ---------- if sentRequests is empty ----------
-                                        <div className="col-span-1 min-[400px]:col-span-2 sm:col-span-3 lg:col-span-4 2xl:col-span-5 min-h-40 flex justify-center items-center text-lg font-bold">
+                                        <div className="col-span-1 min-[400px]:col-span-2 sm:col-span-3 lg:col-span-4 2xl:col-span-5 min-h-40 flex justify-center items-center text-base sm:text-lg font-bold text-center">
                                             No pending connection requests
                                         </div>
 
@@ -123,7 +123,7 @@ const UserConnections = () => {
                             </div>
                             :
                             // ---------- empty ---------- 
-                            <div className="min-h-40 flex justify-center items-center text-lg font-bold">
+                            <div className="min-h-40 flex justify-center items-center text-base sm:text-lg font-bold text-center">
                                 No suggestions available at the moment
                             </div>
                     }

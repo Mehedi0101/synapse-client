@@ -5,8 +5,6 @@ import Register from "../pages/auth_layout/Register";
 import PrivateRoute from "../providers/PrivateRoute";
 import ResetPassword from "../pages/auth_layout/ResetPassword";
 import UserLayout from "../layouts/UserLayout";
-import UserActivity from "../pages/user_layout/UserActivity";
-import UserCreatePost from "../pages/user_layout/UserCreatePost";
 import UserMessages from "../pages/user_layout/UserMessages";
 import UserConnections from "../pages/user_layout/UserConnections";
 import UserMentorship from "../pages/user_layout/UserMentorship";
@@ -17,6 +15,9 @@ import UserProfile from "../pages/user_layout/UserProfile";
 import UpdateUserProfile from "../pages/user_layout/UpdateUserProfile";
 import ErrorPage from "../pages/shared/ErrorPage";
 import PublicRoute from "../providers/PublicRoute";
+import UserPosts from "../pages/user_layout/UserPosts";
+import UserHome from "../pages/user_layout/UserHome";
+import UserAllConnections from "../pages/user_layout/UserAllConnections";
 
 
 const router = createBrowserRouter([
@@ -27,13 +28,13 @@ const router = createBrowserRouter([
         children: [
             {
                 // ---------- activity ----------
-                path: '/activity',
-                element: <UserActivity></UserActivity>
+                path: '',
+                element: <UserHome></UserHome>
             },
             {
                 // ---------- create a post ----------
-                path: '/post',
-                element: <UserCreatePost></UserCreatePost>
+                path: '/my-posts',
+                element: <UserPosts></UserPosts>
             },
             {
                 // ---------- messages ----------
@@ -44,6 +45,11 @@ const router = createBrowserRouter([
                 // ---------- connection request ----------
                 path: '/connections',
                 element: <UserConnections></UserConnections>
+            },
+            {
+                // ---------- all connections ----------
+                path: '/my-connections',
+                element: <UserAllConnections></UserAllConnections>
             },
             {
                 // ---------- mentorship ----------
@@ -79,7 +85,7 @@ const router = createBrowserRouter([
                 // ---------- update user profile ----------
                 path: '/update-profile',
                 element: <UpdateUserProfile></UpdateUserProfile>
-            }
+            },
         ]
     },
     {
