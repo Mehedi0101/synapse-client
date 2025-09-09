@@ -56,8 +56,8 @@ const ConnectionCard = ({ user }) => {
             />
 
             {/* ---------- User Name ---------- */}
-            <Link to={`/profile/${user?._id}`}>
-                <h3 className="font-bold text-dark font-poppins">
+            <Link to={`/profile/${user?._id}`} className="text-dark hover:underline hover:text-primary transition-all duration-200">
+                <h3 className="font-bold font-poppins">
                     {user?.name || "Unknown"}
                 </h3>
             </Link>

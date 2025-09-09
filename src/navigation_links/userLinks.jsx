@@ -1,19 +1,20 @@
+import { AiOutlineHome } from "react-icons/ai";
 import { BsChatText } from "react-icons/bs";
 import { IoLibraryOutline } from "react-icons/io5";
 import { LiaChalkboardTeacherSolid } from "react-icons/lia";
-import { MdOutlineCreate, MdOutlineEditCalendar, MdOutlineFeed, MdOutlineWorkOutline, MdPersonAddAlt } from "react-icons/md";
+import { MdOutlineArticle, MdOutlineEditCalendar, MdOutlineWorkOutline, MdPersonAddAlt } from "react-icons/md";
 
 // ---------- the name, link and icons that are used in the user navigation bar ----------
 export const userLinks = [
     {
-        name: 'Activity',
-        link: '/activity',
-        icon: <MdOutlineFeed />
+        name: 'Home',
+        link: '/',
+        icon: <AiOutlineHome />
     },
     {
-        name: 'Post',
-        link: '/post',
-        icon: <MdOutlineCreate />
+        name: 'My Posts',
+        link: '/my-posts',
+        icon: <MdOutlineArticle />
     },
     {
         name: 'Messages',

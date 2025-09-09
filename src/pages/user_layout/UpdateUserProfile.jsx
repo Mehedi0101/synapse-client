@@ -46,11 +46,13 @@ const UpdateUserProfile = () => {
 
         // ---------- sweet alert for confirmation ---------- 
         Swal.fire({
-            title: 'Do you want to proceed with saving the changes?',
+            html: `
+                    <h2 style="color:#0F172A; font-family:Poppins, sans-serif; font-size:22px; font-weight: bold;">Do you want to proceed with saving the changes?</h2>
+                    <p style="color:#334155; font-family:Open Sans, sans-serif; font-size:16px; margin-top:8px;">Your profile information will be updated.</p>
+                `,
             confirmButtonText: 'Yes',
             showCancelButton: true,
             denyButtonText: 'No',
-            text: "Your profile information will be updated.",
             confirmButtonColor: "#6f16d7",
             cancelButtonColor: "#d33",
             customClass: {
@@ -112,7 +114,7 @@ const UpdateUserProfile = () => {
                         if (data?.data?.acknowledged) {
                             // ---------- toast success ---------- 
                             toast.success('Changes Saved Successfully', { id: toastId });
-                            
+
                             // ---------- navigate to profile page ---------- 
                             navigate('/profile');
 

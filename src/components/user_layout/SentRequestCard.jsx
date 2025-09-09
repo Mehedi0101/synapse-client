@@ -53,8 +53,8 @@ const SentRequestCard = ({ req }) => {
             />
 
             {/* ---------- User Name ---------- */}
-            <Link to={`/profile/${req?.toUser?._id}`}>
-                <h3 className="font-bold text-dark font-poppins">
+            <Link to={`/profile/${req?.toUser?._id}`} className="text-dark hover:underline hover:text-primary transition-all duration-200">
+                <h3 className="font-bold font-poppins">
                     {req?.toUser?.name || "N/A"}
                 </h3>
             </Link>
