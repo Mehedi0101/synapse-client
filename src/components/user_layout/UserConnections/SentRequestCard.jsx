@@ -1,9 +1,9 @@
 import { useState } from "react";
-import defaultUser from "../../assets/default_user.jpg";
+import defaultUser from "../../../assets/default_user.jpg";
 import axios from "axios";
 import toast from "react-hot-toast";
-import GrayButton from "../shared/buttons/GrayButton";
-import RedButton from "../shared/buttons/RedButton";
+import GrayButton from "../../shared/buttons/GrayButton";
+import RedButton from "../../shared/buttons/RedButton";
 import { formatDistanceToNow } from "date-fns";
 import { Link } from "react-router-dom";
 

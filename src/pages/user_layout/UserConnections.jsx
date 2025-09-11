@@ -1,10 +1,10 @@
 import { useContext, useEffect, useState } from "react";
 import UserHeader from "../../components/user_layout/shared/UserHeader";
-import ConnectionCard from "../../components/user_layout/ConnectionCard";
 import AuthContext from "../../contexts/AuthContext";
 import axios from "axios";
-import SentRequestCard from "../../components/user_layout/SentRequestCard";
-import ReceivedRequestCard from "../../components/user_layout/ReceivedRequestCard";
+import ReceivedRequestCard from "../../components/user_layout/UserConnections/ReceivedRequestCard";
+import SentRequestCard from "../../components/user_layout/UserConnections/SentRequestCard";
+import ConnectionCard from "../../components/user_layout/UserConnections/ConnectionCard";
 
 const UserConnections = () => {
 

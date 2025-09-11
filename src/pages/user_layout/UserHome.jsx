@@ -4,19 +4,37 @@ import UserHeader from "../../components/user_layout/shared/UserHeader";
 import AuthContext from "../../contexts/AuthContext";
 import axios from "axios";
 import Swal from "sweetalert2";
-import ButtonWide from "../../components/shared/buttons/ButtonWide";
+import toast from "react-hot-toast";
+import PostCard from "../../components/user_layout/UserHome/postCard";
 
 const UserHome = () => {
 
     // ---------- user data from auth provider ----------
     const { userDetails } = useContext(AuthContext);
 
+    // ---------- posts ----------
+    const [posts, setPosts] = useState([]);
+
     // ---------- my connections data ----------
     const [myConnections, setMyConnections] = useState([]);
 
+    // ---------- get all posts ----------
+    const fetchPosts = () => {
+        axios.get('http://localhost:5000/posts')
+            .then((data) => {
+                setPosts(data.data);
+            })
+            .catch(() => {
+                setPosts([]);
+            });
+    };
+
     const handleCreatePost = () => {
 
+        // ---------- sweet alert to open the post form ----------
         Swal.fire({
+
+            // ---------- alert contents ----------
             html: `
                     <div class="p-4 text-left font-sans">
                         <div class="flex items-center gap-2">
@@ -34,6 +52,15 @@ const UserHome = () => {
                         </button>
                     </div>
                 `,
+
+            // ---------- to disable the bouncing animation ----------
+            showClass: {
+                popup: 'animate__animated animate__fadeIn'
+            },
+            hideClass: {
+                popup: 'animate__animated animate__fadeOut'
+            },
+
             showConfirmButton: false,
             showCancelButton: false,
             showCloseButton: true,
@@ -42,34 +69,75 @@ const UserHome = () => {
                 popup: "rounded-2xl",
                 closeButton: "text-slate-500 hover:text-slate-800 focus:outline-none",
             },
+
+            // ---------- when the alert is opened ----------
             didOpen: () => {
                 const textarea = document.getElementById("postContent");
-                const submitBtn = document.getElementById("submitPost");
+                const postBtn = document.getElementById("submitPost");
                 textarea.focus();
 
-                // listen for input changes
+                // ---------- changing the state of the post button based on whether the text area is empty or not ----------
                 textarea.addEventListener("input", () => {
                     if (textarea.value.trim().length > 0) {
-                        submitBtn.disabled = false;
-                        submitBtn.classList.remove("opacity-50", "cursor-not-allowed");
-                        submitBtn.classList.add("cursor-pointer");
+                        postBtn.disabled = false;
+                        postBtn.classList.remove("opacity-50", "cursor-not-allowed");
+                        postBtn.classList.add("cursor-pointer");
                     } else {
-                        submitBtn.disabled = true;
-                        submitBtn.classList.add("opacity-50", "cursor-not-allowed");
-                        submitBtn.classList.remove("cursor-pointer");
+                        postBtn.disabled = true;
+                        postBtn.classList.add("opacity-50", "cursor-not-allowed");
+                        postBtn.classList.remove("cursor-pointer");
                     }
                 });
 
-                // handle click
-                submitBtn.addEventListener("click", () => {
+                // ---------- when post button is clicked ----------
+                postBtn.addEventListener("click", () => {
+
+                    // ---------- toast loading ----------
+                    const toastId = toast.loading('Posting...');
+
+                    // ---------- post text ----------
                     const content = textarea.value.trim();
-                    if (!content) return; // safeguard
-                    console.log("Post submitted:", content);
+
+                    if (!content) return;
+
+                    // ---------- post data for backend ----------
+                    const postData = { authorId: userDetails._id, postContent: content };
+
+                    // ---------- post request for creating a post ----------
+                    axios.post('http://localhost:5000/posts', postData)
+                        .then(data => {
+
+                            // ---------- successful ----------
+                            if (data?.data?.acknowledged) {
+
+                                // ---------- refetch post data ----------
+                                fetchPosts();
+
+                                // ---------- toast success ----------
+                                toast.success('Posted', { id: toastId });
+                            }
+
+                            // ---------- failed ----------
+                            else toast.error('Something went wrong', { id: toastId });
+                        })
+                        .catch(() => {
+                            // ---------- failed ----------
+                            toast.error('Something went wrong', { id: toastId });
+                        })
+
+                    // ---------- alert close ----------
                     Swal.close();
                 });
             },
         });
     };
+
+
+    // ---------- get all posts ----------
+    useEffect(() => {
+        fetchPosts();
+    }, []);
+
 
     // ---------- my connections data fetching ----------
     useEffect(() => {
@@ -88,34 +156,53 @@ const UserHome = () => {
             <UserHeader searchBar=""></UserHeader>
 
             {/* ---------- main section ---------- */}
-            <div className="mx-2 md:mx-5 my-8 text-semi-dark grid gap-5 grid-cols-1 sm:grid-cols-3">
-                <div className="col-span-1 sm:col-span-2 h-96">
+            <div className="mx-2 md:mx-5 my-8 text-semi-dark grid gap-4 md:gap-8 lg:gap-12 grid-cols-1 sm:grid-cols-3">
+                <div className="col-span-1 sm:col-span-2">
+
                     {/* ---------- create post section ---------- */}
-                    <div className="flex gap-2 rounded-xl p-2 pb-4">
+                    <div className="flex gap-2 rounded-xl pb-4">
+
+                        {/* ---------- user image ---------- */}
                         <div className="min-w-fit">
                             <img className="w-12 h-12 rounded-full object-cover" src={userDetails?.userImage || defaultUser} alt="" />
                         </div>
+
+                        {/* ---------- create a post alert opening button ---------- */}
                         <button onClick={handleCreatePost} className="w-full text-sm text-light border border-slate-400 rounded-full text-left px-5 hover:shadow-xl hover:text-dark active:bg-slate-200 cursor-pointer transition-all duration-100 truncate">Ask for guidance, share experiences...</button>
                     </div>
 
+                    {/* ---------- display post section ---------- */}
+                    <div className="mt-10 space-y-6">
+                        {
+                            posts.map(post => <PostCard key={post._id} post={post}></PostCard>)
+                        }
+                    </div>
                 </div>
 
                 {/* ---------- connections section (hidden for small devices) ---------- */}
                 <div className="hidden sm:block col-span-1">
-                    <h2 className="text-dark font-semibold font-poppins">Connections</h2>
-                    <hr className="w-12 mt-2 mb-6 border border-primary" />
-                    <div className="space-y-2">
-                        {myConnections.map(connection => {
-                            return (
-                                <div key={connection?._id} className="flex gap-2 items-center">
-                                    <img className="w-12 h-12 rounded-full object-cover" src={connection?.otherUser?.userImage || defaultUser} alt="" />
-                                    <div>
-                                        <p className="text-sm font-semibold text-dark">{connection?.otherUser?.name}</p>
-                                        <p className="text-xs text-light">{connection?.otherUser?.role} | {connection?.otherUser?.department}</p>
+                    <div className="sticky top-20">
+                        <h2 className="text-dark font-semibold font-poppins">Connections</h2>
+                        <hr className="w-12 mt-2 mb-6 border border-primary" />
+                        <div className="space-y-2">
+                            {myConnections.map(connection => {
+                                return (
+
+                                    // ---------- each connected user container ----------
+                                    <div key={connection?._id} className="flex gap-2 items-center">
+
+                                        {/* ---------- connected user's image ---------- */}
+                                        <img className="w-12 h-12 rounded-full object-cover" src={connection?.otherUser?.userImage || defaultUser} alt="" />
+
+                                        {/* ---------- connected user's role and department ---------- */}
+                                        <div>
+                                            <p className="text-sm font-semibold text-dark">{connection?.otherUser?.name}</p>
+                                            <p className="text-xs text-light">{connection?.otherUser?.role} | {connection?.otherUser?.department}</p>
+                                        </div>
                                     </div>
-                                </div>
-                            )
-                        })}
+                                )
+                            })}
+                        </div>
                     </div>
                 </div>
             </div>
