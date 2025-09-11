@@ -1,10 +1,10 @@
 import { useContext, useState } from "react";
-import defaultUser from "../../assets/default_user.jpg";
-import PurpleButton from "../shared/buttons/PurpleButton";
-import AuthContext from "../../contexts/AuthContext";
+import defaultUser from "../../../assets/default_user.jpg";
+import PurpleButton from "../../shared/buttons/PurpleButton";
+import AuthContext from "../../../contexts/AuthContext";
 import axios from "axios";
 import toast from "react-hot-toast";
-import GrayButton from "../shared/buttons/GrayButton";
+import GrayButton from "../../shared/buttons/GrayButton";
 import { Link } from "react-router-dom";
 
 const ConnectionCard = ({ user }) => {
