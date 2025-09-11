@@ -1,9 +1,34 @@
+import { useContext, useEffect, useRef, useState } from "react";
 import defaultUser from "../../../assets/default_user.jpg";
 import formatTimeAgo from "../../../functions/formatTimeAgo";
+import { BsThreeDots } from "react-icons/bs";
+import AuthContext from "../../../contexts/AuthContext";
+import { MdDeleteOutline } from "react-icons/md";
 
-const CommentCard = ({ comment }) => {
+
+const CommentCard = ({ comment, handleDeleteComment }) => {
+
+    const { userDetails } = useContext(AuthContext);
+
+    // ---------- delete button's dropdown state ----------
+    const [deleteDropdown, setDeleteDropdown] = useState(false);
+    const dropdownRef = useRef(null);
+
     // ---------- time ago ----------
     const timeAgo = formatTimeAgo(comment?.createdAt);
+
+    // ---------- click outside to close dropdown ----------
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setDeleteDropdown(false);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
 
     return (
         <div>
@@ -24,7 +49,43 @@ const CommentCard = ({ comment }) => {
                     </div>
 
                     {/* ---------- time ago ---------- */}
-                    <p className="text-xs text-slate-500">{timeAgo}</p>
+                    <div className="flex min-[300px]:flex-row flex-col-reverse items-center min-[300px]:gap-2 gap-0">
+                        <p className="text-xs text-slate-500">{timeAgo}</p>
+
+                        {/* ---------- if the current user is the commenter then show the option to open dropdown ---------- */}
+                        {
+                            userDetails?._id === comment?.commenter?._id &&
+                            <div className="relative" ref={dropdownRef}>
+
+                                {/* ---------- three dot button ---------- */}
+                                <BsThreeDots
+                                    className="cursor-pointer hover:text-primary"
+                                    onClick={() => setDeleteDropdown(!deleteDropdown)}
+                                />
+
+                                {
+                                    // ---------- dropdown section ---------- 
+                                    deleteDropdown &&
+                                    <div className="absolute right-0 mt-2 font-poppins text-sm min-w-fit rounded-md shadow-xl overflow-hidden">
+                                        
+                                        {/* ---------- delete button ---------- */}
+                                        <button
+                                            className="flex items-center gap-1 w-full px-4 py-2 text-red-500 cursor-pointer"
+                                            onClick={() => {
+                                                setDeleteDropdown(false);
+                                                handleDeleteComment(comment?._id);
+                                            }}
+                                        >
+                                            {/*---------- delete icon ----------*/}
+                                            <MdDeleteOutline className="text-lg lg:text-xl" />
+                                            Delete
+                                        </button>
+                                    </div>
+                                }
+                            </div>
+                        }
+
+                    </div>
                 </div>
             </div>
 
