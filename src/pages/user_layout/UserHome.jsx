@@ -5,7 +5,7 @@ import AuthContext from "../../contexts/AuthContext";
 import axios from "axios";
 import Swal from "sweetalert2";
 import toast from "react-hot-toast";
-import PostCard from "../../components/user_layout/UserHome/postCard";
+import PostCard from "../../components/user_layout/UserHome/PostCard";
 
 const UserHome = () => {
 

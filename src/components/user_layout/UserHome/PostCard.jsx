@@ -34,9 +34,8 @@ const PostCard = ({ post }) => {
         const commentData = { commenterId: userDetails._id, comment };
 
         // ---------- patch request of post for adding a comment ----------
-        axios.patch(`http://localhost:5000/posts/comments/${post?._id}`, commentData)
+        axios.patch(`http://localhost:5000/posts/comments/add/${post?._id}`, commentData)
             .then((data) => {
-                console.log(data.data);
 
                 // ---------- if successful then refetch post data ----------
                 setPostData(data.data);
@@ -49,6 +48,21 @@ const PostCard = ({ post }) => {
 
         // ---------- reset comment field ----------
         setCommentText("");
+    }
+
+    // ---------- comment deleting function ----------
+    const handleDeleteComment = (commentId) => {
+        axios.patch(`http://localhost:5000/posts/comments/delete/${post?._id}`, { commentId })
+            .then(data => {
+
+                // ---------- if successful then refetch post data ----------
+                setPostData(data.data);
+            })
+            .catch(() => {
+
+                // ---------- error toast ----------
+                toast.error('Something went wrong');;
+            })
     }
 
     return (
@@ -75,7 +89,7 @@ const PostCard = ({ post }) => {
 
                 {/* ---------- splitting the text container based on the newline character ---------- */}
                 {postData?.postContent?.split("\n\n").map((para, idx) => (
-                    <p key={idx} className="mb-4">
+                    <p key={idx} className="mb-4 text-sm sm:text-base">
                         {para}
                     </p>
                 ))}
@@ -114,7 +128,7 @@ const PostCard = ({ post }) => {
             {
                 postData?.comments?.length > 0 && <div className="mt-6 space-y-5">
                     {
-                        postData.comments.map(comment => <CommentCard key={comment._id} comment={comment}></CommentCard>)
+                        postData.comments.map(comment => <CommentCard key={comment._id} comment={comment} handleDeleteComment={handleDeleteComment}></CommentCard>)
                     }
                 </div>
             }
