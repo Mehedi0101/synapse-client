@@ -18,7 +18,7 @@ const PostCard = ({ post }) => {
     const [commentText, setCommentText] = useState("");
 
     // ---------- time ago ----------
-    const timeAgo = formatTimeAgo(post.createdAt);
+    const timeAgo = formatTimeAgo(postData.createdAt);
 
     // ---------- comment posting function ----------
     const handleComment = e => {
@@ -31,10 +31,10 @@ const PostCard = ({ post }) => {
         if (!comment.trim()) return;
 
         // ---------- comment data for storing in the database ----------
-        const commentData = { commenterId: userDetails._id, comment };
+        const commentData = { commenterId: userDetails?._id, comment };
 
         // ---------- patch request of post for adding a comment ----------
-        axios.patch(`http://localhost:5000/posts/comments/add/${post?._id}`, commentData)
+        axios.patch(`http://localhost:5000/posts/comments/add/${postData?._id}`, commentData)
             .then((data) => {
 
                 // ---------- if successful then refetch post data ----------
@@ -52,7 +52,7 @@ const PostCard = ({ post }) => {
 
     // ---------- comment deleting function ----------
     const handleDeleteComment = (commentId) => {
-        axios.patch(`http://localhost:5000/posts/comments/delete/${post?._id}`, { commentId })
+        axios.patch(`http://localhost:5000/posts/comments/delete/${postData?._id}`, { commentId })
             .then(data => {
 
                 // ---------- if successful then refetch post data ----------
@@ -61,7 +61,7 @@ const PostCard = ({ post }) => {
             .catch(() => {
 
                 // ---------- error toast ----------
-                toast.error('Something went wrong');;
+                toast.error('Something went wrong');
             })
     }
 

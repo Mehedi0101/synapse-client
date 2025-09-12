@@ -6,6 +6,7 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import toast from "react-hot-toast";
 import PostCard from "../../components/user_layout/UserHome/PostCard";
+import DisplayConnections from "../../components/user_layout/shared/DisplayConnections";
 
 const UserHome = () => {
 
@@ -14,9 +15,6 @@ const UserHome = () => {
 
     // ---------- posts ----------
     const [posts, setPosts] = useState([]);
-
-    // ---------- my connections data ----------
-    const [myConnections, setMyConnections] = useState([]);
 
     // ---------- get all posts ----------
     const fetchPosts = () => {
@@ -138,22 +136,10 @@ const UserHome = () => {
         fetchPosts();
     }, []);
 
-
-    // ---------- my connections data fetching ----------
-    useEffect(() => {
-        userDetails?._id && axios.get(`http://localhost:5000/connections/accepted/${userDetails._id}`)
-            .then((data) => {
-                setMyConnections(data.data);
-            })
-            .catch(() => {
-                setMyConnections([]);
-            })
-    }, [userDetails])
-
     return (
         <div>
             {/* ---------- user header with searchbar ---------- */}
-            <UserHeader searchBar=""></UserHeader>
+            <UserHeader></UserHeader>
 
             {/* ---------- main section ---------- */}
             <div className="mx-2 md:mx-5 my-8 text-semi-dark grid gap-4 md:gap-8 lg:gap-12 grid-cols-1 sm:grid-cols-3">
@@ -181,29 +167,7 @@ const UserHome = () => {
 
                 {/* ---------- connections section (hidden for small devices) ---------- */}
                 <div className="hidden sm:block col-span-1">
-                    <div className="sticky top-20">
-                        <h2 className="text-dark font-semibold font-poppins">Connections</h2>
-                        <hr className="w-12 mt-2 mb-6 border border-primary" />
-                        <div className="space-y-2">
-                            {myConnections.map(connection => {
-                                return (
-
-                                    // ---------- each connected user container ----------
-                                    <div key={connection?._id} className="flex gap-2 items-center">
-
-                                        {/* ---------- connected user's image ---------- */}
-                                        <img className="w-12 h-12 rounded-full object-cover" src={connection?.otherUser?.userImage || defaultUser} alt="" />
-
-                                        {/* ---------- connected user's role and department ---------- */}
-                                        <div>
-                                            <p className="text-sm font-semibold text-dark">{connection?.otherUser?.name}</p>
-                                            <p className="text-xs text-light">{connection?.otherUser?.role} | {connection?.otherUser?.department}</p>
-                                        </div>
-                                    </div>
-                                )
-                            })}
-                        </div>
-                    </div>
+                    <DisplayConnections></DisplayConnections>
                 </div>
             </div>
         </div>

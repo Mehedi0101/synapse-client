@@ -3,7 +3,7 @@ import defaultUser from "../../../assets/default_user.jpg";
 import formatTimeAgo from "../../../functions/formatTimeAgo";
 import { BsThreeDots } from "react-icons/bs";
 import AuthContext from "../../../contexts/AuthContext";
-import { MdDeleteOutline } from "react-icons/md";
+import { RiDeleteBin6Line } from "react-icons/ri";
 
 
 const CommentCard = ({ comment, handleDeleteComment }) => {
@@ -66,18 +66,18 @@ const CommentCard = ({ comment, handleDeleteComment }) => {
                                 {
                                     // ---------- dropdown section ---------- 
                                     deleteDropdown &&
-                                    <div className="absolute right-0 mt-2 font-poppins text-sm min-w-fit rounded-md shadow-xl overflow-hidden">
+                                    <div className="absolute right-0 mt-2 bg-white font-poppins text-sm min-w-fit rounded-md shadow-xl overflow-hidden">
                                         
                                         {/* ---------- delete button ---------- */}
                                         <button
-                                            className="flex items-center gap-1 w-full px-4 py-2 text-red-500 cursor-pointer"
+                                            className="flex items-center gap-1 w-full px-4 py-2 text-red-500 cursor-pointer select-none"
                                             onClick={() => {
                                                 setDeleteDropdown(false);
                                                 handleDeleteComment(comment?._id);
                                             }}
                                         >
                                             {/*---------- delete icon ----------*/}
-                                            <MdDeleteOutline className="text-lg lg:text-xl" />
+                                            <RiDeleteBin6Line className="text-lg lg:text-xl" />
                                             Delete
                                         </button>
                                     </div>
