@@ -18,6 +18,7 @@ import PublicRoute from "../providers/PublicRoute";
 import UserPosts from "../pages/user_layout/UserPosts";
 import UserHome from "../pages/user_layout/UserHome";
 import UserAllConnections from "../pages/user_layout/UserAllConnections";
+import UserCreateJobPost from "../pages/user_layout/UserCreateJobPost";
 
 
 const router = createBrowserRouter([
@@ -60,6 +61,10 @@ const router = createBrowserRouter([
                 // ---------- jobs ----------
                 path: '/jobs',
                 element: <UserJobs></UserJobs>
+            },
+            {
+                path: '/create-job-post',
+                element: <UserCreateJobPost></UserCreateJobPost>
             },
             {
                 // ---------- events ----------
