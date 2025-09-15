@@ -32,7 +32,8 @@ const UserProfile = () => {
             // ---------- fetch user data by id ----------
             axios.get(`http://localhost:5000/users/${params?.id}`)
                 .then((data) => {
-                    setDisplayData(data.data);
+                    if (data.data) setDisplayData(data.data);
+                    else navigate('/error');
                 })
                 .catch(() => {
                     navigate('/error');
