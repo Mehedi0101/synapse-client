@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import UserHeader from "../../components/user_layout/shared/UserHeader";
@@ -8,10 +8,17 @@ import { FaRegMoneyBillAlt, FaRegUser } from "react-icons/fa";
 import { MdOutlineEditCalendar, MdOutlineWorkOutline } from "react-icons/md";
 import { format } from "date-fns";
 import { IoLocationOutline } from "react-icons/io5";
-import { BiCategory } from "react-icons/bi";
+import { BiCategory, BiEdit } from "react-icons/bi";
 import PurpleButton from "../../components/shared/buttons/PurpleButton";
+import AuthContext from "../../contexts/AuthContext";
+import { AiOutlineDelete } from "react-icons/ai";
+import Swal from "sweetalert2";
+import toast from "react-hot-toast";
 
 const UserJobDetails = () => {
+
+    // ---------- data from auth provider ----------
+    const { userDetails } = useContext(AuthContext);
 
     // ---------- react hooks ----------
     const navigate = useNavigate();
@@ -21,11 +28,49 @@ const UserJobDetails = () => {
     const [jobDetails, setJobDetails] = useState({});
     const [postedDate, setPostedDate] = useState("N/A");
 
-    console.log(postedDate);
+
+    // function for deleting a job post
+    const handleJobPostDelete = () => {
+
+        // ---------- sweet alert for confirmation ----------
+        Swal.fire({
+            html: `
+                    <h2 style="color:#0F172A; font-family:Poppins, sans-serif; font-size:22px; font-weight: bold;">Remove this job post?</h2>
+                    <p style="color:#334155; font-family:Open Sans, sans-serif; font-size:16px; margin-top:8px;">This job will no longer be visible to others on this platform.</p>
+                `,
+            confirmButtonText: "Yes",
+            showCancelButton: true,
+            confirmButtonColor: "#6f16d7",
+            cancelButtonColor: "#d33",
+        }).then((result) => {
+
+            // ---------- when confirmed ----------
+            if (result.isConfirmed) {
+                const toastId = toast.loading("Removing Job Post...");
+
+                // ---------- delete request to backend ----------
+                axios.delete(`http://localhost:5000/jobs/${jobDetails?._id}`)
+                    .then((data) => {
+                        if (data.data?.acknowledged) {
+
+                            // ---------- navigate to the jobs page ----------
+                            navigate("/jobs");
+
+                            toast.success("Removed", { id: toastId });
+                        } else {
+                            toast.error("Something went wrong", { id: toastId });
+                        }
+                    })
+                    .catch(() => {
+                        toast.error("Something went wrong", { id: toastId });
+                    });
+            }
+        });
+    }
 
     useEffect(() => {
         // ---------- fetch job details by id ----------
-        axios.get(`http://localhost:5000/jobs/${id}`)
+        axios.get(`http://localhost:5000/jobs/details/${id}`)
             .then((data) => {
                 if (data.data) setJobDetails(data.data);
                 else navigate('/error');
@@ -52,7 +97,7 @@ const UserJobDetails = () => {
                 <div className="col-span-1 md:col-span-2">
 
                     {/* ---------- job details heading container ---------- */}
-                    <div className="flex gap-2">
+                    <div className="flex gap-2 w-full">
 
                         {/* ---------- company logo ---------- */}
                         <div>
@@ -60,12 +105,43 @@ const UserJobDetails = () => {
                         </div>
 
                         {/* ---------- company name, location, type container ---------- */}
-                        <div>
+                        <div className="w-full">
                             <h2 className="text-xl md:text-2xl font-poppins font-bold text-dark mb-2">{jobDetails?.jobTitle || "N/A"}</h2>
                             <p className="text-primary text-sm mb-1">{jobDetails?.company?.name || "N/A"}</p>
                             {jobDetails?.company?.type && <p className="text-slate-500 text-sm">{jobDetails?.company?.type}</p>}
                         </div>
+
+                        {/* ---------- job post control section (only for job post creator) ---------- */}
+                        {
+                            jobDetails?.author?._id === userDetails?._id &&
+                            <div className="hidden min-[300px]:flex items-center min-w-fit gap-2 ml-1">
+                                <Link to={`/jobs/update/${jobDetails?._id}`}>
+                                    <BiEdit className="text-xl md:text-2xl text-slate-600 hover:text-primary active:text-primary cursor-pointer" />
+                                </Link>
+
+                                <AiOutlineDelete
+                                    className="text-xl md:text-2xl text-slate-600 hover:text-red-600 active:text-red-600 cursor-pointer"
+                                    onClick={handleJobPostDelete}
+                                />
+                            </div>
+                        }
+
                     </div>
+
+                    {/* ---------- job post control section (only for job post creator) small device ---------- */}
+                    {
+                        jobDetails?.author?._id === userDetails?._id &&
+                        <div className="flex min-[300px]:hidden justify-center items-center min-w-fit gap-2 mt-6">
+                            <Link to={`/jobs/update/${jobDetails?._id}`}>
+                                <BiEdit className="text-xl md:text-2xl text-slate-600 hover:text-primary active:text-primary cursor-pointer" />
+                            </Link>
+
+                            <AiOutlineDelete
+                                className="text-xl md:text-2xl text-slate-600 hover:text-red-600 active:text-red-600 cursor-pointer"
+                                onClick={handleJobPostDelete}
+                            />
+                        </div>
+                    }
 
                     {/* ---------- job overview container (small device) ---------- */}
                     <div className="space-y-6 text-sm mt-10 px-4 md:hidden">
@@ -176,7 +252,9 @@ const UserJobDetails = () => {
                     }
 
                     {/* ---------- apply button ---------- */}
-                    <a href={jobDetails?.applyLink || "#"} target="_blank"><PurpleButton className="max-w-fit mt-6" text="Apply Now"></PurpleButton></a>
+                    {jobDetails?.author?._id != userDetails?._id &&
+                        < a href={jobDetails?.applyLink || "#"} target="_blank"><PurpleButton className="max-w-fit mt-6" text="Apply Now"></PurpleButton></a>
+                    }
                 </div>
 
                 {/* ---------- right grid (hidden for small device) ---------- */}
@@ -255,7 +333,7 @@ const UserJobDetails = () => {
                     </div>
                 </div>
             </div>
-        </div>
+        </div >
     );
 };
 

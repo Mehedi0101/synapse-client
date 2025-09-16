@@ -20,6 +20,7 @@ import UserHome from "../pages/user_layout/UserHome";
 import UserAllConnections from "../pages/user_layout/UserAllConnections";
 import UserCreateJobPost from "../pages/user_layout/UserCreateJobPost";
 import UserJobDetails from "../pages/user_layout/UserJobDetails";
+import UserUpdateJobPost from "../pages/user_layout/UserUpdateJobPost";
 
 
 const router = createBrowserRouter([
@@ -64,9 +65,14 @@ const router = createBrowserRouter([
                 element: <UserJobs></UserJobs>
             },
             {
-                // ---------- jobs details ----------
+                // ---------- job details ----------
                 path: '/jobs/:id',
                 element: <UserJobDetails></UserJobDetails>
+            },
+            {
+                // ---------- job post update ----------
+                path: '/jobs/update/:id',
+                element: <UserUpdateJobPost></UserUpdateJobPost>
             },
             {
                 path: '/create-job-post',

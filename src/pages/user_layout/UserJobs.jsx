@@ -15,10 +15,10 @@ const UserJobs = () => {
 
     // ---------- get all jobs ----------
     useEffect(() => {
-        axios.get('http://localhost:5000/jobs')
+        userDetails?._id && axios.get(`http://localhost:5000/jobs/${userDetails?._id}`)
             .then(data => setAllJobs(data.data))
             .catch(() => setAllJobs([]))
-    }, [])
+    }, [userDetails])
 
     return (
         <div>
