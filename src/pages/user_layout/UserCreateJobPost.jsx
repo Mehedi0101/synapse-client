@@ -251,7 +251,7 @@ const UserCreateJobPost = () => {
                         <h2 className="text-lg lg:text-xl font-bold text-dark font-poppins border-b-2 pb-2 mb-4">
                             Apply Link
                         </h2>
-                        <input type="text" name="applyLink" placeholder="Enter the URL where applicants can apply" className="border-b border-slate-400 outline-none w-full" />
+                        <input type="text" name="applyLink" placeholder="Enter the URL where applicants can apply" className="border-b border-slate-400 outline-none w-full" required />
                     </div>
 
 
