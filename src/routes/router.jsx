@@ -21,6 +21,7 @@ import UserAllConnections from "../pages/user_layout/UserAllConnections";
 import UserCreateJobPost from "../pages/user_layout/UserCreateJobPost";
 import UserJobDetails from "../pages/user_layout/UserJobDetails";
 import UserUpdateJobPost from "../pages/user_layout/UserUpdateJobPost";
+import UserCreateEvent from "../pages/user_layout/UserCreateEvent";
 
 
 const router = createBrowserRouter([
@@ -70,18 +71,24 @@ const router = createBrowserRouter([
                 element: <UserJobDetails></UserJobDetails>
             },
             {
+                // ----------create job post ----------
+                path: '/create-job-post',
+                element: <UserCreateJobPost></UserCreateJobPost>
+            },
+            {
                 // ---------- job post update ----------
                 path: '/jobs/update/:id',
                 element: <UserUpdateJobPost></UserUpdateJobPost>
             },
             {
-                path: '/create-job-post',
-                element: <UserCreateJobPost></UserCreateJobPost>
-            },
-            {
                 // ---------- events ----------
                 path: '/events',
                 element: <UserEvents></UserEvents>
+            },
+            {
+                // ---------- create event ----------
+                path: '/create-event',
+                element: <UserCreateEvent></UserCreateEvent>
             },
             {
                 // ---------- resources ----------
