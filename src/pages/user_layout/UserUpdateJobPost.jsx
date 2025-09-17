@@ -9,8 +9,14 @@ import UserHeader from "../../components/user_layout/shared/UserHeader";
 import { ImCancelCircle } from "react-icons/im";
 
 const UserUpdateJobPost = () => {
+
+    // ---------- data from auth provider ----------
     const { userDetails } = useContext(AuthContext);
+
+    // ---------- id from url ----------
     const { id } = useParams();
+
+    // ---------- react hooks ----------
     const navigate = useNavigate();
 
     // ---------- form states ----------
@@ -46,7 +52,6 @@ const UserUpdateJobPost = () => {
                 setApplyLink(job.applyLink || "");
                 setJobResponsibilities(job.responsibility || []);
                 setJobRequirements(job.requirements || []);
-                console.log(res.data);
             })
             .catch(() => toast.error("Something went wrong"));
     }, [id]);
@@ -90,6 +95,7 @@ const UserUpdateJobPost = () => {
     const handleUpdateJob = (e) => {
         e.preventDefault();
 
+        // ---------- confirmation alert ----------
         Swal.fire({
             html: `
         <h2 style="color:#0F172A; font-family:Poppins, sans-serif; font-size:22px; font-weight: bold;">Confirm Update</h2>
@@ -100,9 +106,12 @@ const UserUpdateJobPost = () => {
             confirmButtonColor: "#6f16d7",
             cancelButtonColor: "#d33",
         }).then((result) => {
+
+            // ---------- if confirmed ----------
             if (result.isConfirmed) {
                 const toastId = toast.loading("Updating Job Post...");
 
+                // ---------- updated job data ----------
                 const jobData = {
                     authorId: userDetails?._id,
                     jobTitle,
@@ -121,11 +130,15 @@ const UserUpdateJobPost = () => {
                     applyLink,
                 };
 
+                // ---------- patch requrest to server ----------
                 axios.patch(`http://localhost:5000/jobs/${id}`, jobData)
                     .then((res) => {
                         if (res.data?.acknowledged) {
+
+                            // ---------- navigate to jobs page ----------
                             navigate("/jobs");
                             toast.success("Updated", { id: toastId });
+
                         } else {
                             toast.error("Something went wrong", { id: toastId });
                         }
@@ -153,11 +166,22 @@ const UserUpdateJobPost = () => {
                         <h2 className="text-lg lg:text-xl font-bold text-dark font-poppins border-b-2 pb-2 mb-4">
                             Job & Company Information
                         </h2>
+
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+
+                            {/* ---------- job title ---------- */}
                             <input type="text" value={jobTitle} onChange={(e) => setJobTitle(e.target.value)} placeholder="Job Title" className="border-b border-slate-400 outline-none" required />
+
+                            {/* ---------- company name ---------- */}
                             <input type="text" value={companyName} onChange={(e) => setCompanyName(e.target.value)} placeholder="Company Name" className="border-b border-slate-400 outline-none" required />
+
+                            {/* ---------- job category ---------- */}
                             <input type="text" value={category} onChange={(e) => setCategory(e.target.value)} placeholder="Job Category (e.g. Software, Marketing)" className="border-b border-slate-400 outline-none" required />
+
+                            {/* ---------- company logo ---------- */}
                             <input type="text" value={companyLogo} onChange={(e) => setCompanyLogo(e.target.value)} placeholder="Company Logo URL (optional)" className="border-b border-slate-400 outline-none" />
+
+                            {/* ---------- job type ---------- */}
                             <select value={jobType} onChange={(e) => setJobType(e.target.value)} className="py-1 font-poppins border-b border-slate-400 w-full outline-none" required>
                                 <option value="" disabled>Select Job Type</option>
                                 <option value="Full-time">Full-time</option>
@@ -166,8 +190,14 @@ const UserUpdateJobPost = () => {
                                 <option value="Contract">Contract</option>
                                 <option value="Remote">Remote</option>
                             </select>
+
+                            {/* ---------- company type ---------- */}
                             <input type="text" value={companyType} onChange={(e) => setCompanyType(e.target.value)} placeholder="Company Type (optional)" className="border-b border-slate-400 outline-none" />
+                            
+                            {/* ---------- salary ---------- */}
                             <input type="text" value={salary} onChange={(e) => setSalary(e.target.value)} placeholder="Salary (e.g. Negotiable, 50k-70k)" className="border-b border-slate-400 outline-none" required />
+
+                            {/* ---------- company location ---------- */}
                             <input type="text" value={companyLocation} onChange={(e) => setCompanyLocation(e.target.value)} placeholder="Company Location" className="border-b border-slate-400 outline-none" required />
                         </div>
                     </div>
@@ -216,7 +246,7 @@ const UserUpdateJobPost = () => {
                         <input type="text" value={applyLink} onChange={(e) => setApplyLink(e.target.value)} placeholder="Enter the URL where applicants can apply" className="border-b border-slate-400 outline-none w-full" required />
                     </div>
 
-                    {/* ---------- Submit ---------- */}
+                    {/* ---------- update button ---------- */}
                     <div>
                         <PurpleButton text="Update Job Post" type="submit" />
                     </div>
