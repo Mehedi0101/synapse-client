@@ -88,6 +88,7 @@ const UserCreateEvent = () => {
                     date: selectedDate,
                     timeRange: { start: startTime, end: endTime },
                     banner: form.eventBanner.value,
+                    description: form.description.value,
                 };
 
                 // ---------- post request to server ----------
@@ -261,6 +262,18 @@ const UserCreateEvent = () => {
                                 />
                             </div>
                         </div>
+                    </div>
+
+                    {/* ---------- event description ---------- */}
+                    <div>
+                        <h3 className="text-lg lg:text-xl font-bold text-dark font-poppins border-b-2 pb-2 mb-4">Description</h3>
+                        <textarea
+                            name="description"
+                            rows="10"
+                            placeholder="Write a clear description about the event..."
+                            className="w-full border border-slate-400 rounded-lg p-2 resize-none outline-none"
+                            required
+                        ></textarea>
                     </div>
 
                     {/* ---------- create event button ---------- */}
