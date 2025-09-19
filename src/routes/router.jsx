@@ -23,6 +23,7 @@ import UserJobDetails from "../pages/user_layout/UserJobDetails";
 import UserUpdateJobPost from "../pages/user_layout/UserUpdateJobPost";
 import UserCreateEvent from "../pages/user_layout/UserCreateEvent";
 import UserEventDetails from "../pages/user_layout/UserEventDetails";
+import UserUpdateEvent from "../pages/user_layout/UserUpdateEvent";
 
 
 const router = createBrowserRouter([
@@ -90,6 +91,11 @@ const router = createBrowserRouter([
                 // ---------- event details ----------
                 path: '/events/:id',
                 element: <UserEventDetails></UserEventDetails>
+            },
+            {
+                // ---------- update event ----------
+                path: '/events/update/:id',
+                element: <UserUpdateEvent></UserUpdateEvent>
             },
             {
                 // ---------- create event ----------
