@@ -136,7 +136,7 @@ const UserUpdateJobPost = () => {
                         if (res.data?.acknowledged) {
 
                             // ---------- navigate to jobs page ----------
-                            navigate("/jobs");
+                            navigate(`/jobs/${id}`);
                             toast.success("Updated", { id: toastId });
 
                         } else {
@@ -193,7 +193,7 @@ const UserUpdateJobPost = () => {
 
                             {/* ---------- company type ---------- */}
                             <input type="text" value={companyType} onChange={(e) => setCompanyType(e.target.value)} placeholder="Company Type (optional)" className="border-b border-slate-400 outline-none" />
-                            
+
                             {/* ---------- salary ---------- */}
                             <input type="text" value={salary} onChange={(e) => setSalary(e.target.value)} placeholder="Salary (e.g. Negotiable, 50k-70k)" className="border-b border-slate-400 outline-none" required />
 

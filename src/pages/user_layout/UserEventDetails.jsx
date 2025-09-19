@@ -14,7 +14,6 @@ import Swal from "sweetalert2";
 import toast from "react-hot-toast";
 import { format } from "date-fns";
 import { ClipLoader } from "react-spinners";
-import { IoIosLink } from "react-icons/io";
 import hourFormatConverter from "../../functions/formatTimeString";
 
 const UserEventDetails = () => {
@@ -106,7 +105,7 @@ const UserEventDetails = () => {
                     .then((res) => {
                         if (res.data?.acknowledged) {
                             navigate("/events");
-                            toast.success("Event Removed", { id: toastId });
+                            toast.success("Removed", { id: toastId });
                         } else {
                             toast.error("Something went wrong", { id: toastId });
                         }
@@ -115,8 +114,6 @@ const UserEventDetails = () => {
             }
         });
     };
-
-    console.log(eventDetails);
 
     return (
         <div>
