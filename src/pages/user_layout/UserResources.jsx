@@ -5,25 +5,29 @@ import PurpleButton from "../../components/shared/buttons/PurpleButton";
 import { IoMdAddCircleOutline } from "react-icons/io";
 import axios from "axios";
 import AuthContext from "../../contexts/AuthContext";
-import EventCard from "../../components/user_layout/UserEvents/EventCard";
+import ResourceCard from "../../components/user_layout/UserResources/ResourceCard";
 
 
 const UserResources = () => {
+    // ---------- user data from auth provider ----------
     const { userDetails } = useContext(AuthContext);
 
-    const [upcomingEvents, setUpcomingEvents] = useState([]);
-    const [myEvents, setMyEvents] = useState([]);
+    // ---------- all resources list ----------
+    const [allResources, setAllResources] = useState([]);
+
+    // ---------- my resources list ----------
+    const [myResources, setMyResources] = useState([]);
 
     useEffect(() => {
         // ---------- get all upcoming events ----------
-        userDetails?._id && axios.get(`http://localhost:5000/events/all/${userDetails?._id}`)
-            .then(data => setUpcomingEvents(data.data))
-            .catch(() => setUpcomingEvents([]))
+        userDetails?._id && axios.get(`http://localhost:5000/resources/all/${userDetails?._id}`)
+            .then(data => setAllResources(data.data))
+            .catch(() => setAllResources([]))
 
         // ---------- get all my events ----------
-        userDetails?._id && axios.get(`http://localhost:5000/events/user/${userDetails?._id}`)
-            .then(data => setMyEvents(data.data))
-            .catch(() => setMyEvents([]))
+        userDetails?._id && axios.get(`http://localhost:5000/resources/my/${userDetails?._id}`)
+            .then(data => setMyResources(data.data))
+            .catch(() => setMyResources([]))
     }, [userDetails])
 
     return (
@@ -37,9 +41,9 @@ const UserResources = () => {
 
                     {/* ---------- heading and button container ---------- */}
                     <div className="flex gap-2 justify-between items-center">
-                        <h2 className="font-poppins text-xl font-bold text-dark">My Contributions ({myEvents.length})</h2>
+                        <h2 className="font-poppins text-xl font-bold text-dark">My Contributions ({myResources.length})</h2>
 
-                        {/* ---------- job posting button ---------- */}
+                        {/* ---------- add contribution button ---------- */}
                         <Link to='/post-resource'>
 
                             {/* ---------- for larger device ---------- */}
@@ -52,34 +56,36 @@ const UserResources = () => {
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-10 sm:gap-5 mt-6">
                         {
-                            // ---------- check if myEvents is empty or not ---------- 
-                            myEvents?.length > 0 ?
+                            // ---------- check if myResources is empty or not ---------- 
+                            myResources?.length > 0 ?
+
                                 // ---------- not empty ---------- 
-                                myEvents.map(event => <EventCard key={event._id} event={event} isMyEvent={true}></EventCard>)
+                                myResources.map(resource => <ResourceCard key={resource._id} resource={resource}></ResourceCard>)
                                 :
                                 // ---------- empty ---------- 
                                 <div className="col-span-1 sm:col-span-2 lg:col-span-3 2xl:col-span-4 min-h-40 flex justify-center items-center text-base sm:text-lg font-bold text-center">
-                                    You haven't created any events yet.
+                                    You haven't shared anything yet.
                                 </div>
                         }
                     </div>
                 </div>
 
-                {/* ---------- available job display section ---------- */}
+                {/* ---------- community contribution section ---------- */}
                 <div className="mt-12">
-                    <h2 className="font-poppins text-xl font-bold text-dark">Upcoming Events</h2>
+                    <h2 className="font-poppins text-xl font-bold text-dark">Community Contributions</h2>
 
-                    {/* ---------- jobs container ---------- */}
+                    {/* ---------- card container ---------- */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-10 sm:gap-5 mt-6">
                         {
-                            // ---------- check if allJobs is empty or not ---------- 
-                            upcomingEvents?.length > 0 ?
+                            // ---------- check if allResources is empty or not ---------- 
+                            allResources?.length > 0 ?
+                            
                                 // ---------- not empty ---------- 
-                                upcomingEvents.map(event => <EventCard key={event._id} event={event}></EventCard>)
+                                allResources.map(resource => <ResourceCard key={resource._id} resource={resource}></ResourceCard>)
                                 :
                                 // ---------- empty ---------- 
                                 <div className="col-span-1 sm:col-span-2 lg:col-span-3 2xl:col-span-4 min-h-40 flex justify-center items-center text-base sm:text-lg font-bold text-center">
-                                    No job opportunities available right now.
+                                    No resources have been shared yet.
                                 </div>
                         }
                     </div>

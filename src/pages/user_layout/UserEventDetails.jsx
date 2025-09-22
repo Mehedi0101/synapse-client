@@ -75,6 +75,8 @@ const UserEventDetails = () => {
         e.preventDefault();
 
         setLoading(true);
+
+        // ---------- patch request ----------
         axios.patch(`http://localhost:5000/events/interested/${eventDetails?._id}`, { userId: userDetails?._id })
             .then(() => {
                 fetchEventDetails();
@@ -88,6 +90,8 @@ const UserEventDetails = () => {
 
     // ---------- event delete function ----------
     const handleEventDelete = () => {
+
+        // ---------- confirmation alert ----------
         Swal.fire({
             html: `
                 <h2 style="color:#0F172A; font-family:Poppins, sans-serif; font-size:22px; font-weight:bold;">Remove this event?</h2>
@@ -101,9 +105,12 @@ const UserEventDetails = () => {
             if (result.isConfirmed) {
                 const toastId = toast.loading("Removing Event...");
 
+                // ---------- delete request ----------
                 axios.delete(`http://localhost:5000/events/${eventDetails?._id}`)
                     .then((res) => {
                         if (res.data?.acknowledged) {
+
+                            // ---------- navigate to events page ----------
                             navigate("/events");
                             toast.success("Removed", { id: toastId });
                         } else {

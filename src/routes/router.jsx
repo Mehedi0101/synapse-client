@@ -25,6 +25,8 @@ import UserCreateEvent from "../pages/user_layout/UserCreateEvent";
 import UserEventDetails from "../pages/user_layout/UserEventDetails";
 import UserUpdateEvent from "../pages/user_layout/UserUpdateEvent";
 import UserPostResource from "../pages/user_layout/UserPostResource";
+import UserResourceDetails from "../pages/user_layout/UserResourceDetails";
+import UserUpdateResource from "../pages/user_layout/UserUpdateResource";
 
 
 const router = createBrowserRouter([
@@ -109,9 +111,19 @@ const router = createBrowserRouter([
                 element: <UserResources></UserResources>
             },
             {
+                // ---------- resources details ----------
+                path: '/resources/:id',
+                element: <UserResourceDetails></UserResourceDetails>
+            },
+            {
                 // ---------- post resource ----------
                 path: '/post-resource',
                 element: <UserPostResource></UserPostResource>
+            },
+            {
+                // ---------- post resource ----------
+                path: '/resources/update/:id',
+                element: <UserUpdateResource></UserUpdateResource>
             },
             {
                 // ---------- current user profile ----------
@@ -134,7 +146,6 @@ const router = createBrowserRouter([
         // ---------- auth layout ----------
         path: '/auth',
         element: <PublicRoute><AuthLayout></AuthLayout></PublicRoute>,
-        // element: <AuthLayout></AuthLayout>,
         children: [
             // ---------- automatic navigation to auth/login ----------
             {

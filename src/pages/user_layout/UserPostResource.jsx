@@ -30,7 +30,7 @@ const UserPostResource = () => {
             return;
         }
 
-        const toastId = toast.loading("Posting resource...");
+        const toastId = toast.loading("Adding resource...");
 
         // ---------- resource data ----------
         const resourceData = {
@@ -44,7 +44,9 @@ const UserPostResource = () => {
         axios.post("http://localhost:5000/resources", resourceData)
             .then(data => {
                 if (data?.data?.acknowledged) {
-                    toast.success("Posted successfully", { id: toastId });
+                    toast.success("Added", { id: toastId });
+
+                    // ---------- navigate to resources page ----------F
                     navigate("/resources");
                 }
                 else {

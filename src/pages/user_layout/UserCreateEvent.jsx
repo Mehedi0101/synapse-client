@@ -64,9 +64,9 @@ const UserCreateEvent = () => {
         // ---------- confirmation alert ----------
         Swal.fire({
             html: `
-        <h2 style="color:#0F172A; font-family:Poppins, sans-serif; font-size:22px; font-weight: bold;">Confirm Event Creation?</h2>
-        <p style="color:#334155; font-family:Open Sans, sans-serif; font-size:16px; margin-top:8px;">Once confirmed, this event will be visible to all students and alumni.</p>
-      `,
+                    <h2 style="color:#0F172A; font-family:Poppins, sans-serif; font-size:22px; font-weight: bold;">Confirm Event Creation?</h2>
+                    <p style="color:#334155; font-family:Open Sans, sans-serif; font-size:16px; margin-top:8px;">Once confirmed, this event will be visible to all students and alumni.</p>
+                `,
             confirmButtonText: "Yes",
             showCancelButton: true,
             confirmButtonColor: "#6f16d7",

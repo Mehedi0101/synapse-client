@@ -83,7 +83,7 @@ const UserEvents = () => {
                                 :
                                 // ---------- empty ---------- 
                                 <div className="col-span-1 sm:col-span-2 lg:col-span-3 2xl:col-span-4 min-h-40 flex justify-center items-center text-base sm:text-lg font-bold text-center">
-                                    No job opportunities available right now.
+                                    No upcoming events at the moment.
                                 </div>
                         }
                     </div>
