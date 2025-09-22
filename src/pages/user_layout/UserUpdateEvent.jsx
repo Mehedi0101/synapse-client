@@ -25,8 +25,14 @@ const departments = [
 ];
 
 const UserUpdateEvent = () => {
+
+    // ---------- data from auth provider ----------
     const { userDetails } = useContext(AuthContext);
+
+    // ---------- react hooks ----------
     const navigate = useNavigate();
+
+    // ---------- event id from url ----------
     const { id } = useParams();
 
     // ---------- form states ----------
@@ -39,12 +45,16 @@ const UserUpdateEvent = () => {
 
     // ---------- fetch existing event ----------
     useEffect(() => {
+
+        // ---------- get request for event details ----------
         axios
             .get(`http://localhost:5000/events/details/${id}`, {
                 params: { userId: userDetails?._id },
             })
             .then((res) => {
                 if (res.data) {
+
+                    // ---------- set fetched data to form states ----------
                     setEventData(res.data);
                     setEventType(res.data.type);
                     setSelectedAudience(res.data.audience || []);
@@ -52,10 +62,15 @@ const UserUpdateEvent = () => {
                     setStartTime(res.data.timeRange?.start || "");
                     setEndTime(res.data.timeRange?.end || "");
                 } else {
+
+                    // ---------- navigate to error page ----------
                     navigate("/error");
                 }
             })
+
+            // ---------- navigate to error page ----------
             .catch(() => navigate("/error"));
+
     }, [id, navigate, userDetails?._id]);
 
     // ---------- audience select function ----------
@@ -71,6 +86,7 @@ const UserUpdateEvent = () => {
         }
     };
 
+    // ---------- audience remove function ----------
     const handleAudienceRemove = (dept) => {
         setSelectedAudience(selectedAudience.filter((item) => item !== dept));
     };
@@ -79,20 +95,25 @@ const UserUpdateEvent = () => {
     const handleUpdateEvent = (e) => {
         e.preventDefault();
 
+        // ---------- alert for confirmation ----------
         Swal.fire({
             html: `
-        <h2 style="color:#0F172A; font-family:Poppins, sans-serif; font-size:22px; font-weight: bold;">Confirm Event Update?</h2>
-        <p style="color:#334155; font-family:Open Sans, sans-serif; font-size:16px; margin-top:8px;">Your changes will be visible to all students and alumni.</p>
-      `,
+                    <h2 style="color:#0F172A; font-family:Poppins, sans-serif; font-size:22px; font-weight: bold;">Confirm Event Update?</h2>
+                    <p style="color:#334155; font-family:Open Sans, sans-serif; font-size:16px; margin-top:8px;">Your changes will be visible to all students and alumni.</p>
+                `,
             confirmButtonText: "Yes",
             showCancelButton: true,
             confirmButtonColor: "#6f16d7",
             cancelButtonColor: "#d33",
         }).then((result) => {
+
+            // ---------- after confirmation ----------
             if (result.isConfirmed) {
                 const toastId = toast.loading("Updating Event...");
 
                 const form = e.target;
+
+                // ---------- updated event data ----------
                 const updatedEventData = {
                     title: form.eventTitle.value,
                     type: eventType,
@@ -105,11 +126,14 @@ const UserUpdateEvent = () => {
                     description: form.description.value,
                 };
 
+                // ---------- patch request for updating event ----------
                 axios
                     .patch(`http://localhost:5000/events/${id}`, updatedEventData)
                     .then((res) => {
                         if (res.data?.acknowledged) {
                             toast.success("Event updated successfully!", { id: toastId });
+
+                            // ---------- navigate to event details ----------
                             navigate(`/events/${id}`);
                         } else {
                             toast.error("Something went wrong", { id: toastId });
@@ -122,19 +146,24 @@ const UserUpdateEvent = () => {
 
     return (
         <>
+            {/* ---------- user header without searchbar ---------- */}
             <UserHeader searchBar="invisible" />
 
+            {/* ---------- event update form ---------- */}
             <form
                 onSubmit={handleUpdateEvent}
                 className="grid grid-cols-1 sm:grid-cols-12 gap-8 text-semi-dark mx-2 md:mx-5 my-8 text-sm lg:text-base"
             >
                 <div className="col-span-1 sm:col-span-12 space-y-6 sm:space-y-8">
+
                     {/* ---------- Event Basic Info ---------- */}
                     <div>
                         <h2 className="text-lg lg:text-xl font-bold text-dark font-poppins border-b-2 pb-2 mb-4">
                             Update Event Information
                         </h2>
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+
+                            {/* ---------- event title ---------- */}
                             <input
                                 type="text"
                                 name="eventTitle"
@@ -144,6 +173,7 @@ const UserUpdateEvent = () => {
                                 required
                             />
 
+                            {/* ---------- event type ---------- */}
                             <select
                                 name="eventType"
                                 value={eventType}
@@ -155,6 +185,7 @@ const UserUpdateEvent = () => {
                                 <option value="Offline">Offline</option>
                             </select>
 
+                            {/* ---------- event link (if online) ---------- */}
                             {eventType === "Online" && (
                                 <input
                                     type="text"
@@ -166,6 +197,7 @@ const UserUpdateEvent = () => {
                                 />
                             )}
 
+                            {/* ---------- event location (if offline) ---------- */}
                             {eventType === "Offline" && (
                                 <input
                                     type="text"
@@ -177,6 +209,7 @@ const UserUpdateEvent = () => {
                                 />
                             )}
 
+                            {/* ---------- event banner (optional) ---------- */}
                             <input
                                 type="text"
                                 name="eventBanner"
@@ -193,6 +226,7 @@ const UserUpdateEvent = () => {
                             Target Audience
                         </h2>
 
+                        {/* ---------- select field for target audience ---------- */}
                         <select
                             onChange={handleAudienceChange}
                             value=""
@@ -213,6 +247,7 @@ const UserUpdateEvent = () => {
                             ))}
                         </select>
 
+                        {/* ---------- selected audience list ---------- */}
                         <div className="mt-4 grid grid-cols-1 min-[400px]:grid-cols-2 md:grid-cols-3 gap-2">
                             {selectedAudience.map((dept, idx) => (
                                 <div
@@ -238,6 +273,8 @@ const UserUpdateEvent = () => {
                             Event Date & Time
                         </h2>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+                            {/* ---------- event date ---------- */}
                             <div className="relative w-full">
                                 <DatePicker
                                     selected={selectedDate}
@@ -249,6 +286,8 @@ const UserUpdateEvent = () => {
                             </div>
 
                             <div className="flex flex-col min-[250px]:flex-row gap-2">
+
+                                {/* ---------- event time range ---------- */}
                                 <input
                                     type="time"
                                     value={startTime}

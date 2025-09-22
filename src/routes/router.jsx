@@ -24,6 +24,7 @@ import UserUpdateJobPost from "../pages/user_layout/UserUpdateJobPost";
 import UserCreateEvent from "../pages/user_layout/UserCreateEvent";
 import UserEventDetails from "../pages/user_layout/UserEventDetails";
 import UserUpdateEvent from "../pages/user_layout/UserUpdateEvent";
+import UserPostResource from "../pages/user_layout/UserPostResource";
 
 
 const router = createBrowserRouter([
@@ -108,6 +109,11 @@ const router = createBrowserRouter([
                 element: <UserResources></UserResources>
             },
             {
+                // ---------- post resource ----------
+                path: '/post-resource',
+                element: <UserPostResource></UserPostResource>
+            },
+            {
                 // ---------- current user profile ----------
                 path: '/profile',
                 element: <UserProfile></UserProfile>
@@ -128,6 +134,7 @@ const router = createBrowserRouter([
         // ---------- auth layout ----------
         path: '/auth',
         element: <PublicRoute><AuthLayout></AuthLayout></PublicRoute>,
+        // element: <AuthLayout></AuthLayout>,
         children: [
             // ---------- automatic navigation to auth/login ----------
             {

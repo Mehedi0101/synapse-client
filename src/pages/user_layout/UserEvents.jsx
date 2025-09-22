@@ -9,9 +9,13 @@ import EventCard from "../../components/user_layout/UserEvents/EventCard";
 
 const UserEvents = () => {
 
+    // ---------- user details from auth provider ----------
     const { userDetails } = useContext(AuthContext);
 
+    // ---------- upcoming events ----------
     const [upcomingEvents, setUpcomingEvents] = useState([]);
+
+    // ---------- my created events ----------
     const [myEvents, setMyEvents] = useState([]);
 
     useEffect(() => {

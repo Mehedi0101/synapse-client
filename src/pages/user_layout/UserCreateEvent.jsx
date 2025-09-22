@@ -232,6 +232,7 @@ const UserCreateEvent = () => {
                             Event Date & Time
                         </h2>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            
                             {/* ---------- event date ---------- */}
                             <div className="relative w-full">
                                 <DatePicker
