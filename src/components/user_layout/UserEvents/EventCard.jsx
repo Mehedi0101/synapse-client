@@ -9,6 +9,8 @@ import toast from "react-hot-toast";
 import { ClipLoader } from "react-spinners";
 import defaultUser from "../../../assets/default_user.jpg";
 import { Link } from "react-router-dom";
+// eslint-disable-next-line no-unused-vars
+import { motion } from "motion/react";
 
 const EventCard = ({ event, isMyEvent = false }) => {
 
@@ -49,97 +51,105 @@ const EventCard = ({ event, isMyEvent = false }) => {
     }
 
     return (
-        <Link to={`/events/${event?._id}`} className="rounded-xl flex flex-col shadow-lg hover:shadow-xl cursor-pointer group">
+        <motion.div
+            // ---------- card animation configuration ----------
+            initial={{ opacity: 0, y: 50 }} // start invisible and 50px lower
+            whileInView={{ opacity: 1, y: 0 }} // animate into place
+            viewport={{ once: true, amount: 0.2 }} // trigger only once when 20% is visible
+            transition={{ duration: 0.6, ease: "easeOut" }}
+        >
+            <Link to={`/events/${event?._id}`} className="rounded-xl flex flex-col shadow-lg hover:shadow-xl cursor-pointer group h-full">
 
-            {/* ---------- Banner ---------- */}
-            <div className="relative h-40 overflow-hidden rounded-t-xl">
+                {/* ---------- Banner ---------- */}
+                <div className="relative h-40 overflow-hidden rounded-t-xl">
 
-                {/* ---------- banner image ---------- */}
-                <div
-                    className="absolute inset-0 bg-cover bg-no-repeat bg-center transition-transform duration-500 ease-in-out group-hover:scale-110 group-active:scale-110"
-                    style={{
-                        backgroundImage: `linear-gradient(to right, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.7)), url(${eventData?.banner || defaultEventBanner})`,
-                    }}
-                ></div>
+                    {/* ---------- banner image ---------- */}
+                    <div
+                        className="absolute inset-0 bg-cover bg-no-repeat bg-center transition-transform duration-500 ease-in-out group-hover:scale-110 group-active:scale-110"
+                        style={{
+                            backgroundImage: `linear-gradient(to right, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.7)), url(${eventData?.banner || defaultEventBanner})`,
+                        }}
+                    ></div>
 
-                {/* ---------- Date badge ---------- */}
-                <div className="relative z-10 bg-white inline-block px-2 py-1 rounded m-4 text-center text-primary font-poppins">
-                    <p className="text-xl font-semibold leading-6">{day}</p>
-                    <p className="text-lg leading-6">{month}</p>
+                    {/* ---------- Date badge ---------- */}
+                    <div className="relative z-10 bg-white inline-block px-2 py-1 rounded m-4 text-center text-primary font-poppins">
+                        <p className="text-xl font-semibold leading-6">{day}</p>
+                        <p className="text-lg leading-6">{month}</p>
+                    </div>
                 </div>
-            </div>
 
-            {/* ---------- card content ---------- */}
-            <div className="flex flex-col justify-between flex-1 mx-4 py-3">
-                <div>
-                    <div className="flex gap-2 items-center justify-between">
+                {/* ---------- card content ---------- */}
+                <div className="flex flex-col justify-between flex-1 mx-4 py-3">
+                    <div>
+                        <div className="flex gap-2 items-center justify-between">
 
-                        {/* ---------- event title ---------- */}
-                        <h3
-                            className="text-lg text-dark font-semibold font-poppins"
-                            title={eventData.title} // tooltip full title
-                        >
-                            {eventData.title?.length > 40
-                                ? eventData.title.slice(0, 40) + "..."
-                                : eventData.title}
-                        </h3>
+                            {/* ---------- event title ---------- */}
+                            <h3
+                                className="text-lg text-dark font-semibold font-poppins"
+                                title={eventData.title} // tooltip full title
+                            >
+                                {eventData.title?.length > 40
+                                    ? eventData.title.slice(0, 40) + "..."
+                                    : eventData.title}
+                            </h3>
 
-                        {/* ---------- event type ---------- */}
-                        <p
-                            className={`text-xs font-medium ${eventData.type === "Online" ? "text-green-600" : "text-blue-600"
-                                }`}
-                        >
-                            {eventData.type}
+                            {/* ---------- event type ---------- */}
+                            <p
+                                className={`text-xs font-medium ${eventData.type === "Online" ? "text-green-600" : "text-blue-600"
+                                    }`}
+                            >
+                                {eventData.type}
+                            </p>
+                        </div>
+
+                        {/* ---------- event time ---------- */}
+                        <p className="text-sm text-slate-500">
+                            {hourFormatConverter(eventData?.timeRange?.start)} -{" "}
+                            {hourFormatConverter(eventData?.timeRange?.end)}
                         </p>
                     </div>
 
-                    {/* ---------- event time ---------- */}
-                    <p className="text-sm text-slate-500">
-                        {hourFormatConverter(eventData?.timeRange?.start)} -{" "}
-                        {hourFormatConverter(eventData?.timeRange?.end)}
-                    </p>
-                </div>
+                    {/* ---------- interested users and interested button container ---------- */}
+                    <div className="flex gap-1 justify-between items-center mt-4 h-8">
 
-                {/* ---------- interested users and interested button container ---------- */}
-                <div className="flex gap-1 justify-between items-center mt-4 h-8">
+                        {/* ---------- interested users preview ---------- */}
+                        <div className="text-primary text-sm hidden min-[200px]:flex items-center gap-2 font-semibold font-poppins">
+                            <div className="flex -space-x-3">
+                                {
+                                    eventData?.interestedPreview?.map((img, idx) => {
+                                        return (
+                                            <img key={idx} className="w-8 h-8 rounded-full object-cover border-2 border-white" src={img || defaultUser} />
+                                        )
+                                    })
+                                }
+                            </div>
+                            {eventData?.interestedCount > 3 && `+${eventData?.interestedCount - 3} `}
+                            {eventData?.interestedCount > 0 && "Interested"}
+                        </div>
 
-                    {/* ---------- interested users preview ---------- */}
-                    <div className="text-primary text-sm hidden min-[200px]:flex items-center gap-2 font-semibold font-poppins">
-                        <div className="flex -space-x-3">
+                        {/* ---------- is interested section hidden if current user is event creator ---------- */}
+                        <div className={`${isMyEvent && "hidden"}`}>
                             {
-                                eventData?.interestedPreview?.map((img, idx) => {
-                                    return (
-                                        <img key={idx} className="w-8 h-8 rounded-full object-cover border-2 border-white" src={img || defaultUser} />
-                                    )
-                                })
+                                loading
+                                    ?
+                                    <ClipLoader
+                                        color="#f59e0b"
+                                        size={15}
+                                        aria-label="Loading Spinner"
+                                        data-testid="loader"
+                                    />
+                                    :
+                                    eventData?.isInterested
+                                        ?
+                                        <FaStar onClick={handleToggleInterested} className="text-amber-500 text-xl cursor-pointer" />
+                                        :
+                                        <FaRegStar onClick={handleToggleInterested} className="text-amber-500 text-xl cursor-pointer" />
                             }
                         </div>
-                        {eventData?.interestedCount > 3 && `+${eventData?.interestedCount - 3} `}
-                        {eventData?.interestedCount > 0 && "Interested"}
-                    </div>
-
-                    {/* ---------- is interested section hidden if current user is event creator ---------- */}
-                    <div className={`${isMyEvent && "hidden"}`}>
-                        {
-                            loading
-                                ?
-                                <ClipLoader
-                                    color="#f59e0b"
-                                    size={15}
-                                    aria-label="Loading Spinner"
-                                    data-testid="loader"
-                                />
-                                :
-                                eventData?.isInterested
-                                    ?
-                                    <FaStar onClick={handleToggleInterested} className="text-amber-500 text-xl cursor-pointer" />
-                                    :
-                                    <FaRegStar onClick={handleToggleInterested} className="text-amber-500 text-xl cursor-pointer" />
-                        }
                     </div>
                 </div>
-            </div>
-        </Link>
+            </Link>
+        </motion.div>
     );
 };
 

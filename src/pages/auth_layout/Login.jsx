@@ -6,6 +6,8 @@ import toast from "react-hot-toast";
 import WelcomeText from "../../components/auth_layout/WelcomeText";
 import ButtonWide from "../../components/shared/buttons/ButtonWide";
 import { IoEyeOffOutline, IoEyeOutline } from "react-icons/io5";
+// eslint-disable-next-line no-unused-vars
+import { motion } from "motion/react";
 
 const Login = () => {
 
@@ -54,7 +56,13 @@ const Login = () => {
     };
 
     return (
-        <>
+        <motion.div
+
+            // ---------- animation configuration ----------
+            initial={{ x: "-100vw", opacity: 0 }}   // start off-screen to the left
+            animate={{ x: 0, opacity: 1 }}      // move to center
+            exit={{ x: -200, opacity: 0 }}      // if you want exit animation
+            transition={{ type: "tween", duration: 0.7, ease: "easeOut" }}>
             <WelcomeText></WelcomeText>
 
             <div className="flex items-center justify-center px-4 text-sm md:text-base">
@@ -150,7 +158,7 @@ const Login = () => {
                     </div>
                 </div>
             </div>
-        </>
+        </motion.div>
     );
 };
 

@@ -7,6 +7,8 @@ import RedButton from "../../shared/buttons/RedButton";
 import { formatDistanceToNow } from "date-fns";
 import PurpleButton from "../../shared/buttons/PurpleButton";
 import { Link } from "react-router-dom";
+// eslint-disable-next-line no-unused-vars
+import { motion } from "motion/react";
 
 const ReceivedRequestCard = ({ req }) => {
 
@@ -68,7 +70,15 @@ const ReceivedRequestCard = ({ req }) => {
     }
 
     return (
-        <div className="rounded-2xl shadow-lg p-4 flex flex-col justify-between items-center text-center hover:shadow-xl transition-shadow duration-300 col-span-1">
+        <motion.div
+
+            // ---------- card animation configuration ----------
+            initial={{ opacity: 0, y: 50 }} // start invisible and 50px lower
+            whileInView={{ opacity: 1, y: 0 }} // animate into place
+            viewport={{ once: true, amount: 0.2 }} // trigger only once when 20% is visible
+            transition={{ duration: 0.6, ease: "easeOut" }}
+
+            className="rounded-2xl shadow-lg p-4 flex flex-col justify-between items-center text-center hover:shadow-xl transition-shadow duration-300 col-span-1">
 
             {/* ---------- User Image ---------- */}
             <img
@@ -132,7 +142,7 @@ const ReceivedRequestCard = ({ req }) => {
                     </div>
                 }
             </div>
-        </div >
+        </motion.div >
     );
 };
 

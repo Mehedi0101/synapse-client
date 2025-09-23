@@ -2,6 +2,8 @@ import { getAuth, sendPasswordResetEmail } from "firebase/auth";
 import app from "../../firebase/firebase.config";
 import toast from "react-hot-toast";
 import ButtonWide from "../../components/shared/buttons/ButtonWide";
+// eslint-disable-next-line no-unused-vars
+import { motion } from "motion/react";
 
 const auth = getAuth(app);
 
@@ -29,7 +31,14 @@ const ResetPassword = () => {
     }
 
     return (
-        <>
+        <motion.div
+
+            // ---------- animation configuration ----------
+            initial={{ x: "100vw", opacity: 0 }}    // start off-screen to the right
+            animate={{ x: 0, opacity: 1 }}      // move to center
+            exit={{ x: 200, opacity: 0 }}       // optional exit animation
+            transition={{ type: "tween", duration: 0.7, ease: "easeOut" }}
+        >
             <div className='max-w-96 text-center mx-auto my-10'>
                 <h2 className='font-poppins text-2xl xl:text-3xl font-semibold text-white'>Reset your password</h2>
                 <p className='text-sm xl:text-base text-gray-300 mt-4'>Check your email. We will send a link to reset your password. If you can't find it in the inbox then check the spam folder as well.</p>
@@ -60,7 +69,7 @@ const ResetPassword = () => {
                     </div>
                 </div>
             </div>
-        </>
+        </motion.div>
     );
 };
 

@@ -37,108 +37,108 @@ const router = createBrowserRouter([
         children: [
             {
                 // ---------- activity ----------
-                path: '',
-                element: <UserHome></UserHome>
+                index: true,
+                Component: UserHome
             },
             {
-                // ---------- create a post ----------
-                path: '/my-posts',
-                element: <UserPosts></UserPosts>
+                // ---------- my posts ----------
+                path: 'my-posts',
+                Component: UserPosts
             },
             {
                 // ---------- messages ----------
-                path: '/messages',
-                element: <UserMessages></UserMessages>
+                path: 'messages',
+                Component: UserMessages
             },
             {
                 // ---------- connection request ----------
-                path: '/connections',
-                element: <UserConnections></UserConnections>
+                path: 'connections',
+                Component: UserConnections
             },
             {
                 // ---------- all connections ----------
-                path: '/my-connections',
-                element: <UserAllConnections></UserAllConnections>
+                path: 'my-connections',
+                Component: UserAllConnections
             },
             {
                 // ---------- mentorship ----------
-                path: '/mentorship',
-                element: <UserMentorship></UserMentorship>
+                path: 'mentorship',
+                Component: UserMentorship
             },
             {
                 // ---------- jobs ----------
-                path: '/jobs',
-                element: <UserJobs></UserJobs>
+                path: 'jobs',
+                Component: UserJobs
             },
             {
                 // ---------- job details ----------
-                path: '/jobs/:id',
-                element: <UserJobDetails></UserJobDetails>
+                path: 'jobs/:id',
+                Component: UserJobDetails
             },
             {
                 // ----------create job post ----------
-                path: '/create-job-post',
-                element: <UserCreateJobPost></UserCreateJobPost>
+                path: 'create-job-post',
+                Component: UserCreateJobPost
             },
             {
                 // ---------- job post update ----------
-                path: '/jobs/update/:id',
-                element: <UserUpdateJobPost></UserUpdateJobPost>
+                path: 'jobs/update/:id',
+                Component: UserUpdateJobPost
             },
             {
                 // ---------- events ----------
-                path: '/events',
-                element: <UserEvents></UserEvents>
+                path: 'events',
+                Component: UserEvents
             },
             {
                 // ---------- event details ----------
-                path: '/events/:id',
-                element: <UserEventDetails></UserEventDetails>
-            },
-            {
-                // ---------- update event ----------
-                path: '/events/update/:id',
-                element: <UserUpdateEvent></UserUpdateEvent>
+                path: 'events/:id',
+                Component: UserEventDetails
             },
             {
                 // ---------- create event ----------
-                path: '/create-event',
-                element: <UserCreateEvent></UserCreateEvent>
+                path: 'create-event',
+                Component: UserCreateEvent
+            },
+            {
+                // ---------- update event ----------
+                path: 'events/update/:id',
+                Component: UserUpdateEvent
             },
             {
                 // ---------- resources ----------
-                path: '/resources',
-                element: <UserResources></UserResources>
+                path: 'resources',
+                Component: UserResources
             },
             {
                 // ---------- resources details ----------
-                path: '/resources/:id',
-                element: <UserResourceDetails></UserResourceDetails>
+                path: 'resources/:id',
+                Component: UserResourceDetails
             },
             {
                 // ---------- post resource ----------
-                path: '/post-resource',
-                element: <UserPostResource></UserPostResource>
+                path: 'post-resource',
+                Component: UserPostResource
             },
             {
-                // ---------- post resource ----------
-                path: '/resources/update/:id',
-                element: <UserUpdateResource></UserUpdateResource>
+                // ---------- update resource ----------
+                path: 'resources/update/:id',
+                Component: UserUpdateResource
             },
             {
                 // ---------- current user profile ----------
-                path: '/profile',
-                element: <UserProfile></UserProfile>
+                path: 'profile',
+                Component: UserProfile
             },
             {
                 // ---------- other user's profile ----------
-                path: '/profile/:id',
-                element: <UserProfile></UserProfile>
+                path: 'profile/:id',
+                Component: UserProfile
             },
             {
                 // ---------- update user profile ----------
-                path: '/update-profile',
-                element: <UpdateUserProfile></UpdateUserProfile>
+                path: 'update-profile',
+                Component: UpdateUserProfile
             },
         ]
     },
@@ -149,30 +149,31 @@ const router = createBrowserRouter([
         children: [
             // ---------- automatic navigation to auth/login ----------
             {
-                path: '',
+                index: true,
                 element: <Navigate to='/auth/login'></Navigate>
             },
             {
                 // ---------- login ----------
-                path: '/auth/login',
-                element: <Login></Login>
+                index: true,
+                path: 'login',
+                Component: Login
             },
             {
                 // ---------- reset password ----------
-                path: '/auth/reset-password',
-                element: <ResetPassword></ResetPassword>
+                path: 'reset-password',
+                Component: ResetPassword
             },
             {
                 // ---------- register ----------
-                path: '/auth/register',
-                element: <Register></Register>
+                path: 'register',
+                Component: Register
             }
         ]
     },
     {
         // ---------- any other routes ----------
         path: '/*',
-        element: <ErrorPage></ErrorPage>
+        Component: ErrorPage
     }
 ])
 

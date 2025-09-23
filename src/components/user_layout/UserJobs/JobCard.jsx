@@ -1,10 +1,21 @@
 import { Link } from "react-router-dom";
 import defaultLogo from "../../../assets/synapse-logo-square.png";
+// eslint-disable-next-line no-unused-vars
+import { motion } from "motion/react";
 
 const JobCard = ({ jobPost }) => {
     return (
         <Link to={`/jobs/${jobPost?._id}`}>
-            <div className="w-full flex flex-col min-[400px]:flex-row gap-2 shadow-lg hover:shadow-xl p-4 cursor-pointer rounded-lg min-[400px]:text-left text-center h-full min-[400px]:items-start">
+            <motion.div
+
+                // ---------- card animation configuration ----------
+                initial={{ opacity: 0, y: 50 }} // start invisible and 50px lower
+                whileInView={{ opacity: 1, y: 0 }} // animate into place
+                viewport={{ once: true, amount: 0.2 }} // trigger only once when 20% is visible
+                transition={{ duration: 0.6, ease: "easeOut" }}
+
+                className="w-full flex flex-col min-[400px]:flex-row gap-2 shadow-lg hover:shadow-xl p-4 cursor-pointer rounded-lg min-[400px]:text-left text-center h-full min-[400px]:items-start"
+            >
 
                 {/* ---------- company logo section ---------- */}
                 <div className="min-w-fit mx-auto">
@@ -44,7 +55,7 @@ const JobCard = ({ jobPost }) => {
                     </p>
 
                 </div>
-            </div>
+            </motion.div>
         </Link>
     );
 };

@@ -6,6 +6,8 @@ import axios from "axios";
 import CommentCard from "./CommentCard";
 import toast from "react-hot-toast";
 import formatTimeAgo from "../../../functions/formatTimeAgo";
+// eslint-disable-next-line no-unused-vars
+import { motion } from "motion/react";
 
 const PostCard = ({ post }) => {
 
@@ -66,7 +68,15 @@ const PostCard = ({ post }) => {
     }
 
     return (
-        <div className="border border-slate-300 rounded-xl p-6 shadow-xl">
+        <motion.div
+
+            // ---------- card animation configuration ----------
+            initial={{ opacity: 0, y: 50 }} // start invisible and 50px lower
+            whileInView={{ opacity: 1, y: 0 }} // animate into place
+            viewport={{ once: true, amount: 0.2 }} // trigger only once when 20% is visible
+            transition={{ duration: 0.6, ease: "easeOut" }}
+
+            className="border border-slate-300 rounded-xl p-6 shadow-xl">
 
             {/* ---------- card header ---------- */}
             <div className="flex items-center gap-2">
@@ -132,7 +142,7 @@ const PostCard = ({ post }) => {
                     }
                 </div>
             }
-        </div>
+        </motion.div>
     );
 };
 
