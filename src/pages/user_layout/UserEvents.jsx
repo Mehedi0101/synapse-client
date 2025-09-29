@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext } from "react";
 import UserHeader from "../../components/user_layout/shared/UserHeader";
 import { Link } from "react-router-dom";
 import PurpleButton from "../../components/shared/buttons/PurpleButton";
@@ -6,29 +6,35 @@ import { IoMdAddCircleOutline } from "react-icons/io";
 import axios from "axios";
 import AuthContext from "../../contexts/AuthContext";
 import EventCard from "../../components/user_layout/UserEvents/EventCard";
+import { useQuery } from "@tanstack/react-query";
+import EventCardSkeleton from "../../components/skeletons/EventCardSkeleton";
 
 const UserEvents = () => {
 
     // ---------- user details from auth provider ----------
     const { userDetails } = useContext(AuthContext);
 
-    // ---------- upcoming events ----------
-    const [upcomingEvents, setUpcomingEvents] = useState([]);
+    // ---------- for fetching my created events ----------
+    const { data: myEvents = [], isPending: myEventsPending } = useQuery({
+        queryKey: ["my-events", userDetails?._id],
+        queryFn: async () => {
+            const res = await axios.get(`http://localhost:5000/events/user/${userDetails?._id}`);
+            return res.data;
+        },
+        enabled: !!userDetails?._id
+    })
+    
+    // ---------- for fetching upcoming events ----------
+    const { data: upcomingEvents = [], isPending: upcomingEventsPending } = useQuery({
+        queryKey: ["upcoming-events", userDetails?._id],
+        queryFn: async () => {
+            const res = await axios.get(`http://localhost:5000/events/all/${userDetails?._id}`);
+            return res.data;
+        },
+        enabled: !!userDetails?._id
+    })
 
-    // ---------- my created events ----------
-    const [myEvents, setMyEvents] = useState([]);
 
-    useEffect(() => {
-        // ---------- get all upcoming events ----------
-        userDetails?._id && axios.get(`http://localhost:5000/events/all/${userDetails?._id}`)
-            .then(data => setUpcomingEvents(data.data))
-            .catch(() => setUpcomingEvents([]))
-
-        // ---------- get all my events ----------
-        userDetails?._id && axios.get(`http://localhost:5000/events/user/${userDetails?._id}`)
-            .then(data => setMyEvents(data.data))
-            .catch(() => setMyEvents([]))
-    }, [userDetails])
 
     return (
         <div>
@@ -56,15 +62,19 @@ const UserEvents = () => {
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-10 sm:gap-5 mt-6">
                         {
-                            // ---------- check if myEvents is empty or not ---------- 
-                            myEvents?.length > 0 ?
-                                // ---------- not empty ---------- 
-                                myEvents.map(event => <EventCard key={event._id} event={event} isMyEvent={true}></EventCard>)
+                            // ---------- loading? ---------- 
+                            myEventsPending ?
+                                <EventCardSkeleton></EventCardSkeleton>
                                 :
-                                // ---------- empty ---------- 
-                                <div className="col-span-1 sm:col-span-2 lg:col-span-3 2xl:col-span-4 min-h-40 flex justify-center items-center text-base sm:text-lg font-bold text-center">
-                                    You haven't created any events yet.
-                                </div>
+                                // ---------- check if myEvents is empty or not ---------- 
+                                myEvents?.length > 0 ?
+                                    // ---------- not empty ---------- 
+                                    myEvents.map(event => <EventCard key={event._id} event={event} isMyEvent={true}></EventCard>)
+                                    :
+                                    // ---------- empty ---------- 
+                                    <div className="col-span-1 sm:col-span-2 lg:col-span-3 2xl:col-span-4 min-h-40 flex justify-center items-center text-base sm:text-lg font-bold text-center">
+                                        You haven't created any events yet.
+                                    </div>
                         }
                     </div>
                 </div>
@@ -76,15 +86,19 @@ const UserEvents = () => {
                     {/* ---------- jobs container ---------- */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-10 sm:gap-5 mt-6">
                         {
-                            // ---------- check if allJobs is empty or not ---------- 
-                            upcomingEvents?.length > 0 ?
-                                // ---------- not empty ---------- 
-                                upcomingEvents.map(event => <EventCard key={event._id} event={event}></EventCard>)
+                            // ---------- loading? ---------- 
+                            upcomingEventsPending ?
+                                <EventCardSkeleton></EventCardSkeleton>
                                 :
-                                // ---------- empty ---------- 
-                                <div className="col-span-1 sm:col-span-2 lg:col-span-3 2xl:col-span-4 min-h-40 flex justify-center items-center text-base sm:text-lg font-bold text-center">
-                                    No upcoming events at the moment.
-                                </div>
+                                // ---------- check if allJobs is empty or not ---------- 
+                                upcomingEvents?.length > 0 ?
+                                    // ---------- not empty ---------- 
+                                    upcomingEvents.map(event => <EventCard key={event._id} event={event}></EventCard>)
+                                    :
+                                    // ---------- empty ---------- 
+                                    <div className="col-span-1 sm:col-span-2 lg:col-span-3 2xl:col-span-4 min-h-40 flex justify-center items-center text-base sm:text-lg font-bold text-center">
+                                        No upcoming events at the moment.
+                                    </div>
                         }
                     </div>
                 </div>

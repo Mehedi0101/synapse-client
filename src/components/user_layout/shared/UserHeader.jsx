@@ -6,6 +6,8 @@ import defaultUser from "../../../assets/default_user.jpg";
 import { CgProfile } from "react-icons/cg";
 import AuthContext from "../../../contexts/AuthContext";
 import toast from "react-hot-toast";
+// eslint-disable-next-line no-unused-vars
+import { motion, AnimatePresence } from "motion/react";
 
 const UserHeader = ({ searchBar = "" }) => {
     // ---------- data from auth provider ----------
@@ -92,47 +94,54 @@ const UserHeader = ({ searchBar = "" }) => {
                     />
 
                     {/* ---------- dropdown menu ---------- */}
-                    {open && (
-                        <div className="absolute right-0 mt-2 w-40 bg-white rounded-md shadow-lg overflow-hidden text-dark-ash">
+                    <AnimatePresence>
+                        {open && (
+                            <motion.div
+                                initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                                animate={{ opacity: 1, y: 0, scale: 1 }}
+                                exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                                transition={{ duration: 0.2, ease: "easeOut" }}
+                                className="absolute right-0 mt-2 w-40 bg-white rounded-md shadow-lg overflow-hidden text-dark-ash">
 
-                            {/* ---------- notification (only form small devices) ---------- */}
-                            <Link
-                                to="#"
-                                className="flex sm:hidden items-center gap-1 px-4 py-2 hover:text-primary"
-                                onClick={() => setOpen(false)}
-                            >
-                                {/*---------- notification icon ----------*/}
-                                <MdOutlineNotifications className="text-lg" />
-                                Notifications <span className="text-red-500">(3)</span>
-                            </Link>
+                                {/* ---------- notification (only form small devices) ---------- */}
+                                <Link
+                                    to="#"
+                                    className="flex sm:hidden items-center gap-1 px-4 py-2 hover:text-primary"
+                                    onClick={() => setOpen(false)}
+                                >
+                                    {/*---------- notification icon ----------*/}
+                                    <MdOutlineNotifications className="text-lg" />
+                                    Notifications <span className="text-red-500">(3)</span>
+                                </Link>
 
-                            {/* ---------- profile ---------- */}
-                            <Link
-                                to="/profile"
-                                className="flex items-center gap-1 px-4 py-2 hover:text-primary"
-                                onClick={() => setOpen(false)}
-                            >
+                                {/* ---------- profile ---------- */}
+                                <Link
+                                    to="/profile"
+                                    className="flex items-center gap-1 px-4 py-2 hover:text-primary"
+                                    onClick={() => setOpen(false)}
+                                >
 
-                                {/*---------- profile icon ----------*/}
-                                <CgProfile className="text-lg lg:text-xl" />
-                                Profile
-                            </Link>
+                                    {/*---------- profile icon ----------*/}
+                                    <CgProfile className="text-lg lg:text-xl" />
+                                    Profile
+                                </Link>
 
-                            {/* ---------- logout ---------- */}
-                            <button
-                                className="flex items-center gap-1 w-full text-left px-4 py-2 hover:text-primary cursor-pointer"
-                                onClick={() => {
-                                    setOpen(false);
-                                    handleLogOut();
-                                }}
-                            >
-                                {/*---------- logout icon ----------*/}
-                                <MdOutlineLogout className="text-lg lg:text-xl" />
-                                Logout
-                            </button>
+                                {/* ---------- logout ---------- */}
+                                <button
+                                    className="flex items-center gap-1 w-full text-left px-4 py-2 hover:text-primary cursor-pointer"
+                                    onClick={() => {
+                                        setOpen(false);
+                                        handleLogOut();
+                                    }}
+                                >
+                                    {/*---------- logout icon ----------*/}
+                                    <MdOutlineLogout className="text-lg lg:text-xl" />
+                                    Logout
+                                </button>
 
-                        </div>
-                    )}
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
                 </div>
             </div>
         </div>

@@ -1,33 +1,26 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext } from "react";
 import UserHeader from "../../components/user_layout/shared/UserHeader";
 import AuthContext from "../../contexts/AuthContext";
 import axios from "axios";
 import DisplayConnections from "../../components/user_layout/shared/DisplayConnections";
 import UserPostCard from "../../components/user_layout/UserPosts/UserPostCard";
+import { useQuery } from "@tanstack/react-query";
+import PostSkeleton from "../../components/skeletons/PostSkeleton";
 
-const UserHome = () => {
+const UserPosts = () => {
 
     // ---------- user data from auth provider ----------
     const { userDetails } = useContext(AuthContext);
 
-    // ---------- posts ----------
-    const [myPosts, setMyPosts] = useState([]);
-
-    // ---------- post fetching function ----------
-    const fetchMyPosts = (id) => {
-        axios.get(`http://localhost:5000/posts/author/${id}`)
-            .then((data) => {
-                setMyPosts(data.data);
-            })
-            .catch(() => {
-                setMyPosts([]);
-            });
-    }
-
-    // ---------- get all posts ----------
-    useEffect(() => {
-        userDetails?._id && fetchMyPosts(userDetails?._id);
-    }, [userDetails]);
+    // ---------- for fetching my posts ----------
+    const { data: myPosts = [], refetch: refetchMyPosts, isPending } = useQuery({
+        queryKey: ["my-posts", userDetails?._id],
+        queryFn: async () => {
+            const res = await axios.get(`http://localhost:5000/posts/author/${userDetails._id}`);
+            return res.data;
+        },
+        enabled: !!userDetails?._id
+    })
 
     return (
         <div>
@@ -43,7 +36,15 @@ const UserHome = () => {
                     {/* ---------- display post section ---------- */}
                     <div className="mt-6 space-y-6">
                         {
-                            myPosts.map(post => <UserPostCard key={post._id} post={post} fetchMyPosts={fetchMyPosts}></UserPostCard>)
+                            isPending ?
+                                <PostSkeleton></PostSkeleton>
+                                :
+                                myPosts.length > 0 ?
+                                    myPosts.map(post => <UserPostCard key={post._id} post={post} refetchMyPosts={refetchMyPosts}></UserPostCard>)
+                                    :
+                                    <div className="min-h-80 flex justify-center items-center text-base sm:text-lg font-bold text-center">
+                                        You haven't posted anything yet
+                                    </div>
                         }
                     </div>
                 </div>
@@ -57,4 +58,4 @@ const UserHome = () => {
     );
 };
 
-export default UserHome;
+export default UserPosts;

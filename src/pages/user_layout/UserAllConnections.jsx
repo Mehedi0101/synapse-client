@@ -1,27 +1,25 @@
 import UserHeader from "../../components/user_layout/shared/UserHeader";
-import { useContext, useEffect, useState } from "react";
+import { useContext } from "react";
 import AuthContext from "../../contexts/AuthContext";
 import axios from "axios";
 import MyConnectionCard from "../../components/user_layout/UserAllConnections/MyConnectionCard";
+import { useQuery } from "@tanstack/react-query";
+import ConnectedUsersCardSkeleton from "../../components/skeletons/ConnectedUsersCardSkeleton";
 
 const UserAllConnections = () => {
 
     // ---------- user data from auth provider ----------
     const { userDetails } = useContext(AuthContext);
 
-    // ---------- my connections data ----------
-    const [myConnections, setMyConnections] = useState([]);
-
-    // ---------- my connections data fetching ----------
-    useEffect(() => {
-        userDetails?._id && axios.get(`http://localhost:5000/connections/accepted/${userDetails._id}`)
-            .then((data) => {
-                setMyConnections(data.data);
-            })
-            .catch(() => {
-                setMyConnections([]);
-            })
-    }, [userDetails])
+    // ---------- for fetching my posts ----------
+    const { data: myConnections = [], isPending } = useQuery({
+        queryKey: ["connected-users", userDetails?._id],
+        queryFn: async () => {
+            const res = await axios.get(`http://localhost:5000/connections/accepted/${userDetails._id}`);
+            return res.data;
+        },
+        enabled: !!userDetails?._id
+    })
 
 
     return (
@@ -36,7 +34,15 @@ const UserAllConnections = () => {
                 {/* ---------- card container ---------- */}
                 <div className="mt-6 space-y-3">
                     {
-                        myConnections.map(connection => <MyConnectionCard key={connection._id} connection={connection}></MyConnectionCard>)
+                        isPending ?
+                            <ConnectedUsersCardSkeleton></ConnectedUsersCardSkeleton>
+                            :
+                            myConnections.length > 0 ?
+                                myConnections.map(connection => <MyConnectionCard key={connection._id} connection={connection}></MyConnectionCard>)
+                                :
+                                <div className="min-h-80 flex justify-center items-center text-base sm:text-lg font-bold text-center">
+                                    You haven't connected with anyone yet
+                                </div>
                     }
                 </div>
             </div>

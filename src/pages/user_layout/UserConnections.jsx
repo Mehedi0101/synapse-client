@@ -1,61 +1,53 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import UserHeader from "../../components/user_layout/shared/UserHeader";
 import AuthContext from "../../contexts/AuthContext";
 import axios from "axios";
 import ReceivedRequestCard from "../../components/user_layout/UserConnections/ReceivedRequestCard";
 import SentRequestCard from "../../components/user_layout/UserConnections/SentRequestCard";
 import ConnectionCard from "../../components/user_layout/UserConnections/ConnectionCard";
+import { useQuery } from "@tanstack/react-query";
+import ConnectionsCardTwoBtnSkeleton from "../../components/skeletons/ConnectionsCardTwoBtnSkeleton";
+import ConnectionsCardOneBtnSkeleton from "../../components/skeletons/ConnectionsCardOneBtnSkeleton";
 
 const UserConnections = () => {
 
     // ---------- received or sent tab ----------
     const [tabState, setTabState] = useState("Received");
 
-    // ---------- people you may connect data ----------
-    const [peopleYouMayConnect, setPeopleYouMayConnect] = useState([]);
-
-    // ---------- sent request data ----------
-    const [sentRequests, setSentRequests] = useState([]);
-
-    // ---------- received request data ----------
-    const [receivedRequests, setReceivedRequests] = useState([]);
 
     // ---------- user data from auth provider ----------
     const { userDetails } = useContext(AuthContext);
 
 
+    // ---------- for fetching people you connect ----------
+    const { data: peopleYouMayConnect = [], isPending: peopleYouMayKnowLoading } = useQuery({
+        queryKey: ["people-you-may-connect", userDetails?._id],
+        queryFn: async () => {
+            const res = await axios.get(`http://localhost:5000/users/available/${userDetails._id}`);
+            return res.data;
+        },
+        enabled: !!userDetails?._id
+    })
 
-    // ---------- fetching people you may connect, sent request and received request data when userDetails or tabstate is changed ----------
-    useEffect(() => {
+    // ---------- for fetching all received requests ----------
+    const { data: receivedRequests = [], isPending: receivedRequestsLoading } = useQuery({
+        queryKey: ["received-requests", userDetails?._id],
+        queryFn: async () => {
+            const res = await axios.get(`http://localhost:5000/connections/received/${userDetails._id}`);
+            return res.data;
+        },
+        enabled: !!userDetails?._id
+    })
 
-        // ---------- fetching all users available for connection request ----------
-        userDetails?._id && axios.get(`http://localhost:5000/users/available/${userDetails._id}`)
-            .then(data => {
-                setPeopleYouMayConnect(data.data);
-            })
-            .catch(() => {
-                setPeopleYouMayConnect([]);
-            })
-
-        // ---------- fetching all received requests ----------
-        userDetails?._id && axios.get(`http://localhost:5000/connections/received/${userDetails._id}`)
-            .then(data => {
-                setReceivedRequests(data.data);
-            })
-            .catch(() => {
-                setReceivedRequests([]);
-            })
-
-        // ---------- fetching all sent requests ----------
-        userDetails?._id && axios.get(`http://localhost:5000/connections/sent/${userDetails._id}`)
-            .then(data => {
-                setSentRequests(data.data);
-            })
-            .catch(() => {
-                setSentRequests([]);
-            })
-    }, [userDetails, tabState])
-
+    // ---------- for fetching all sent requests ----------
+    const { data: sentRequests = [], isPending: sentRequestsLoading } = useQuery({
+        queryKey: ["sent-requests", userDetails?._id],
+        queryFn: async () => {
+            const res = await axios.get(`http://localhost:5000/connections/sent/${userDetails._id}`);
+            return res.data;
+        },
+        enabled: !!userDetails?._id
+    })
 
 
     return (
@@ -81,27 +73,34 @@ const UserConnections = () => {
                         {
                             // ---------- if tab state is "Received" ---------- 
                             tabState === "Received" ?
-                                (
-                                    // ---------- if receivedRequests is not empty ---------- 
-                                    receivedRequests?.length > 0 ?
-                                        receivedRequests.map(req => <ReceivedRequestCard key={req._id} req={req}></ReceivedRequestCard>)
-                                        :
-                                        // ---------- if receivedRequests is empty ---------- 
-                                        <div className="col-span-1 min-[400px]:col-span-2 sm:col-span-3 lg:col-span-4 2xl:col-span-5 min-h-40 flex justify-center items-center text-base sm:text-lg font-bold text-center">
-                                            No connection requests received yet
-                                        </div>
-                                )
+                                receivedRequestsLoading ?
+                                    <ConnectionsCardTwoBtnSkeleton></ConnectionsCardTwoBtnSkeleton>
+                                    :
+                                    (
+                                        // ---------- if receivedRequests is not empty ---------- 
+                                        receivedRequests?.length > 0 ?
+                                            receivedRequests.map(req => <ReceivedRequestCard key={req._id} req={req}></ReceivedRequestCard>)
+                                            :
+                                            // ---------- if receivedRequests is empty ---------- 
+                                            <div className="col-span-1 min-[400px]:col-span-2 sm:col-span-3 lg:col-span-4 2xl:col-span-5 min-h-40 flex justify-center items-center text-base sm:text-lg font-bold text-center">
+                                                No connection requests received yet
+                                            </div>
+                                    )
                                 :
                                 // ---------- if tab state is "Sent" ---------- 
                                 (
-                                    // ---------- if sentRequests is not empty ---------- 
-                                    sentRequests?.length > 0 ?
-                                        sentRequests.map(req => <SentRequestCard key={req._id} req={req}></SentRequestCard>)
+                                    sentRequestsLoading ?
+                                        // ---------- if loading ---------- 
+                                        <ConnectionsCardOneBtnSkeleton></ConnectionsCardOneBtnSkeleton>
                                         :
-                                        // ---------- if sentRequests is empty ----------
-                                        <div className="col-span-1 min-[400px]:col-span-2 sm:col-span-3 lg:col-span-4 2xl:col-span-5 min-h-40 flex justify-center items-center text-base sm:text-lg font-bold text-center">
-                                            No pending connection requests
-                                        </div>
+                                        sentRequests?.length > 0 ?
+                                            // ---------- if sentRequests is not empty ---------- 
+                                            sentRequests.map(req => <SentRequestCard key={req._id} req={req}></SentRequestCard>)
+                                            :
+                                            // ---------- if sentRequests is empty ----------
+                                            <div className="col-span-1 min-[400px]:col-span-2 sm:col-span-3 lg:col-span-4 2xl:col-span-5 min-h-40 flex justify-center items-center text-base sm:text-lg font-bold text-center">
+                                                No pending connection requests
+                                            </div>
 
                                 )
                         }
@@ -111,22 +110,23 @@ const UserConnections = () => {
                 {/* ---------- People You May Connect section ---------- */}
                 <div className="mt-12">
                     <h2 className="font-poppins text-xl font-bold text-dark">People You May Connect With</h2>
-                    {
-                        // ---------- check if peopleYouMayConnect is empty or not ---------- 
-                        peopleYouMayConnect?.length > 0 ?
-                            // ---------- not empty ---------- 
-                            // ---------- card container ---------- 
-                            <div className="grid min-[400px]:grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-x-4 gap-y-8 min-[400px]:gap-y-6 mt-6">
-                                {
+                    <div className="grid min-[400px]:grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-x-4 gap-y-8 min-[400px]:gap-y-6 mt-6">
+                        {
+                            // ---------- check if peopleYouMayConnect is empty or not ---------- 
+                            peopleYouMayKnowLoading ?
+                                // ---------- if loading ---------- 
+                                <ConnectionsCardOneBtnSkeleton></ConnectionsCardOneBtnSkeleton>
+                                :
+                                peopleYouMayConnect?.length > 0 ?
+                                    // ---------- not empty ---------- 
                                     peopleYouMayConnect.map(user => <ConnectionCard key={user._id} user={user}></ConnectionCard>)
-                                }
-                            </div>
-                            :
-                            // ---------- empty ---------- 
-                            <div className="min-h-40 flex justify-center items-center text-base sm:text-lg font-bold text-center">
-                                No suggestions available at the moment
-                            </div>
-                    }
+                                    :
+                                    // ---------- empty ---------- 
+                                    <div className="col-span-1 min-[400px]:col-span-2 sm:col-span-3 lg:col-span-4 2xl:col-span-5 min-h-40 flex justify-center items-center text-base sm:text-lg font-bold text-center">
+                                        No suggestions available at the moment
+                                    </div>
+                        }
+                    </div>
                 </div>
             </div>
         </div>

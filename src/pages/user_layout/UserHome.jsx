@@ -1,5 +1,5 @@
 import defaultUser from "../../assets/default_user.jpg";
-import { useContext, useEffect, useState } from "react";
+import { useContext } from "react";
 import UserHeader from "../../components/user_layout/shared/UserHeader";
 import AuthContext from "../../contexts/AuthContext";
 import axios from "axios";
@@ -7,26 +7,25 @@ import Swal from "sweetalert2";
 import toast from "react-hot-toast";
 import PostCard from "../../components/user_layout/UserHome/PostCard";
 import DisplayConnections from "../../components/user_layout/shared/DisplayConnections";
+import { useQuery } from "@tanstack/react-query";
+import PostSkeleton from "../../components/skeletons/PostSkeleton";
 
 const UserHome = () => {
+
+    // ---------- for fetching all the posts ----------
+    const { data: posts = [], refetch: refetchPosts, isPending } = useQuery({
+        queryKey: ["allPosts"],
+        queryFn: async () => {
+            const res = await axios.get('http://localhost:5000/posts');
+            return res.data;
+        }
+    })
 
     // ---------- user data from auth provider ----------
     const { userDetails } = useContext(AuthContext);
 
-    // ---------- posts ----------
-    const [posts, setPosts] = useState([]);
 
-    // ---------- get all posts ----------
-    const fetchPosts = () => {
-        axios.get('http://localhost:5000/posts')
-            .then((data) => {
-                setPosts(data.data);
-            })
-            .catch(() => {
-                setPosts([]);
-            });
-    };
-
+    // ---------- function for creating a post ----------
     const handleCreatePost = () => {
 
         // ---------- sweet alert to open the post form ----------
@@ -109,7 +108,7 @@ const UserHome = () => {
                             if (data?.data?.acknowledged) {
 
                                 // ---------- refetch post data ----------
-                                fetchPosts();
+                                refetchPosts();
 
                                 // ---------- toast success ----------
                                 toast.success('Posted', { id: toastId });
@@ -130,11 +129,6 @@ const UserHome = () => {
         });
     };
 
-
-    // ---------- get all posts ----------
-    useEffect(() => {
-        fetchPosts();
-    }, []);
 
     return (
         <div>
@@ -160,7 +154,11 @@ const UserHome = () => {
                     {/* ---------- display post section ---------- */}
                     <div className="mt-10 space-y-6">
                         {
-                            posts.map(post => <PostCard key={post._id} post={post}></PostCard>)
+                            isPending ?
+                                // ---------- show skeleton when pending ----------
+                                <PostSkeleton></PostSkeleton>
+                                :
+                                posts.map(post => <PostCard key={post._id} post={post}></PostCard>)
                         }
                     </div>
                 </div>

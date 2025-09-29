@@ -13,7 +13,7 @@ import Swal from 'sweetalert2';
 // eslint-disable-next-line no-unused-vars
 import { motion } from "motion/react";
 
-const UserPostCard = ({ post, fetchMyPosts }) => {
+const UserPostCard = ({ post, refetchMyPosts }) => {
     const [postData, setPostData] = useState(post);
 
     // ---------- user details from auth provider ----------
@@ -162,7 +162,7 @@ const UserPostCard = ({ post, fetchMyPosts }) => {
                         if (data?.data?.acknowledged) {
 
                             // ---------- refetch all posts from the author ----------
-                            fetchMyPosts(userDetails?._id);
+                            refetchMyPosts();
 
                             // ---------- success toast ----------
                             toast.success('Removed', { id: toastId });
@@ -248,7 +248,7 @@ const UserPostCard = ({ post, fetchMyPosts }) => {
 
     return (
         <motion.div
-        
+
             // ---------- card animation configuration ----------
             initial={{ opacity: 0, y: 50 }} // start invisible and 50px lower
             whileInView={{ opacity: 1, y: 0 }} // animate into place

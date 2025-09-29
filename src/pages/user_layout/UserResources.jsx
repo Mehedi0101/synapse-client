@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext } from "react";
 import UserHeader from "../../components/user_layout/shared/UserHeader";
 import { Link } from "react-router-dom";
 import PurpleButton from "../../components/shared/buttons/PurpleButton";
@@ -6,29 +6,34 @@ import { IoMdAddCircleOutline } from "react-icons/io";
 import axios from "axios";
 import AuthContext from "../../contexts/AuthContext";
 import ResourceCard from "../../components/user_layout/UserResources/ResourceCard";
+import { useQuery } from "@tanstack/react-query";
+import ResourceCardSkeleton from "../../components/skeletons/ResourceCardSkeleton";
 
 
 const UserResources = () => {
     // ---------- user data from auth provider ----------
     const { userDetails } = useContext(AuthContext);
 
-    // ---------- all resources list ----------
-    const [allResources, setAllResources] = useState([]);
+    // ---------- for fetching all resources ----------
+    const { data: allResources = [], isPending: allResourcesPending } = useQuery({
+        queryKey: ["all-resources", userDetails?._id],
+        queryFn: async () => {
+            const res = await axios.get(`http://localhost:5000/resources/all/${userDetails?._id}`);
+            return res.data;
+        },
+        enabled: !!userDetails?._id
+    })
 
-    // ---------- my resources list ----------
-    const [myResources, setMyResources] = useState([]);
+    // ---------- for fetching my contributions ----------
+    const { data: myResources = [], isPending: myResourcesPending } = useQuery({
+        queryKey: ["my-resources", userDetails?._id],
+        queryFn: async () => {
+            const res = await axios.get(`http://localhost:5000/resources/my/${userDetails?._id}`);
+            return res.data;
+        },
+        enabled: !!userDetails?._id
+    })
 
-    useEffect(() => {
-        // ---------- get all upcoming events ----------
-        userDetails?._id && axios.get(`http://localhost:5000/resources/all/${userDetails?._id}`)
-            .then(data => setAllResources(data.data))
-            .catch(() => setAllResources([]))
-
-        // ---------- get all my events ----------
-        userDetails?._id && axios.get(`http://localhost:5000/resources/my/${userDetails?._id}`)
-            .then(data => setMyResources(data.data))
-            .catch(() => setMyResources([]))
-    }, [userDetails])
 
     return (
         <div>
@@ -56,16 +61,20 @@ const UserResources = () => {
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-10 sm:gap-5 mt-6">
                         {
-                            // ---------- check if myResources is empty or not ---------- 
-                            myResources?.length > 0 ?
-
-                                // ---------- not empty ---------- 
-                                myResources.map(resource => <ResourceCard key={resource._id} resource={resource}></ResourceCard>)
+                            // ---------- loading? ---------- 
+                            myResourcesPending ?
+                                <ResourceCardSkeleton></ResourceCardSkeleton>
                                 :
-                                // ---------- empty ---------- 
-                                <div className="col-span-1 sm:col-span-2 lg:col-span-3 2xl:col-span-4 min-h-40 flex justify-center items-center text-base sm:text-lg font-bold text-center">
-                                    You haven't shared anything yet.
-                                </div>
+                                // ---------- check if myResources is empty or not ---------- 
+                                myResources?.length > 0 ?
+
+                                    // ---------- not empty ---------- 
+                                    myResources.map(resource => <ResourceCard key={resource._id} resource={resource}></ResourceCard>)
+                                    :
+                                    // ---------- empty ---------- 
+                                    <div className="col-span-1 sm:col-span-2 lg:col-span-3 2xl:col-span-4 min-h-40 flex justify-center items-center text-base sm:text-lg font-bold text-center">
+                                        You haven't shared anything yet.
+                                    </div>
                         }
                     </div>
                 </div>
@@ -77,16 +86,20 @@ const UserResources = () => {
                     {/* ---------- card container ---------- */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-10 sm:gap-5 mt-6">
                         {
-                            // ---------- check if allResources is empty or not ---------- 
-                            allResources?.length > 0 ?
-                            
-                                // ---------- not empty ---------- 
-                                allResources.map(resource => <ResourceCard key={resource._id} resource={resource}></ResourceCard>)
+                            // ---------- loading? ---------- 
+                            allResourcesPending ?
+                                <ResourceCardSkeleton></ResourceCardSkeleton>
                                 :
-                                // ---------- empty ---------- 
-                                <div className="col-span-1 sm:col-span-2 lg:col-span-3 2xl:col-span-4 min-h-40 flex justify-center items-center text-base sm:text-lg font-bold text-center">
-                                    No resources have been shared yet.
-                                </div>
+                                // ---------- check if allResources is empty or not ---------- 
+                                allResources?.length > 0 ?
+
+                                    // ---------- not empty ---------- 
+                                    allResources.map(resource => <ResourceCard key={resource._id} resource={resource}></ResourceCard>)
+                                    :
+                                    // ---------- empty ---------- 
+                                    <div className="col-span-1 sm:col-span-2 lg:col-span-3 2xl:col-span-4 min-h-40 flex justify-center items-center text-base sm:text-lg font-bold text-center">
+                                        No resources have been shared yet.
+                                    </div>
                         }
                     </div>
                 </div>

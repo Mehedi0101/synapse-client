@@ -1,24 +1,26 @@
 import UserHeader from "../../components/user_layout/shared/UserHeader";
-import { useContext, useEffect, useState } from "react";
+import { useContext } from "react";
 import AuthContext from "../../contexts/AuthContext";
 import AlumniJobPost from "../../components/user_layout/UserJobs/AlumniJobPost";
 import axios from "axios";
 import JobCard from "../../components/user_layout/UserJobs/JobCard";
+import { useQuery } from "@tanstack/react-query";
+import JobCardSkeleton from "../../components/skeletons/JobCardSkeleton";
 
 const UserJobs = () => {
 
     // ---------- data from auth provider ----------
     const { userDetails } = useContext(AuthContext);
 
-    // ---------- all jobs ----------
-    const [allJobs, setAllJobs] = useState([]);
-
-    // ---------- get all jobs ----------
-    useEffect(() => {
-        userDetails?._id && axios.get(`http://localhost:5000/jobs/${userDetails?._id}`)
-            .then(data => setAllJobs(data.data))
-            .catch(() => setAllJobs([]))
-    }, [userDetails])
+    // ---------- for fetching all jobs ----------
+    const { data: allJobs = [], isPending } = useQuery({
+        queryKey: ["all-jobs", userDetails?._id],
+        queryFn: async () => {
+            const res = await axios.get(`http://localhost:5000/jobs/${userDetails?._id}`);
+            return res.data;
+        },
+        enabled: !!userDetails?._id
+    })
 
     return (
         <div>
@@ -38,15 +40,19 @@ const UserJobs = () => {
                     {/* ---------- jobs container ---------- */}
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mt-6">
                         {
-                            // ---------- check if allJobs is empty or not ---------- 
-                            allJobs?.length > 0 ?
-                                // ---------- not empty ---------- 
-                                allJobs.map(jobPost => <JobCard key={jobPost._id} jobPost={jobPost}></JobCard>)
+                            // ---------- loading? ---------- 
+                            isPending ?
+                                <JobCardSkeleton></JobCardSkeleton>
                                 :
-                                // ---------- empty ---------- 
-                                <div className="col-span-1 lg:col-span-2 min-h-40 flex justify-center items-center text-base sm:text-lg font-bold text-center">
-                                    No job opportunities available right now.
-                                </div>
+                                // ---------- check if allJobs is empty or not ---------- 
+                                allJobs?.length > 0 ?
+                                    // ---------- not empty ---------- 
+                                    allJobs.map(jobPost => <JobCard key={jobPost._id} jobPost={jobPost}></JobCard>)
+                                    :
+                                    // ---------- empty ---------- 
+                                    <div className="col-span-1 lg:col-span-2 min-h-40 flex justify-center items-center text-base sm:text-lg font-bold text-center">
+                                        No job opportunities available right now.
+                                    </div>
                         }
                     </div>
                 </div>
