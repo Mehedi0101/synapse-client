@@ -13,7 +13,7 @@ const NavBarLg = () => {
         <div>
 
             {/* ---------- logo section with gray backgrounds ---------- */}
-            <LogoSection></LogoSection>
+            <LogoSection role="User"></LogoSection>
 
             {/* ---------- basic user information ---------- */}
             <div className='-mt-36 p-4'>

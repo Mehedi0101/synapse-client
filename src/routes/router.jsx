@@ -27,6 +27,14 @@ import UserUpdateEvent from "../pages/user_layout/UserUpdateEvent";
 import UserPostResource from "../pages/user_layout/UserPostResource";
 import UserResourceDetails from "../pages/user_layout/UserResourceDetails";
 import UserUpdateResource from "../pages/user_layout/UserUpdateResource";
+import AdminLayout from "../layouts/AdminLayout";
+import AdminRoute from "../providers/AdminRoute";
+import AdminOverview from "../pages/admin_layout/AdminOverview";
+import AdminUsers from "../pages/admin_layout/AdminUsers";
+import AdminMentorship from "../pages/admin_layout/AdminMentorship";
+import AdminJobs from "../pages/admin_layout/AdminJobs";
+import AdminEvents from "../pages/admin_layout/AdminEvents";
+import AdminResources from "../pages/admin_layout/AdminResources";
 
 
 const router = createBrowserRouter([
@@ -167,6 +175,47 @@ const router = createBrowserRouter([
                 // ---------- register ----------
                 path: 'register',
                 Component: Register
+            }
+        ]
+    },
+    {
+        // ---------- admin layout ----------
+        path: '/admin',
+        element: <AdminRoute><AdminLayout></AdminLayout></AdminRoute>,
+        children: [
+            {
+                index: true,
+                element: <Navigate to='/admin/overview'></Navigate>
+            },
+            {
+                // ---------- overview ----------
+                path: 'overview',
+                Component: AdminOverview
+            },
+            {
+                // ---------- users ----------
+                path: 'users',
+                Component: AdminUsers
+            },
+            {
+                // ---------- mentorship ----------
+                path: 'mentorship',
+                Component: AdminMentorship
+            },
+            {
+                // ---------- jobs ----------
+                path: 'jobs',
+                Component: AdminJobs
+            },
+            {
+                // ---------- events ----------
+                path: 'events',
+                Component: AdminEvents
+            },
+            {
+                // ---------- resources ----------
+                path: 'resources',
+                Component: AdminResources
             }
         ]
     },

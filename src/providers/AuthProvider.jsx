@@ -40,31 +40,53 @@ const AuthProvider = ({ children }) => {
                 .then((data) => {
                     setUserDetails(data.data);
                 })
+                .catch(() => setUserDetails(null))
+                .finally(() => setLoading(false));
         }
     };
 
     // ---------- user observer ----------
+    // useEffect(() => {
+    //     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    //         setUser(currentUser);
+    //         setLoading(false);
+    //     });
+
+    //     return () => unsubscribe();
+    // }, [])
+
+    // ---------- fetch user data from database if current user is not null ----------
+    // useEffect(() => {
+    //     if (user?.email) {
+    //         axios.post("http://localhost:5000/users/email", { email: user.email })
+    //             .then((data) => {
+    //                 setUserDetails(data.data);
+    //             })
+    //     }
+    //     else {
+    //         setUserDetails(null);
+    //     }
+    // }, [user])
+
+    // Firebase observer
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
             setUser(currentUser);
-            setLoading(false);
+
+            if (currentUser?.email) {
+                setLoading(true); // wait for DB fetch
+                axios.post("http://localhost:5000/users/email", { email: currentUser.email })
+                    .then((data) => setUserDetails(data.data))
+                    .catch(() => setUserDetails(null))
+                    .finally(() => setLoading(false));
+            } else {
+                setUserDetails(null);
+                setLoading(false);
+            }
         });
 
         return () => unsubscribe();
-    }, [])
-
-    // ---------- fetch user data from database if current user is not null ----------
-    useEffect(() => {
-        if (user?.email) {
-            axios.post("http://localhost:5000/users/email", { email: user.email })
-                .then((data) => {
-                    setUserDetails(data.data);
-                })
-        }
-        else {
-            setUserDetails(null);
-        }
-    }, [user])
+    }, []);
 
     // ---------- data available to children ----------
     const authData = {

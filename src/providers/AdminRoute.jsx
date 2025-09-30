@@ -3,7 +3,7 @@ import AuthContext from '../contexts/AuthContext';
 import Loading from '../pages/shared/Loading';
 import { Navigate } from 'react-router-dom';
 
-const PrivateRoute = ({ children }) => {
+const AdminRoute = ({ children }) => {
 
     // ---------- data from auth provider ----------
     const { user, userDetails, loading } = useContext(AuthContext);
@@ -15,7 +15,7 @@ const PrivateRoute = ({ children }) => {
 
     // ---------- after loading if user is not null ----------
     if (user && userDetails) {
-        if (userDetails.role === "Admin") return <Navigate to="/admin"></Navigate>
+        if (userDetails.role !== "Admin") return <Navigate to="/"></Navigate>
         else return children;
     }
 
@@ -23,4 +23,4 @@ const PrivateRoute = ({ children }) => {
     return <Navigate state={location.pathname} to="/auth/login"></Navigate>;
 };
 
-export default PrivateRoute;
+export default AdminRoute;
