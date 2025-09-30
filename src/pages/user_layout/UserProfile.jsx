@@ -12,7 +12,7 @@ import { useContext, useEffect, useState } from "react";
 import UserHeader from "../../components/user_layout/shared/UserHeader";
 import axios from "axios";
 
-const UserProfile = () => {
+const UserProfile = ({ display = "" }) => {
 
     // ---------- react hooks ----------
     const navigate = useNavigate();
@@ -48,7 +48,7 @@ const UserProfile = () => {
     return (
         <>
             {/* ---------- header without searchbar ---------- */}
-            <UserHeader searchBar="invisible"></UserHeader>
+            <UserHeader searchBar="invisible" display={display}></UserHeader>
 
             {/* ---------- Main Section of Profile Page ---------- */}
             <div className="grid grid-cols-1 sm:grid-cols-12 gap-8 text-semi-dark mx-2 md:mx-5 my-8 text-sm lg:text-base">

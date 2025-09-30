@@ -9,7 +9,7 @@ import toast from "react-hot-toast";
 // eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from "motion/react";
 
-const UserHeader = ({ searchBar = "" }) => {
+const UserHeader = ({ searchBar = "", display = "" }) => {
     // ---------- data from auth provider ----------
     const { userDetails, logout } = useContext(AuthContext);
 
@@ -49,7 +49,7 @@ const UserHeader = ({ searchBar = "" }) => {
 
     return (
         // ---------- header container ----------
-        <div className={"sticky top-0 right-0 flex sm:gap-4 gap-2 items-center justify-between text-sm lg:text-base pr-2 md:pr-5 pl-12 md:pl-5 py-1 md:py-3 bg-white border-b-1 border-b-gray-200 z-20"}>
+        <div className={`${display === "hidden" && "hidden"} sticky top-0 right-0 flex sm:gap-4 gap-2 items-center justify-between text-sm lg:text-base pr-2 md:pr-5 pl-12 md:pl-5 py-1 md:py-3 bg-white border-b-1 border-b-gray-200 z-20`}>
 
             {/* ---------- search bar ---------- */}
             <div className={`flex items-center w-full ${searchBar}`}>

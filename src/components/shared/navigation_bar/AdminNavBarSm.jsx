@@ -16,7 +16,7 @@ const menuStyles = {
         top: "16px",
     },
     bmBurgerBars: {
-        background: "#F59E0B", // amber color
+        background: "#6f16d7", // amber color
         borderRadius: "3px",
         height: "2px"
     },

@@ -15,7 +15,7 @@ import { AiOutlineDelete } from "react-icons/ai";
 import Swal from "sweetalert2";
 import toast from "react-hot-toast";
 
-const UserJobDetails = () => {
+const UserJobDetails = ({ display = "" }) => {
 
     // ---------- data from auth provider ----------
     const { userDetails } = useContext(AuthContext);
@@ -88,7 +88,7 @@ const UserJobDetails = () => {
     return (
         <div>
             {/* ---------- user header without searchbar ---------- */}
-            <UserHeader searchBar="invisible"></UserHeader>
+            <UserHeader searchBar="invisible" display={display}></UserHeader>
 
             {/* ---------- main content ---------- */}
             <div className="mx-2 md:mx-5 my-8 text-semi-dark grid gap-4 md:gap-8 lg:gap-12 grid-cols-1 md:grid-cols-3">

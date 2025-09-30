@@ -198,6 +198,11 @@ const router = createBrowserRouter([
                 Component: AdminUsers
             },
             {
+                // ---------- user profile ----------
+                path: 'users/:id',
+                element: <UserProfile display="hidden" />
+            },
+            {
                 // ---------- mentorship ----------
                 path: 'mentorship',
                 Component: AdminMentorship
@@ -206,6 +211,11 @@ const router = createBrowserRouter([
                 // ---------- jobs ----------
                 path: 'jobs',
                 Component: AdminJobs
+            },
+            {
+                // ---------- job details ----------
+                path: 'jobs/:id',
+                element: <UserJobDetails display="hidden" />
             },
             {
                 // ---------- events ----------
