@@ -143,14 +143,14 @@ const AdminEvents = () => {
                                     <td className="py-3 px-4">
                                         <div className="flex items-center gap-2">
 
-                                            {/* ---------- user image ---------- */}
+                                            {/* ---------- event creator image ---------- */}
                                             <img
                                                 src={event?.creator?.userImage || defaultUser}
                                                 alt="creator"
                                                 className="w-7 h-7 rounded-full object-cover"
                                             />
                                             <span className="truncate max-w-[100px]">
-                                                {/* ---------- user name ---------- */}
+                                                {/* ---------- event creator name ---------- */}
                                                 <Link
                                                     title={event?.creator?.name}
                                                     className="hover:underline hover:text-primary transition-all duration-200"

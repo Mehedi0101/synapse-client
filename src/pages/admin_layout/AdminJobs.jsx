@@ -134,14 +134,14 @@ const AdminJobs = () => {
                                         <td className="py-3 px-4">
                                             <div className="flex items-center gap-2">
 
-                                                {/* ---------- user image ---------- */}
+                                                {/* ---------- job poster's image ---------- */}
                                                 <img
                                                     src={job?.author?.userImage || defaultUser}
                                                     alt="avatar"
                                                     className="w-7 h-7 rounded-full object-cover"
                                                 />
 
-                                                {/* ---------- user name ---------- */}
+                                                {/* ---------- job poster's name ---------- */}
                                                 <span className="truncate max-w-[100px]">
                                                     <Link title={job?.author?.name} className="hover:underline hover:text-primary transition-all duration-200" to={`http://localhost:5173/admin/users/${job?.author?._id}`}>{job?.author?.name || "N/A"}</Link>
                                                 </span>

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { IoSearch } from "react-icons/io5";
 import { MdDeleteOutline } from "react-icons/md";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { format } from "date-fns";
 import Swal from "sweetalert2";
@@ -14,10 +14,9 @@ const AdminResources = () => {
   // ---------- search text ----------
   const [searchText, setSearchText] = useState("");
 
-  // ---------- react query ----------
-  const queryClient = useQueryClient();
-  const {
-    data: resources = [],
+  // ---------- fetch all resources ----------
+  const { data: resources = [],
+    refetch: refetchResources,
     isPending,
   } = useQuery({
     queryKey: ["resources"],
@@ -29,6 +28,8 @@ const AdminResources = () => {
 
   // ---------- delete resource ----------
   const handleDeleteResource = (resourceId) => {
+
+    // ---------- confirmation alert ----------
     Swal.fire({
       html: `
         <h2 style="color:#0F172A; font-family:Poppins, sans-serif; font-size:22px; font-weight: bold;">Remove this resource?</h2>
@@ -39,6 +40,8 @@ const AdminResources = () => {
       confirmButtonColor: "#6f16d7",
       cancelButtonColor: "#d33",
     }).then((result) => {
+
+      // ---------- if confirmed ----------
       if (result.isConfirmed) {
         const toastId = toast.loading("Removing Resource...");
         axios
@@ -46,7 +49,7 @@ const AdminResources = () => {
           .then((data) => {
             if (data.data?.acknowledged) {
               toast.success("Removed", { id: toastId });
-              queryClient.invalidateQueries(["resources"]); // refresh resources
+              refetchResources();
             } else {
               toast.error("Something went wrong", { id: toastId });
             }
@@ -63,10 +66,10 @@ const AdminResources = () => {
     searchText.trim() === ""
       ? resources
       : resources.filter((res) =>
-          (res?.title || "")
-            .toLowerCase()
-            .includes(searchText.toLowerCase())
-        );
+        (res?.title || "")
+          .toLowerCase()
+          .includes(searchText.toLowerCase())
+      );
 
   return (
     <div className="mx-2 md:mx-5 my-8 text-semi-dark">
@@ -113,9 +116,8 @@ const AdminResources = () => {
               filteredResources.map((res, idx) => (
                 <tr
                   key={res._id}
-                  className={`${
-                    idx % 2 === 0 ? "bg-white" : "bg-gray-50"
-                  } hover:bg-slate-100 transition border-b-1 border-slate-300`}
+                  className={`${idx % 2 === 0 ? "bg-white" : "bg-gray-50"
+                    } hover:bg-slate-100 transition border-b-1 border-slate-300`}
                 >
                   {/* ---------- Serial No ---------- */}
                   <td className="py-3 px-4">{idx + 1}</td>
@@ -134,12 +136,16 @@ const AdminResources = () => {
                   {/* ---------- Author ---------- */}
                   <td className="py-3 px-4">
                     <div className="flex items-center gap-2">
+
+                      {/* ---------- Author image---------- */}
                       <img
                         src={res?.author?.userImage || defaultUser}
                         alt="avatar"
                         className="w-7 h-7 rounded-full object-cover"
                       />
                       <span className="truncate max-w-[100px]">
+
+                        {/* ---------- Author name---------- */}
                         <Link
                           title={res?.author?.name}
                           to={`/admin/users/${res?.author?._id}`}
