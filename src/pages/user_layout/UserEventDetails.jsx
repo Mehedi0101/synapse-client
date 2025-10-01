@@ -16,7 +16,7 @@ import { format } from "date-fns";
 import { ClipLoader } from "react-spinners";
 import hourFormatConverter from "../../functions/formatTimeString";
 
-const UserEventDetails = () => {
+const UserEventDetails = ({ display = "" }) => {
 
     // ---------- data from auth provider ----------
     const { userDetails } = useContext(AuthContext);
@@ -125,7 +125,7 @@ const UserEventDetails = () => {
     return (
         <div>
             {/* ---------- header without searchbar ---------- */}
-            <UserHeader searchBar="invisible" />
+            <UserHeader searchBar="invisible" display={display} />
 
             {/* ---------- banner section ---------- */}
             <div className="h-64 md:h-96">

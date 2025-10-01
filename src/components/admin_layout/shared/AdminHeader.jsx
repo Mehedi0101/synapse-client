@@ -46,7 +46,7 @@ const AdminHeader = () => {
 
     return (
         // ---------- header container ----------
-        <div className={"sticky top-0 right-0 flex sm:gap-4 gap-2 items-center justify-end text-sm lg:text-base pr-2 md:pr-5 pl-12 md:pl-5 py-1 md:py-3 border-b-1 border-b-gray-200 z-20"}>
+        <div className={"sticky top-0 right-0 flex sm:gap-4 gap-2 items-center justify-end text-sm lg:text-base pr-2 md:pr-5 pl-12 md:pl-5 py-1 md:py-3 border-b-1 border-b-gray-200 z-20 bg-white"}>
 
             {/* ---------- admin section container ---------- */}
             <div className="flex gap-4 md:gap-6 lg:gap-8 items-center min-w-fit relative">

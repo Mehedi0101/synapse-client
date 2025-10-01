@@ -223,6 +223,11 @@ const router = createBrowserRouter([
                 Component: AdminEvents
             },
             {
+                // ---------- events ----------
+                path: 'events/:id',
+                element: <UserEventDetails display="hidden" />
+            },
+            {
                 // ---------- resources ----------
                 path: 'resources',
                 Component: AdminResources
