@@ -27,8 +27,10 @@ const AdminEvents = () => {
         },
     });
 
-    // ---------- handle delete event ----------
+    // ---------- function for delete event ----------
     const handleDeleteEvent = (eventId) => {
+
+        // ---------- confirmation alert ----------
         Swal.fire({
             html: `
         <h2 style="color:#0F172A; font-family:Poppins, sans-serif; font-size:22px; font-weight: bold;">Remove this event?</h2>
@@ -39,6 +41,8 @@ const AdminEvents = () => {
             confirmButtonColor: "#6f16d7",
             cancelButtonColor: "#d33",
         }).then((result) => {
+
+            // ---------- confirmed ----------
             if (result.isConfirmed) {
                 const toastId = toast.loading("Removing Event...");
 
@@ -104,9 +108,13 @@ const AdminEvents = () => {
                         </tr>
                     </thead>
                     <tbody>
+
+                        {/* ---------- data loading? ---------- */}
                         {isPending ? (
                             <tr>
                                 <td colSpan="8" className="text-center py-6 text-slate-500">
+
+                                    {/* ---------- skeleton ---------- */}
                                     <TableSkeleton columns={8} />
                                 </td>
                             </tr>
@@ -115,12 +123,12 @@ const AdminEvents = () => {
                                 <tr
                                     key={event._id}
                                     className={`${idx % 2 === 0 ? "bg-white" : "bg-gray-50"
-                                        } hover:bg-slate-100 transition`}
+                                        } hover:bg-slate-100 transition border-b-1 border-slate-300`}
                                 >
-                                    {/* Serial No */}
+                                    {/* ---------- Serial No ---------- */}
                                     <td className="py-3 px-4">{idx + 1}</td>
 
-                                    {/* Event name */}
+                                    {/* ----------  Event name ---------- */}
                                     <td className="py-3 px-4 max-w-[220px] truncate">
                                         <Link
                                             title={event?.title}
@@ -131,15 +139,18 @@ const AdminEvents = () => {
                                         </Link>
                                     </td>
 
-                                    {/* Event creator */}
+                                    {/* ----------  Event creator ---------- */}
                                     <td className="py-3 px-4">
                                         <div className="flex items-center gap-2">
+
+                                            {/* ---------- user image ---------- */}
                                             <img
                                                 src={event?.creator?.userImage || defaultUser}
                                                 alt="creator"
                                                 className="w-7 h-7 rounded-full object-cover"
                                             />
                                             <span className="truncate max-w-[100px]">
+                                                {/* ---------- user name ---------- */}
                                                 <Link
                                                     title={event?.creator?.name}
                                                     className="hover:underline hover:text-primary transition-all duration-200"
@@ -151,7 +162,7 @@ const AdminEvents = () => {
                                         </div>
                                     </td>
 
-                                    {/* Event type */}
+                                    {/* ---------- Event type ---------- */}
                                     <td
                                         className={`py-3 px-4 ${event?.type === "Online"
                                             ? "text-green-600"
@@ -161,22 +172,22 @@ const AdminEvents = () => {
                                         {event?.type}
                                     </td>
 
-                                    {/* Date */}
+                                    {/* ---------- Date ---------- */}
                                     <td className="py-3 px-4">
                                         {event?.date ? format(new Date(event.date), "MMMM dd, yyyy") : "N/A"}
                                     </td>
 
-                                    {/* Time */}
+                                    {/* ---------- Time ---------- */}
                                     <td className="py-3 px-4">
                                         {hourFormatConverter(event?.timeRange?.start)} - {hourFormatConverter(event?.timeRange?.end)}
                                     </td>
 
-                                    {/* Interested Members */}
+                                    {/* ---------- Interested Members ---------- */}
                                     <td className="py-3 px-4 text-center">
                                         {event?.interestedCount || 0}
                                     </td>
 
-                                    {/* Action */}
+                                    {/* ---------- Action ---------- */}
                                     <td className="py-3 px-4 text-center">
                                         <button
                                             onClick={() => handleDeleteEvent(event._id)}
@@ -189,6 +200,7 @@ const AdminEvents = () => {
                             ))
                         ) : (
                             <tr>
+                                {/* ---------- no events found ---------- */}
                                 <td
                                     colSpan="8"
                                     className="text-center py-6 text-slate-500 font-poppins"

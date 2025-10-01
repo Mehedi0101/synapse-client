@@ -9,7 +9,7 @@ import defaultUser from "../../assets/default_user.jpg";
 import Swal from "sweetalert2";
 import toast from "react-hot-toast";
 
-const UserResourceDetails = () => {
+const UserResourceDetails = ({ display = "" }) => {
 
     // ---------- resource id from url ----------
     const { id } = useParams();
@@ -71,7 +71,7 @@ const UserResourceDetails = () => {
 
     return (
         <div>
-            <UserHeader searchBar="invisible" />
+            <UserHeader searchBar="invisible" display={display} />
 
             <div className="max-w-5xl mx-auto my-10 px-3 sm:px-6 lg:px-8">
                 {/* ---------- Title & Author section ---------- */}
