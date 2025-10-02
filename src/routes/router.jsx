@@ -35,6 +35,7 @@ import AdminMentorship from "../pages/admin_layout/AdminMentorship";
 import AdminJobs from "../pages/admin_layout/AdminJobs";
 import AdminEvents from "../pages/admin_layout/AdminEvents";
 import AdminResources from "../pages/admin_layout/AdminResources";
+import UserMentorshipRequest from "../pages/user_layout/UserMentorshipRequest";
 
 
 const router = createBrowserRouter([
@@ -72,6 +73,11 @@ const router = createBrowserRouter([
                 // ---------- mentorship ----------
                 path: 'mentorship',
                 Component: UserMentorship
+            },
+            {
+                // ---------- mentorship request ----------
+                path: 'mentorship/request',
+                Component: UserMentorshipRequest
             },
             {
                 // ---------- jobs ----------
