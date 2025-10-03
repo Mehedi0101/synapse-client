@@ -36,6 +36,8 @@ import AdminJobs from "../pages/admin_layout/AdminJobs";
 import AdminEvents from "../pages/admin_layout/AdminEvents";
 import AdminResources from "../pages/admin_layout/AdminResources";
 import UserMentorshipRequest from "../pages/user_layout/UserMentorshipRequest";
+import AdminMentorshipDetails from "../pages/admin_layout/AdminMentorshipDetails";
+import UserMentorshipRequestDetails from "../pages/user_layout/UserMentorshipRequestDetails";
 
 
 const router = createBrowserRouter([
@@ -78,6 +80,11 @@ const router = createBrowserRouter([
                 // ---------- mentorship request ----------
                 path: 'mentorship/request',
                 Component: UserMentorshipRequest
+            },
+            {
+                // ---------- mentorship request details ----------
+                path: 'mentorship/request-action/:id',
+                Component: UserMentorshipRequestDetails
             },
             {
                 // ---------- jobs ----------
@@ -212,6 +219,11 @@ const router = createBrowserRouter([
                 // ---------- mentorship ----------
                 path: 'mentorship',
                 Component: AdminMentorship
+            },
+            {
+                // ---------- mentorship details ----------
+                path: 'mentorship/:id',
+                Component: AdminMentorshipDetails
             },
             {
                 // ---------- jobs ----------
