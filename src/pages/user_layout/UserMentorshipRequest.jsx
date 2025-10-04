@@ -9,15 +9,19 @@ import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 
 const UserMentorshipRequest = () => {
+
+    // ---------- user data from auth provider ----------
     const { userDetails } = useContext(AuthContext);
 
+    // ---------- hooks ----------
     const navigate = useNavigate();
 
+    // ---------- request states ----------
     const [goal, setGoal] = useState("");
     const [description, setDescription] = useState("");
     const [selectedMentor, setSelectedMentor] = useState("");
 
-    // ---------- fetch connections of current user ----------
+    // ---------- fetch connections of current user and filter alumni ----------
     const { data: connections = [] } = useQuery({
         queryKey: ["connected-users"],
         queryFn: async () => {
@@ -32,10 +36,12 @@ const UserMentorshipRequest = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
 
+        // ---------- if any field is empty then show error toast ----------
         if (!goal.trim() || !description.trim() || !selectedMentor) {
             return toast.error("Please fill in all fields");
         }
 
+        // ---------- confirmation alert ----------
         Swal.fire({
             html: `
                     <h2 style="color:#0F172A; font-family:Poppins, sans-serif; font-size:22px; font-weight: bold;">Confirm Mentorship Request</h2>
@@ -46,6 +52,8 @@ const UserMentorshipRequest = () => {
             confirmButtonColor: "#6f16d7",
             cancelButtonColor: "#d33",
         }).then((result) => {
+
+            // ---------- after confirmation ----------
             if (result.isConfirmed) {
                 const toastId = toast.loading("Submitting Request...");
 
@@ -62,6 +70,8 @@ const UserMentorshipRequest = () => {
                     .then((res) => {
                         if (res.data?.acknowledged) {
                             toast.success("Request submitted successfully!", { id: toastId });
+
+                            // ---------- navigate to mentorship page ----------
                             navigate("/mentorship");
                         } else {
                             toast.error("Something went wrong", { id: toastId });

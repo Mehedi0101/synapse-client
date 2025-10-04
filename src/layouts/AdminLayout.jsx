@@ -32,9 +32,11 @@ const AdminLayout = () => {
             </section>
 
             {/* ---------- Dynamic content of User Layout ---------- */}
-            <div className="max-w-screen-2xl mx-auto w-full">
+            <div className="flex-1 flex flex-col overflow-y-auto overflow-x-hidden">
                 <AdminHeader></AdminHeader>
-                <Outlet></Outlet>
+                <div className="flex-1 px-2 md:px-5 py-6 overflow-x-auto text-semi-dark">
+                    <Outlet></Outlet>
+                </div>
             </div>
         </div>
 

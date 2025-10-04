@@ -3,11 +3,14 @@ import pendingSvg from "../../../assets/pending.svg";
 const StudentPendingRequest = ({ mentorship }) => {
     return (
         <div className="bg-white rounded-xl sm:p-8 flex flex-col items-center text-center">
+
+            {/* ---------- svg ---------- */}
             <img
                 src={pendingSvg}
                 alt="pending request"
                 className="w-48 max-w-full mb-4"
             />
+
             <h3 className="text-lg font-semibold font-poppins text-dark">
                 Mentorship Request Submitted
             </h3>
@@ -17,6 +20,7 @@ const StudentPendingRequest = ({ mentorship }) => {
                 You will be notified soon about the outcome of your request.
             </p>
 
+            {/* ---------- request overview ---------- */}
             <div className="mt-4 p-3 rounded-lg bg-slate-50 border border-slate-200 text-sm text-slate-600 max-w-md">
                 <p><span className="font-semibold">Goal:</span> {mentorship?.goal}</p>
                 <p><span className="font-semibold">Chosen Mentor:</span> {mentorship?.mentor?.name || "N/A"}</p>

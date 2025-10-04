@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { IoSearch } from "react-icons/io5";
 import { MdDeleteOutline } from "react-icons/md";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import Swal from "sweetalert2";
 import toast from "react-hot-toast";
@@ -11,11 +11,12 @@ import { format } from "date-fns";
 import TableSkeleton from "../../components/skeletons/TableSkeleton";
 
 const AdminMentorships = () => {
-    const queryClient = useQueryClient();
+
+    // ---------- search text state ----------
     const [searchText, setSearchText] = useState("");
 
     // ---------- fetch all mentorship requests ----------
-    const { data: mentorships = [], isPending } = useQuery({
+    const { data: mentorships = [], isPending, refetch } = useQuery({
         queryKey: ["mentorships"],
         queryFn: async () => {
             const res = await axios.get("http://localhost:5000/mentorship");
@@ -23,26 +24,31 @@ const AdminMentorships = () => {
         },
     });
 
-    // ---------- handle delete ----------
+    // ---------- delete mentorship ----------
     const handleDelete = (id) => {
+
+        // ---------- confirmation alert ----------
         Swal.fire({
             html: `
-        <h2 style="color:#0F172A; font-family:Poppins, sans-serif; font-size:22px; font-weight:bold;">Delete Mentorship Request?</h2>
-        <p style="color:#334155; font-family:Open Sans, sans-serif; font-size:16px;margin-top:8px;">This action cannot be undone.</p>
-      `,
-            confirmButtonText: "Yes, Delete",
+                    <h2 style="color:#0F172A; font-family:Poppins, sans-serif; font-size:22px; font-weight:bold;">Delete Mentorship Request?</h2>
+                    <p style="color:#334155; font-family:Open Sans, sans-serif; font-size:16px;margin-top:8px;">This action cannot be undone.</p>
+                `,
+            confirmButtonText: "Yes",
             showCancelButton: true,
             confirmButtonColor: "#6f16d7",
             cancelButtonColor: "#d33",
         }).then((result) => {
+
+            // ---------- if confirmed ----------
             if (result.isConfirmed) {
                 const toastId = toast.loading("Deleting request...");
-                axios
-                    .delete(`http://localhost:5000/mentorship/${id}`)
+
+                // ---------- delete request to server ----------
+                axios.delete(`http://localhost:5000/mentorship/${id}`)
                     .then((res) => {
                         if (res.data?.acknowledged) {
                             toast.success("Request deleted", { id: toastId });
-                            queryClient.invalidateQueries(["mentorships"]);
+                            refetch();
                         } else {
                             toast.error("Failed to delete request", { id: toastId });
                         }
@@ -54,24 +60,29 @@ const AdminMentorships = () => {
 
     // ---------- handle status change ----------
     const handleStatusChange = (id, currentStatus, newStatus, resetSelect) => {
+
+        // ---------- confirmation alert ----------
         Swal.fire({
             html: `
-        <h2 style="color:#0F172A; font-family:Poppins, sans-serif; font-size:22px; font-weight:bold;">Change Status?</h2>
-        <p style="color:#334155; font-family:Open Sans, sans-serif; font-size:16px;margin-top:8px;">Are you sure you want to update status to <strong>${newStatus}</strong>?</p>
-      `,
+                    <h2 style="color:#0F172A; font-family:Poppins, sans-serif; font-size:22px; font-weight:bold;">Change Status?</h2>
+                    <p style="color:#334155; font-family:Open Sans, sans-serif; font-size:16px;margin-top:8px;">Are you sure you want to update status to <strong>${newStatus}</strong>?</p>
+                `,
             confirmButtonText: "Yes",
             showCancelButton: true,
             confirmButtonColor: "#6f16d7",
             cancelButtonColor: "#d33",
         }).then((result) => {
+
+            // ---------- if confirmed ----------
             if (result.isConfirmed) {
                 const toastId = toast.loading("Updating status...");
-                axios
-                    .patch(`http://localhost:5000/mentorship/${id}`, { status: newStatus })
+
+                // ---------- patch request to server to update status ----------
+                axios.patch(`http://localhost:5000/mentorship/${id}`, { status: newStatus })
                     .then((res) => {
                         if (res.data?.acknowledged) {
                             toast.success("Status updated", { id: toastId });
-                            queryClient.invalidateQueries(["mentorships"]);
+                            refetch();
                         } else {
                             toast.error("Failed to update status", { id: toastId });
                             resetSelect(currentStatus); // rollback if backend failed
@@ -101,20 +112,24 @@ const AdminMentorships = () => {
     const getStatusColor = (status) => {
         switch (status) {
             case "pending":
-                return "text-yellow-600 bg-yellow-100";
+                return "text-amber-600 bg-amber-100";
             case "assigned":
                 return "text-blue-600 bg-blue-100";
             case "accepted":
-                return "text-green-600 bg-green-100";
+                return "text-emerald-600 bg-emerald-100";
             case "rejected":
                 return "text-red-600 bg-red-100";
+            case "completed":
+                return "text-purple-700 bg-purple-100";
+            case "cancelled":
+                return "text-gray-600 bg-gray-200";
             default:
-                return "text-gray-600 bg-gray-100";
+                return "text-slate-600 bg-slate-100";
         }
     };
 
     return (
-        <div className="mx-2 md:mx-5 my-8 text-semi-dark">
+        <div>
             {/* ---------- Heading ---------- */}
             <h2 className="text-2xl md:text-3xl font-bold font-poppins mb-6 text-dark">
                 Manage Mentorship Requests
@@ -149,6 +164,8 @@ const AdminMentorships = () => {
                     </thead>
                     <tbody>
                         {isPending ? (
+
+                            // ---------- skeleton if data loading ----------
                             <tr>
                                 <td colSpan="8" className="text-center py-6 text-slate-500">
                                     <TableSkeleton columns={8} />
@@ -161,18 +178,21 @@ const AdminMentorships = () => {
                                     className={`${idx % 2 === 0 ? "bg-white" : "bg-gray-50"
                                         } hover:bg-slate-100 transition`}
                                 >
-                                    {/* Serial No */}
+                                    {/* ---------- serial no ---------- */}
                                     <td className="py-3 px-4">{idx + 1}</td>
 
-                                    {/* Student */}
+                                    {/* ---------- student ---------- */}
                                     <td className="py-3 px-4">
                                         <div className="flex items-center gap-2">
+
+                                            {/* ---------- student image ---------- */}
                                             <img
                                                 src={m?.student?.userImage || defaultUser}
                                                 alt="student"
                                                 className="w-7 h-7 rounded-full object-cover"
                                             />
 
+                                            {/* ---------- student name ---------- */}
                                             <Link
                                                 title={m?.student?.name}
                                                 to={`/admin/users/${m?.student?._id}`}
@@ -183,15 +203,18 @@ const AdminMentorships = () => {
                                         </div>
                                     </td>
 
-                                    {/* Alumni */}
+                                    {/* ---------- mentor ---------- */}
                                     <td className="py-3 px-4">
                                         <div className="flex items-center gap-2">
+
+                                            {/* ---------- mentor image ---------- */}
                                             <img
                                                 src={m?.mentor?.userImage || defaultUser}
                                                 alt="alumni"
                                                 className="w-7 h-7 rounded-full object-cover"
                                             />
 
+                                            {/* ---------- mentor name ---------- */}
                                             <Link
                                                 title={m?.mentor?.name}
                                                 to={`/admin/users/${m?.mentor?._id}`}
@@ -202,7 +225,7 @@ const AdminMentorships = () => {
                                         </div>
                                     </td>
 
-                                    {/* Goal */}
+                                    {/* ---------- goal ---------- */}
                                     <td className="py-3 px-4 max-w-[200px] truncate" title={m?.goal}>
                                         <Link
                                             title={m?.mentor?.name}
@@ -213,12 +236,12 @@ const AdminMentorships = () => {
                                         </Link>
                                     </td>
 
-                                    {/* Requested On */}
+                                    {/* ---------- requested on ---------- */}
                                     <td className="py-3 px-4">
                                         {m?.createdAt ? format(new Date(m.createdAt), "MMMM dd, yyyy") : "N/A"}
                                     </td>
 
-                                    {/* Status */}
+                                    {/* ---------- status ---------- */}
                                     <td className="py-3 px-4">
                                         <span
                                             className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(
@@ -229,7 +252,7 @@ const AdminMentorships = () => {
                                         </span>
                                     </td>
 
-                                    {/* Change Status */}
+                                    {/* ---------- change status ---------- */}
                                     <td className="py-3 px-4 text-center">
                                         <select
                                             value={m.status}
@@ -249,7 +272,7 @@ const AdminMentorships = () => {
                                         </select>
                                     </td>
 
-                                    {/* Delete Action */}
+                                    {/* ---------- delete ---------- */}
                                     <td className="py-3 px-4 text-center">
                                         <button
                                             onClick={(e) => {
@@ -265,6 +288,8 @@ const AdminMentorships = () => {
                             ))
                         ) : (
                             <tr>
+
+                                {/* ---------- if no mentorship data ---------- */}
                                 <td
                                     colSpan="8"
                                     className="text-center py-6 text-slate-500 font-poppins"

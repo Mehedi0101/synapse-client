@@ -74,7 +74,7 @@ const AdminEvents = () => {
             );
 
     return (
-        <div className="mx-2 md:mx-5 my-8 text-semi-dark">
+        <div>
             {/* ---------- Heading ---------- */}
             <h2 className="text-2xl md:text-3xl font-bold font-poppins mb-6 text-dark">
                 Manage Events
@@ -93,7 +93,7 @@ const AdminEvents = () => {
             </div>
 
             {/* ---------- Events Table ---------- */}
-            <div className="overflow-x-auto rounded-lg shadow-md">
+            <div className="overflow-x-scroll rounded-lg shadow-md">
                 <table className="w-full text-left text-xs md:text-sm font-poppins">
                     <thead className="bg-gradient-to-r from-primary to-purple-500 text-white text-sm">
                         <tr>

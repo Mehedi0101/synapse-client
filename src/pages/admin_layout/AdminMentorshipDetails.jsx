@@ -18,6 +18,7 @@ const AdminMentorshipDetails = () => {
         enabled: !!id,
     });
 
+    // ---------- if data loading ----------
     if (isPending) {
         return (
             <div className="mx-2 md:mx-5 my-8 text-semi-dark text-center">
@@ -26,6 +27,7 @@ const AdminMentorshipDetails = () => {
         );
     }
 
+    // ---------- if no mentorship details found ----------
     if (!mentorship) {
         return (
             <div className="mx-2 md:mx-5 my-8 text-semi-dark text-center">
@@ -35,7 +37,7 @@ const AdminMentorshipDetails = () => {
     }
 
     return (
-        <div className="mx-2 md:mx-5 my-8 text-semi-dark">
+        <div>
             {/* ---------- Back button ---------- */}
             <Link
                 to="/admin/mentorship"
@@ -50,35 +52,49 @@ const AdminMentorshipDetails = () => {
             </h2>
 
             {/* ---------- Main card ---------- */}
-            <div className="bg-white rounded-xl shadow-md p-6 space-y-8">
+            <div className="bg-white rounded-xl shadow-md sm:p-6 space-y-8">
+
                 {/* ---------- Student & Mentor Info ---------- */}
                 <div className="grid md:grid-cols-2 gap-8">
+
                     {/* ---------- Student ---------- */}
                     <div className="flex items-center gap-4">
+
+                        {/* ---------- student image ---------- */}
                         <img
                             src={mentorship.student?.userImage || defaultUser}
                             alt={mentorship.student?.name}
                             className="w-16 h-16 rounded-full object-cover shadow"
                         />
                         <div>
+
+                            {/* ---------- student name ---------- */}
                             <p className="font-semibold text-lg text-dark">
                                 {mentorship.student?.name}
                             </p>
+
+                            {/* ---------- role ---------- */}
                             <p className="text-sm text-green-600 font-medium">Student</p>
                         </div>
                     </div>
 
                     {/* ---------- Mentor ---------- */}
                     <div className="flex items-center gap-4">
+
+                        {/* ---------- mentor image ---------- */}
                         <img
                             src={mentorship.mentor?.userImage || defaultUser}
                             alt={mentorship.mentor?.name}
                             className="w-16 h-16 rounded-full object-cover shadow"
                         />
                         <div>
+
+                            {/* ---------- mentor name ---------- */}
                             <p className="font-semibold text-lg text-dark">
                                 {mentorship.mentor?.name}
                             </p>
+
+                            {/* ---------- role ---------- */}
                             <p className="text-sm text-blue-600 font-medium">Mentor</p>
                         </div>
                     </div>
@@ -91,10 +107,14 @@ const AdminMentorshipDetails = () => {
                     </h3>
 
                     <div className="grid md:grid-cols-2 gap-6">
+
+                        {/* ---------- goal ---------- */}
                         <div>
                             <p className="text-sm text-slate-500">Goal</p>
                             <p className="text-base font-medium">{mentorship.goal}</p>
                         </div>
+
+                        {/* ---------- status ---------- */}
                         <div>
                             <p className="text-sm text-slate-500">Status</p>
                             <span
@@ -113,12 +133,16 @@ const AdminMentorshipDetails = () => {
                                 {mentorship.status}
                             </span>
                         </div>
+
+                        {/* ---------- request date ---------- */}
                         <div>
                             <p className="text-sm text-slate-500">Requested At</p>
                             <p className="text-base font-medium">
                                 {format(new Date(mentorship.createdAt), "MMMM dd, yyyy")}
                             </p>
                         </div>
+
+                        {/* ---------- mentor's current mentorship program count ---------- */}
                         <div>
                             <p className="text-sm text-slate-500">Mentor's Current Load</p>
                             <p className="text-base font-medium">
@@ -127,6 +151,7 @@ const AdminMentorshipDetails = () => {
                         </div>
                     </div>
 
+                    {/* ---------- description ---------- */}
                     <div>
                         <p className="text-sm text-slate-500">Description</p>
                         <p className="text-base mt-1">{mentorship.description}</p>

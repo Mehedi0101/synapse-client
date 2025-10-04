@@ -69,7 +69,7 @@ const AdminJobs = () => {
         );
 
     return (
-        <div className="mx-2 md:mx-5 my-8 text-semi-dark">
+        <div>
             {/* ---------- Heading ---------- */}
             <h2 className="text-2xl md:text-3xl font-bold font-poppins mb-6 text-dark">
                 Manage Job Posts

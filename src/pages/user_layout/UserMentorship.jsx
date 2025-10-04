@@ -8,37 +8,36 @@ import StudentPendingRequest from "../../components/user_layout/UserMentorship/S
 import AlumniNotAssigned from "../../components/user_layout/UserMentorship/AlumniNotAssigned";
 import MentorshipStatusSkeleton from "../../components/skeletons/MentorshipStatusSkeleton";
 import AlumniMentorshipTabs from "../../components/user_layout/UserMentorship/AlumniMentorshipTabs";
+import StudentMentorshipInProgress from "../../components/user_layout/UserMentorship/StudentMentorshipInProgress";
 
 
 const UserMentorship = () => {
     // ---------- user details from context ----------
     const { userDetails } = useContext(AuthContext);
 
-    // ---------- role based rendering ----------
+    // ---------- role detection ----------
     const isStudent = userDetails?.role === "Student";
     const isAlumni = userDetails?.role === "Alumni";
 
-    // ---------- fetch mentorship data of current user ----------
+    // ---------- fetch mentorship data (student) ----------
     const { data: mentorship = null, isPending: mentorshipPending } = useQuery({
         queryKey: ["mentorship-student", userDetails?._id],
         queryFn: async () => {
             const res = await axios.get(`http://localhost:5000/mentorship/student/${userDetails?._id}`);
             return res.data;
         },
-        enabled: !!userDetails?._id
+        enabled: isStudent && !!userDetails?._id
     })
 
-    // ---------- fetch mentorship data of alumni ----------
+    // ---------- fetch mentorship data (alumni) ----------
     const { data: mentor = [], isPending: mentorPending } = useQuery({
         queryKey: ["mentorship-alumni", userDetails?._id],
         queryFn: async () => {
             const res = await axios.get(`http://localhost:5000/mentorship/mentor/${userDetails?._id}`);
             return res.data;
         },
-        enabled: !!userDetails?._id
+        enabled: isAlumni && !!userDetails?._id
     })
-
-    console.log(mentor);
 
     return (
         <div>
@@ -51,29 +50,35 @@ const UserMentorship = () => {
                     Mentorship
                 </h2>
 
+                {/* ---------- skeleton when data loading ---------- */}
                 {isStudent && mentorshipPending &&
                     <MentorshipStatusSkeleton></MentorshipStatusSkeleton>
                 }
 
-                {/* ---------- Student view (no mentorship request) ---------- */}
+                {/* ---------- Student view (no mentorship request made) ---------- */}
                 {isStudent && !mentorshipPending && !mentorship &&
                     <StudentNoRequest></StudentNoRequest>
                 }
 
                 {/* ---------- Student view (pending mentorship request) ---------- */}
-                {isStudent && !mentorshipPending && mentorship && (mentorship?.status === "pending" || mentorship?.status === "assigned") &&
+                {isStudent && !mentorshipPending && mentorship && mentorship?.status !== "accepted" &&
                     <StudentPendingRequest mentorship={mentorship}></StudentPendingRequest>
+                }
+
+                {/* ---------- Student view (in progress mentorship) ---------- */}
+                {isStudent && !mentorshipPending && mentorship && mentorship?.status === "accepted" &&
+                    <StudentMentorshipInProgress mentorship={mentorship}></StudentMentorshipInProgress>
                 }
 
 
 
 
                 {/* ---------- Alumni view (no mentees) ---------- */}
-
                 {isAlumni && mentorPending &&
                     <MentorshipStatusSkeleton></MentorshipStatusSkeleton>
                 }
 
+                {/* ---------- alumni no request and in progress mentorship ---------- */}
                 {isAlumni && !mentorPending && mentor.length === 0 &&
                     <AlumniNotAssigned></AlumniNotAssigned>
                 }

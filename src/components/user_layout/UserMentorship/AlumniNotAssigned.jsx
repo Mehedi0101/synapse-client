@@ -3,11 +3,14 @@ import menteeSvg from "../../../assets/mentee.svg";
 const AlumniNotAssigned = () => {
     return (
         <div className="bg-white rounded-xl sm:p-8 flex flex-col items-center text-center">
+
+            {/* ---------- svg ---------- */}
             <img
                 src={menteeSvg}
                 alt="mentees placeholder"
                 className="w-48 max-w-full mb-4"
             />
+
             <h3 className="text-lg font-semibold font-poppins text-dark">
                 No Mentees Assigned
             </h3>
