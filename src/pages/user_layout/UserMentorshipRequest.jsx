@@ -89,7 +89,7 @@ const UserMentorshipRequest = () => {
 
             <div className="mx-2 md:mx-5 my-8 text-semi-dark">
                 {/* ---------- Heading ---------- */}
-                <h2 className="font-poppins text-xl font-bold mb-6 text-dark">
+                <h2 className="font-poppins text-xl lg:text-2xl font-bold mb-6 text-dark">
                     Request a Mentor
                 </h2>
 

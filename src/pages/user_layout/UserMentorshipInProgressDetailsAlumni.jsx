@@ -166,7 +166,7 @@ const UserMentorshipInProgressDetailsAlumni = () => {
             <UserHeader searchBar="invisible" />
 
             <div className="mx-2 md:mx-5 my-8 text-semi-dark">
-                <h2 className="font-poppins text-xl font-bold mb-8 text-dark">
+                <h2 className="font-poppins text-xl lg:text-2xl font-bold mb-8 text-dark">
                     Mentorship Progress
                 </h2>
 

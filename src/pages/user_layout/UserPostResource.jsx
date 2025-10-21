@@ -69,7 +69,7 @@ const UserPostResource = () => {
                 <div className="space-y-6">
                     {/* ---------- title ---------- */}
                     <div>
-                        <h2 className="text-lg lg:text-xl font-bold text-dark font-poppins border-b-2 pb-2 mb-4">
+                        <h2 className="text-xl lg:text-2xl font-bold text-dark font-poppins border-b-2 pb-2 mb-4">
                             Post a Resource
                         </h2>
                         <input

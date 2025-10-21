@@ -34,8 +34,8 @@ const UserJobs = () => {
                 {userDetails?.role === "Alumni" && <AlumniJobPost></AlumniJobPost>}
 
                 {/* ---------- available job display section ---------- */}
-                <div className="mt-12">
-                    <h2 className="font-poppins text-xl font-bold text-dark">Available Job Opportunities</h2>
+                <div className={`${userDetails?.role === "Alumni" && "mt-12"}`}>
+                    <h2 className="font-poppins text-xl lg:text-2xl font-bold text-dark">Available Job Opportunities</h2>
 
                     {/* ---------- jobs container ---------- */}
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mt-6">

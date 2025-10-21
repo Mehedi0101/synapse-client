@@ -28,7 +28,7 @@ const AlumniJobPost = () => {
 
             {/* ---------- heading and button container ---------- */}
             <div className="flex gap-2 justify-between items-center">
-                <h2 className="font-poppins text-xl font-bold text-dark">My Job Posts ({myJobPosts.length})</h2>
+                <h2 className="font-poppins text-xl lg:text-2xl font-bold text-dark">My Job Posts ({myJobPosts.length})</h2>
 
                 {/* ---------- job posting button ---------- */}
                 <Link to='/create-job-post'>

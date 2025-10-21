@@ -46,7 +46,7 @@ const UserResources = () => {
 
                     {/* ---------- heading and button container ---------- */}
                     <div className="flex gap-2 justify-between items-center">
-                        <h2 className="font-poppins text-xl font-bold text-dark">My Contributions ({myResources.length})</h2>
+                        <h2 className="font-poppins text-xl lg:text-2xl font-bold text-dark">My Contributions ({myResources.length})</h2>
 
                         {/* ---------- add contribution button ---------- */}
                         <Link to='/post-resource'>

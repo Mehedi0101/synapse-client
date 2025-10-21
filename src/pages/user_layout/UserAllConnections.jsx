@@ -29,7 +29,7 @@ const UserAllConnections = () => {
 
             {/* ---------- main section ---------- */}
             <div className="mx-2 md:mx-5 my-8 text-semi-dark">
-                <h2 className="font-poppins text-xl font-bold text-dark">My Connections ({myConnections.length})</h2>
+                <h2 className="font-poppins text-xl lg:text-2xl font-bold text-dark">My Connections ({myConnections.length})</h2>
 
                 {/* ---------- card container ---------- */}
                 <div className="mt-6 space-y-3">

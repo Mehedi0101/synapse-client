@@ -60,7 +60,7 @@ const UserConnections = () => {
 
                 {/* ---------- connection request container ---------- */}
                 <div>
-                    <h2 className="font-poppins text-xl font-bold text-dark">Connection Requests</h2>
+                    <h2 className="font-poppins text-xl md:text-2xl font-bold text-dark">Connection Requests</h2>
 
                     {/* ---------- request or received connections tab ---------- */}
                     <div className="flex gap-4 border-b border-gray-200 font-semibold mt-6">
@@ -109,7 +109,7 @@ const UserConnections = () => {
 
                 {/* ---------- People You May Connect section ---------- */}
                 <div className="mt-12">
-                    <h2 className="font-poppins text-xl font-bold text-dark">People You May Connect With</h2>
+                    <h2 className="font-poppins text-xl lg:text-2xl font-bold text-dark">People You May Connect With</h2>
                     <div className="grid min-[400px]:grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-x-4 gap-y-8 min-[400px]:gap-y-6 mt-6">
                         {
                             // ---------- check if peopleYouMayConnect is empty or not ---------- 
