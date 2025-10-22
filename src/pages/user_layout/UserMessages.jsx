@@ -4,7 +4,9 @@ import InboxTab from "../../components/user_layout/UserMessages/InboxTab";
 import StartConversationTab from "../../components/user_layout/UserMessages/StartConversationTab";
 
 const UserMessage = () => {
-    const [activeTab, setActiveTab] = useState("inbox"); // inbox | new
+
+    // ---------- tab state ----------
+    const [activeTab, setActiveTab] = useState("inbox");
 
     return (
         <div className="font-open-sans">
@@ -18,10 +20,12 @@ const UserMessage = () => {
                 </h2>
 
                 {/* ---------- Tabs ---------- */}
-                <div className="flex gap-3 border-b border-gray-300 mb-6">
+                <div className="flex gap-3 border-b border-gray-300 mb-6 text-sm md:text-base">
+
+                    {/* ---------- inbox tab ---------- */}
                     <button
                         onClick={() => setActiveTab("inbox")}
-                        className={`pb-2 px-3 font-semibold transition-all ${activeTab === "inbox"
+                        className={`pb-2 px-3 font-semibold transition-all cursor-pointer ${activeTab === "inbox"
                             ? "text-primary border-b-2 border-primary"
                             : "text-slate-500 hover:text-primary"
                             }`}
@@ -29,9 +33,10 @@ const UserMessage = () => {
                         Inbox
                     </button>
 
+                    {/* ---------- new conversation tab ---------- */}
                     <button
                         onClick={() => setActiveTab("new")}
-                        className={`pb-2 px-3 font-semibold transition-all ${activeTab === "new"
+                        className={`pb-2 px-3 font-semibold transition-all cursor-pointer ${activeTab === "new"
                             ? "text-primary border-b-2 border-primary"
                             : "text-slate-500 hover:text-primary"
                             }`}

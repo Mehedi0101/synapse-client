@@ -39,6 +39,7 @@ import UserMentorshipRequest from "../pages/user_layout/UserMentorshipRequest";
 import AdminMentorshipDetails from "../pages/admin_layout/AdminMentorshipDetails";
 import UserMentorshipRequestDetails from "../pages/user_layout/UserMentorshipRequestDetails";
 import UserMentorshipInProgressDetailsAlumni from "../pages/user_layout/UserMentorshipInProgressDetailsAlumni";
+import UserChatPage from "../pages/user_layout/UserChatPage";
 
 
 const router = createBrowserRouter([
@@ -61,6 +62,11 @@ const router = createBrowserRouter([
                 // ---------- messages ----------
                 path: 'messages',
                 Component: UserMessages
+            },
+            {
+                // ---------- chat page ----------
+                path: 'messages/chat/:id',
+                Component: UserChatPage
             },
             {
                 // ---------- connection request ----------
