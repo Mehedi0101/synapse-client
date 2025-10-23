@@ -9,7 +9,7 @@ import { Link } from "react-router-dom";
 // eslint-disable-next-line no-unused-vars
 import { motion } from "motion/react";
 
-const SentRequestCard = ({ req }) => {
+const SentRequestCard = ({ req, refetchSentRequests, refetchPeopleYouMayConnect }) => {
 
     // ---------- button status ----------
     const [clicked, setClicked] = useState(false);
@@ -30,6 +30,8 @@ const SentRequestCard = ({ req }) => {
                 if (data?.data?.acknowledged) {
                     toast.success('Request Cancelled', { id: toastId });
                     setClicked(true);
+                    refetchSentRequests();
+                    refetchPeopleYouMayConnect();
                 }
 
                 // ---------- delete request unsuccessful ----------

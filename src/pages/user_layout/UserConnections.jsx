@@ -20,7 +20,7 @@ const UserConnections = () => {
 
 
     // ---------- for fetching people you connect ----------
-    const { data: peopleYouMayConnect = [], isPending: peopleYouMayKnowLoading } = useQuery({
+    const { data: peopleYouMayConnect = [], isPending: peopleYouMayKnowLoading, refetch: refetchPeopleYouMayConnect } = useQuery({
         queryKey: ["people-you-may-connect", userDetails?._id],
         queryFn: async () => {
             const res = await axios.get(`http://localhost:5000/users/available/${userDetails._id}`);
@@ -30,7 +30,7 @@ const UserConnections = () => {
     })
 
     // ---------- for fetching all received requests ----------
-    const { data: receivedRequests = [], isPending: receivedRequestsLoading } = useQuery({
+    const { data: receivedRequests = [], isPending: receivedRequestsLoading, refetch: refetchReceivedRequests } = useQuery({
         queryKey: ["received-requests", userDetails?._id],
         queryFn: async () => {
             const res = await axios.get(`http://localhost:5000/connections/received/${userDetails._id}`);
@@ -40,7 +40,7 @@ const UserConnections = () => {
     })
 
     // ---------- for fetching all sent requests ----------
-    const { data: sentRequests = [], isPending: sentRequestsLoading } = useQuery({
+    const { data: sentRequests = [], isPending: sentRequestsLoading, refetch: refetchSentRequests } = useQuery({
         queryKey: ["sent-requests", userDetails?._id],
         queryFn: async () => {
             const res = await axios.get(`http://localhost:5000/connections/sent/${userDetails._id}`);
@@ -79,7 +79,7 @@ const UserConnections = () => {
                                     (
                                         // ---------- if receivedRequests is not empty ---------- 
                                         receivedRequests?.length > 0 ?
-                                            receivedRequests.map(req => <ReceivedRequestCard key={req._id} req={req}></ReceivedRequestCard>)
+                                            receivedRequests.map(req => <ReceivedRequestCard key={req._id} req={req} refetchReceivedRequests={refetchReceivedRequests} refetchPeopleYouMayConnect={refetchPeopleYouMayConnect}></ReceivedRequestCard>)
                                             :
                                             // ---------- if receivedRequests is empty ---------- 
                                             <div className="col-span-1 min-[400px]:col-span-2 sm:col-span-3 lg:col-span-4 2xl:col-span-5 min-h-40 flex justify-center items-center text-base sm:text-lg font-bold text-center">
@@ -95,7 +95,7 @@ const UserConnections = () => {
                                         :
                                         sentRequests?.length > 0 ?
                                             // ---------- if sentRequests is not empty ---------- 
-                                            sentRequests.map(req => <SentRequestCard key={req._id} req={req}></SentRequestCard>)
+                                            sentRequests.map(req => <SentRequestCard key={req._id} req={req} refetchSentRequests={refetchSentRequests} refetchPeopleYouMayConnect={refetchPeopleYouMayConnect}></SentRequestCard>)
                                             :
                                             // ---------- if sentRequests is empty ----------
                                             <div className="col-span-1 min-[400px]:col-span-2 sm:col-span-3 lg:col-span-4 2xl:col-span-5 min-h-40 flex justify-center items-center text-base sm:text-lg font-bold text-center">
@@ -119,7 +119,7 @@ const UserConnections = () => {
                                 :
                                 peopleYouMayConnect?.length > 0 ?
                                     // ---------- not empty ---------- 
-                                    peopleYouMayConnect.map(user => <ConnectionCard key={user._id} user={user}></ConnectionCard>)
+                                    peopleYouMayConnect.map(user => <ConnectionCard key={user._id} user={user} refetchPeopleYouMayConnect={refetchPeopleYouMayConnect} refetchSentRequests={refetchSentRequests}></ConnectionCard>)
                                     :
                                     // ---------- empty ---------- 
                                     <div className="col-span-1 min-[400px]:col-span-2 sm:col-span-3 lg:col-span-4 2xl:col-span-5 min-h-40 flex justify-center items-center text-base sm:text-lg font-bold text-center">

@@ -9,7 +9,7 @@ import { Link } from "react-router-dom";
 // eslint-disable-next-line no-unused-vars
 import { motion } from "motion/react";
 
-const ConnectionCard = ({ user }) => {
+const ConnectionCard = ({ user, refetchPeopleYouMayConnect, refetchSentRequests }) => {
     // ---------- user data from auth provider ----------
     const { userDetails } = useContext(AuthContext);
 
@@ -34,7 +34,9 @@ const ConnectionCard = ({ user }) => {
                 // ---------- post request successful ----------
                 if (data?.data?.acknowledged) {
                     toast.success('Request Sent', { id: toastId });
-                    setClicked(true)
+                    setClicked(true);
+                    refetchPeopleYouMayConnect();
+                    refetchSentRequests();
                 }
 
                 // ---------- post request unsuccessful ----------

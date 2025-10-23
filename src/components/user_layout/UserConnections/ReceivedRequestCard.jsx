@@ -10,7 +10,7 @@ import { Link } from "react-router-dom";
 // eslint-disable-next-line no-unused-vars
 import { motion } from "motion/react";
 
-const ReceivedRequestCard = ({ req }) => {
+const ReceivedRequestCard = ({ req, refetchReceivedRequests, refetchPeopleYouMayConnect }) => {
 
     // ---------- button status ----------
     const [requestStatus, setRequestStatus] = useState("pending");
@@ -29,6 +29,7 @@ const ReceivedRequestCard = ({ req }) => {
                 if (data?.data?.acknowledged) {
                     toast.success('Accepted', { id: toastId });
                     setRequestStatus("accepted");
+                    refetchReceivedRequests();
                 }
 
                 // ---------- accept unsuccessful ----------
@@ -55,6 +56,8 @@ const ReceivedRequestCard = ({ req }) => {
                 if (data?.data?.acknowledged) {
                     toast.success('Cancelled', { id: toastId });
                     setRequestStatus("cancelled");
+                    refetchReceivedRequests();
+                    refetchPeopleYouMayConnect();
                 }
 
                 // ---------- delete request unsuccessful ----------
