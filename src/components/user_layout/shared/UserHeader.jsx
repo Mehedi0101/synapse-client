@@ -8,53 +8,101 @@ import AuthContext from "../../../contexts/AuthContext";
 import toast from "react-hot-toast";
 // eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from "motion/react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import axios from "axios";
+import Swal from "sweetalert2";
 
 const UserHeader = ({ searchBar = "", display = "" }) => {
-    // ---------- data from auth provider ----------
     const { userDetails, logout } = useContext(AuthContext);
-
-    // ---------- state of the dropdown ----------
     const [open, setOpen] = useState(false);
+    const [notificationOpen, setNotificationOpen] = useState(false);
     const dropdownRef = useRef(null);
+    const NotificationRef = useRef(null);
+    const queryClient = useQueryClient();
 
-    // ---------- logout function ----------
+    // ---------- Fetch Notifications ----------
+    const { data: notifications = [] } = useQuery({
+        queryKey: ["notifications", userDetails?._id],
+        queryFn: async () => {
+            const res = await axios.get(`http://localhost:5000/notifications/${userDetails._id}`);
+            return res.data;
+        },
+        enabled: !!userDetails?._id,
+        // refetchInterval: 5000, // optional: poll every 5 sec
+    });
+
+    // ---------- Delete Notifications ----------
+    const deleteMutation = useMutation({
+        mutationFn: async () => {
+            await axios.delete(`http://localhost:5000/notifications/${userDetails._id}`);
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries(["notifications", userDetails._id]);
+        },
+    });
+
+    // ---------- Logout Function ----------
     const handleLogOut = () => {
-
-        // ---------- loading toast ----------
-        const toastId = toast.loading('Creating account...');
-
+        const toastId = toast.loading("Logging out...");
         logout()
-            .then(() => {
-                // ---------- success toast ----------
-                toast.success('Logged out', { id: toastId });
-            })
-            .catch(() => {
-                // ---------- error toast ----------
-                toast.error('Something went wrong', { id: toastId });
-            })
-    }
+            .then(() => toast.success("Logged out", { id: toastId }))
+            .catch(() => toast.error("Something went wrong", { id: toastId }));
+    };
 
-    // ---------- click outside to close ----------
+    // ---------- Close dropdowns when clicking outside ----------
     useEffect(() => {
         const handleClickOutside = (event) => {
-            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+            if (
+                dropdownRef.current &&
+                !dropdownRef.current.contains(event.target) &&
+                NotificationRef.current &&
+                !NotificationRef.current.contains(event.target)
+            ) {
+                if (notificationOpen) {
+                    setNotificationOpen(false);
+                    // delete notifications when closing
+                    if (notifications.length > 0) deleteMutation.mutate();
+                }
                 setOpen(false);
             }
         };
         document.addEventListener("mousedown", handleClickOutside);
-        return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
-        };
-    }, []);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, [notificationOpen, notifications, deleteMutation]);
+
+    // ---------- SweetAlert for Small Devices ----------
+    const handleMobileNotif = async () => {
+        if (!notifications.length) {
+            Swal.fire({
+                icon: "info",
+                title: "No new notifications",
+                timer: 1500,
+                showConfirmButton: false,
+            });
+            return;
+        }
+
+        const htmlList = notifications
+            .map((n) => `<li class="text-left mb-1">${n.message}</li>`)
+            .join("");
+
+        await Swal.fire({
+            title: "Notifications",
+            html: `<ul class="list-disc pl-5 text-gray-700 text-sm">${htmlList}</ul>`,
+            confirmButtonText: "Close",
+            confirmButtonColor: "#3B82F6",
+        });
+
+        // delete after closing
+        deleteMutation.mutate();
+    };
 
     return (
-        // ---------- header container ----------
-        <div className={`${display === "hidden" && "hidden"} sticky top-0 right-0 flex sm:gap-4 gap-2 items-center justify-between text-sm lg:text-base pr-2 md:pr-5 pl-12 md:pl-5 py-1 md:py-3 bg-white border-b-1 border-b-gray-200 z-20`}>
-
-            {/* ---------- search bar ---------- */}
+        <div
+            className={`${display === "hidden" && "hidden"} sticky top-0 right-0 flex sm:gap-4 gap-2 items-center justify-between text-sm lg:text-base pr-2 md:pr-5 pl-12 md:pl-5 py-1 md:py-3 bg-white border-b border-gray-200 z-20`}
+        >
+            {/* ---------- Search Bar ---------- */}
             <div className={`flex items-center w-full ${searchBar}`}>
-
-                {/*---------- search icon ----------*/}
                 <MdOutlineSearch className="text-lg lg:text-xl text-ash" />
                 <input
                     className="-ml-5 pl-6 py-2.5 w-full outline-none focus:ring-0 focus:outline-none"
@@ -63,29 +111,59 @@ const UserHeader = ({ searchBar = "", display = "" }) => {
                 />
             </div>
 
-            {/* ---------- notification and user section container ---------- */}
+            {/* ---------- Notification + User Section ---------- */}
             <div className="flex gap-4 md:gap-6 lg:gap-8 items-center min-w-fit relative">
-
-                {/* ---------- notification container ---------- */}
-                <div className="hidden sm:block relative cursor-pointer">
-
-                    {/* ---------- notification icon ---------- */}
+                {/* ---------- Notification Icon (Desktop) ---------- */}
+                <div
+                    className="hidden sm:block relative cursor-pointer"
+                    onClick={() => {
+                        if (notificationOpen && notifications.length > 0) {
+                            // user is closing the dropdown → delete notifications
+                            deleteMutation.mutate();
+                        }
+                        setNotificationOpen(!notificationOpen);
+                    }}
+                    ref={NotificationRef}
+                >
                     <IoIosNotificationsOutline className="text-2xl lg:text-3xl text-dark-ash" />
 
-                    {/* ---------- notification dot ---------- */}
-                    {/* <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full"></span> */}
+                    {notifications.length > 0 && (
+                        <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[8px] lg:text-[10px] font-bold w-3.5 lg:w-4 h-3.5 lg:h-4 rounded-full flex justify-center items-center">
+                            {notifications.length > 9 ? "9+" : notifications.length}
+                        </span>
+                    )}
 
-                    {/* ---------- notification number ---------- */}
-                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[8px] lg:text-[10px] font-bold w-3 lg:w-4 h-3 lg:h-4 rounded-full flex justify-center items-center">
-                        3
-                    </span>
-
+                    {/* ---------- Notification Dropdown ---------- */}
+                    <AnimatePresence>
+                        {notificationOpen && (
+                            <motion.div
+                                initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                                animate={{ opacity: 1, y: 0, scale: 1 }}
+                                exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                                transition={{ duration: 0.2, ease: "easeOut" }}
+                                className="absolute right-0 mt-2 w-72 bg-white rounded-lg shadow-lg border border-gray-100 z-50 max-h-80 overflow-y-auto"
+                            >
+                                {notifications.length === 0 ? (
+                                    <p className="text-sm text-center text-gray-500 py-3">
+                                        No new notifications
+                                    </p>
+                                ) : (
+                                    notifications.map((n, i) => (
+                                        <div
+                                            key={i}
+                                            className="px-8 py-2 text-sm text-gray-700 hover:bg-gray-50 border-b border-slate-200 last:border-none"
+                                        >
+                                            {n.message}
+                                        </div>
+                                    ))
+                                )}
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
                 </div>
 
-                {/* ---------- avatar + dropdown wrapper ---------- */}
+                {/* ---------- Avatar + Dropdown ---------- */}
                 <div className="relative" ref={dropdownRef}>
-
-                    {/* ---------- avatar ---------- */}
                     <img
                         className="w-10 lg:w-12 h-10 lg:h-12 rounded-full object-cover cursor-pointer"
                         src={userDetails?.userImage || defaultUser}
@@ -93,7 +171,6 @@ const UserHeader = ({ searchBar = "", display = "" }) => {
                         onClick={() => setOpen(!open)}
                     />
 
-                    {/* ---------- dropdown menu ---------- */}
                     <AnimatePresence>
                         {open && (
                             <motion.div
@@ -101,32 +178,36 @@ const UserHeader = ({ searchBar = "", display = "" }) => {
                                 animate={{ opacity: 1, y: 0, scale: 1 }}
                                 exit={{ opacity: 0, y: -10, scale: 0.95 }}
                                 transition={{ duration: 0.2, ease: "easeOut" }}
-                                className="absolute right-0 mt-2 w-40 bg-white rounded-md shadow-lg overflow-hidden text-dark-ash">
-
-                                {/* ---------- notification (only form small devices) ---------- */}
-                                <Link
-                                    to="#"
-                                    className="flex sm:hidden items-center gap-1 px-4 py-2 hover:text-primary"
-                                    onClick={() => setOpen(false)}
+                                className="absolute right-0 mt-2 w-40 bg-white rounded-md shadow-lg overflow-hidden text-dark-ash"
+                            >
+                                {/* ---------- Notifications (Mobile only) ---------- */}
+                                <button
+                                    onClick={() => {
+                                        setOpen(false);
+                                        handleMobileNotif();
+                                    }}
+                                    className="flex sm:hidden items-center gap-1 px-4 py-2 hover:text-primary w-full text-left"
                                 >
-                                    {/*---------- notification icon ----------*/}
                                     <MdOutlineNotifications className="text-lg" />
-                                    Notifications <span className="text-red-500">(3)</span>
-                                </Link>
+                                    Notifications{" "}
+                                    {notifications.length > 0 && (
+                                        <span className="text-red-500">
+                                            ({notifications.length})
+                                        </span>
+                                    )}
+                                </button>
 
-                                {/* ---------- profile ---------- */}
+                                {/* ---------- Profile ---------- */}
                                 <Link
                                     to="/profile"
                                     className="flex items-center gap-1 px-4 py-2 hover:text-primary"
                                     onClick={() => setOpen(false)}
                                 >
-
-                                    {/*---------- profile icon ----------*/}
                                     <CgProfile className="text-lg lg:text-xl" />
                                     Profile
                                 </Link>
 
-                                {/* ---------- logout ---------- */}
+                                {/* ---------- Logout ---------- */}
                                 <button
                                     className="flex items-center gap-1 w-full text-left px-4 py-2 hover:text-primary cursor-pointer"
                                     onClick={() => {
@@ -134,11 +215,9 @@ const UserHeader = ({ searchBar = "", display = "" }) => {
                                         handleLogOut();
                                     }}
                                 >
-                                    {/*---------- logout icon ----------*/}
                                     <MdOutlineLogout className="text-lg lg:text-xl" />
                                     Logout
                                 </button>
-
                             </motion.div>
                         )}
                     </AnimatePresence>
