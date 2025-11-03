@@ -1,4 +1,4 @@
-import { createUserWithEmailAndPassword, getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut, updatePassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, EmailAuthProvider, getAuth, onAuthStateChanged, reauthenticateWithCredential, signInWithEmailAndPassword, signOut, updatePassword } from "firebase/auth";
 import app from "../firebase/firebase.config";
 import AuthContext from "../contexts/AuthContext";
 import { useEffect, useState } from "react";
@@ -33,7 +33,10 @@ const AuthProvider = ({ children }) => {
         return signOut(auth);
     }
 
-    const changePassword = (newPassword) => {
+    // ---------- change password ----------
+    const changePassword = async(oldPassword, newPassword) => {
+        const credential = EmailAuthProvider.credential(user.email, oldPassword);
+        await reauthenticateWithCredential(user, credential);
         return updatePassword(user, newPassword);
     }
 
