@@ -1,4 +1,4 @@
-import { createUserWithEmailAndPassword, getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "firebase/auth";
+import { createUserWithEmailAndPassword, getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut, updatePassword } from "firebase/auth";
 import app from "../firebase/firebase.config";
 import AuthContext from "../contexts/AuthContext";
 import { useEffect, useState } from "react";
@@ -31,6 +31,10 @@ const AuthProvider = ({ children }) => {
     const logout = () => {
         // setLoading(true);
         return signOut(auth);
+    }
+
+    const changePassword = (newPassword) => {
+        return updatePassword(user, newPassword);
     }
 
     // ---------- for refetching user details ----------
@@ -98,6 +102,7 @@ const AuthProvider = ({ children }) => {
         createUser,
         login,
         logout,
+        changePassword
     };
 
     return (

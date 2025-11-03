@@ -13,9 +13,17 @@ import axios from "axios";
 import Swal from "sweetalert2";
 
 const UserHeader = ({ searchBar = "", display = "" }) => {
+
+    // ---------- user details and logout from auth provider ----------
     const { userDetails, logout } = useContext(AuthContext);
+
+    // ---------- avatar dropdown status ----------
     const [open, setOpen] = useState(false);
+
+    // ---------- notification status ----------
     const [notificationOpen, setNotificationOpen] = useState(false);
+
+    // ---------- hooks ----------
     const dropdownRef = useRef(null);
     const NotificationRef = useRef(null);
     const queryClient = useQueryClient();
@@ -71,7 +79,7 @@ const UserHeader = ({ searchBar = "", display = "" }) => {
     }, [notificationOpen, notifications, deleteMutation]);
 
     // ---------- SweetAlert for Small Devices ----------
-    const handleMobileNotif = async () => {
+    const handleMobileNotifications = async () => {
         if (!notifications.length) {
             Swal.fire({
                 icon: "info",
@@ -113,12 +121,13 @@ const UserHeader = ({ searchBar = "", display = "" }) => {
 
             {/* ---------- Notification + User Section ---------- */}
             <div className="flex gap-4 md:gap-6 lg:gap-8 items-center min-w-fit relative">
+
                 {/* ---------- Notification Icon (Desktop) ---------- */}
                 <div
                     className="hidden sm:block relative cursor-pointer"
                     onClick={() => {
                         if (notificationOpen && notifications.length > 0) {
-                            // user is closing the dropdown → delete notifications
+                            // user is closing the dropdown (delete notifications)
                             deleteMutation.mutate();
                         }
                         setNotificationOpen(!notificationOpen);
@@ -184,7 +193,7 @@ const UserHeader = ({ searchBar = "", display = "" }) => {
                                 <button
                                     onClick={() => {
                                         setOpen(false);
-                                        handleMobileNotif();
+                                        handleMobileNotifications();
                                     }}
                                     className="flex sm:hidden items-center gap-1 px-4 py-2 hover:text-primary w-full text-left"
                                 >

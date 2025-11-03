@@ -63,7 +63,7 @@ const UserProfile = ({ display = "" }) => {
                         <div className="flex flex-wrap gap-3">
 
                             {/* ---------- image ---------- */}
-                            <img className="w-20 h-20 rounded-2xl object-cover" src={displayData?.userImage || defaultUser} alt="user image" />
+                            <img className="w-20 h-20 rounded-2xl object-cover" src={displayData?.userImage || defaultUser} onError={(e) => { e.currentTarget.src = defaultUser; }} alt="user image" />
 
                             {/* ---------- name and badge container ---------- */}
                             <div className="">
@@ -139,7 +139,7 @@ const UserProfile = ({ display = "" }) => {
                         </Link>
 
                         {/* ---------- change password button ---------- */}
-                        <Link className={`block ${params?.id && "hidden"}`} to='/update-profile'>
+                        <Link className={`block ${params?.id && "hidden"}`} to='/change-password'>
                             <BlueButton text='Change Password' className="text-sm"></BlueButton>
                         </Link>
 
@@ -265,7 +265,7 @@ const UserProfile = ({ display = "" }) => {
                         </Link>
 
                         {/* ---------- change password button ---------- */}
-                        <Link className="block" to='/update-profile'>
+                        <Link className="block" to='/change-password'>
                             <BlueButton text='Change Password' className={`text-sm ${params?.id && "hidden"}`}></BlueButton>
                         </Link>
 

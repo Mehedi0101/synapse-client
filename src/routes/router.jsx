@@ -40,6 +40,7 @@ import AdminMentorshipDetails from "../pages/admin_layout/AdminMentorshipDetails
 import UserMentorshipRequestDetails from "../pages/user_layout/UserMentorshipRequestDetails";
 import UserMentorshipInProgressDetailsAlumni from "../pages/user_layout/UserMentorshipInProgressDetailsAlumni";
 import UserChatPage from "../pages/user_layout/UserChatPage";
+import UserChangePassword from "../pages/user_layout/UserChangePassword";
 
 
 const router = createBrowserRouter([
@@ -173,6 +174,11 @@ const router = createBrowserRouter([
                 path: 'update-profile',
                 Component: UpdateUserProfile
             },
+            {
+                // ---------- change password ----------
+                path: 'change-password',
+                Component: UserChangePassword
+            }
         ]
     },
     {
@@ -213,57 +219,57 @@ const router = createBrowserRouter([
                 element: <Navigate to='/admin/overview'></Navigate>
             },
             {
-                // ---------- overview ----------
+                // ---------- admin overview ----------
                 path: 'overview',
                 Component: AdminOverview
             },
             {
-                // ---------- users ----------
+                // ---------- admin users ----------
                 path: 'users',
                 Component: AdminUsers
             },
             {
-                // ---------- user profile ----------
+                // ---------- admin user profile ----------
                 path: 'users/:id',
                 element: <UserProfile display="hidden" />
             },
             {
-                // ---------- mentorship ----------
+                // ---------- admin mentorship ----------
                 path: 'mentorship',
                 Component: AdminMentorship
             },
             {
-                // ---------- mentorship details ----------
+                // ---------- admin mentorship details ----------
                 path: 'mentorship/:id',
                 Component: AdminMentorshipDetails
             },
             {
-                // ---------- jobs ----------
+                // ---------- admin jobs ----------
                 path: 'jobs',
                 Component: AdminJobs
             },
             {
-                // ---------- job details ----------
+                // ---------- admin job details ----------
                 path: 'jobs/:id',
                 element: <UserJobDetails display="hidden" />
             },
             {
-                // ---------- events ----------
+                // ---------- admin events ----------
                 path: 'events',
                 Component: AdminEvents
             },
             {
-                // ---------- event details ----------
+                // ---------- admin event details ----------
                 path: 'events/:id',
                 element: <UserEventDetails display="hidden" />
             },
             {
-                // ---------- resources ----------
+                // ---------- admin resources ----------
                 path: 'resources',
                 Component: AdminResources
             },
             {
-                // ---------- resource details ----------
+                // ---------- admin resource details ----------
                 path: 'resources/:id',
                 element: <UserResourceDetails display="hidden"></UserResourceDetails>
             }

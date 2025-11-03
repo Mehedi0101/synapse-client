@@ -194,7 +194,7 @@ const Register = () => {
                     type={showConfirmPassword ? "text" : "password"}
                     required
                     className="mt-1 w-full px-3 py-2 border-b-2 border-gray-300 text-gray-900 focus:outline-none pr-10"
-                    placeholder="Password"
+                    placeholder="Confirm Password"
                   />
 
                   {/*----------Confirm password show or hide toggle button ----------*/}
