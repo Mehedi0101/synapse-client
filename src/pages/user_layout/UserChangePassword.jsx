@@ -82,10 +82,10 @@ const UserChangePassword = () => {
             <div className="mx-2 md:mx-5 my-20 text-semi-dark flex flex-col justify-center items-center">
 
                 {/* ---------- heading ---------- */}
-                <h2 className="font-poppins text-xl lg:text-2xl font-bold text-dark">Change Password</h2>
+                <h2 className="font-poppins text-xl lg:text-2xl font-bold text-dark mb-4 min-[450px]:p-0">Change Password</h2>
 
                 <form
-                    className="max-w-md bg-white p-6 rounded-lg shadow-md space-y-4 w-full"
+                    className="max-w-md bg-white p-0 min-[450px]:p-6 rounded-lg shadow-md space-y-4 w-full"
                     onSubmit={handleChangePassword}
                 >
 

@@ -176,8 +176,8 @@ const AdminUsers = () => {
                             filteredUsers.map((user, idx) => (
                                 <tr
                                     key={user._id}
-                                    className={`${idx % 2 === 0 ? "bg-white" : "bg-gray-50"
-                                        } hover:bg-slate-100 transition`}
+                                    className={`${user?.accountDeletion ? "bg-orange-200 hover:bg-orange-300 transition" : idx % 2 === 0 ? "bg-white hover:bg-slate-100 transition" : "bg-gray-50 hover:bg-slate-100 transition"
+                                        }`}
                                 >
                                     {/* ---------- serial no ---------- */}
                                     <td className="py-3 px-4">{idx + 1}</td>
