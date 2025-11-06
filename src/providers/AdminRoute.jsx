@@ -6,11 +6,11 @@ import { Navigate } from 'react-router-dom';
 const AdminRoute = ({ children }) => {
 
     // ---------- data from auth provider ----------
-    const { user, userDetails, loading } = useContext(AuthContext);
+    const { user, userDetails, loading, userDetailsPending } = useContext(AuthContext);
 
     // ---------- when loading state is true ----------
-    if (loading) {
-        return <Loading></Loading>
+    if (loading || (user && userDetailsPending)) {
+        return <Loading />;
     }
 
     // ---------- after loading if user is not null ----------
@@ -20,7 +20,7 @@ const AdminRoute = ({ children }) => {
     }
 
     // ---------- if user is null ----------
-    return <Navigate state={location.pathname} to="/auth/login"></Navigate>;
+    return <Navigate to="/auth/login"></Navigate>;
 };
 
 export default AdminRoute;
