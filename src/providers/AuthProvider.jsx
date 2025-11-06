@@ -1,8 +1,10 @@
-import { createUserWithEmailAndPassword, EmailAuthProvider, getAuth, onAuthStateChanged, reauthenticateWithCredential, signInWithEmailAndPassword, signOut, updatePassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, deleteUser, EmailAuthProvider, getAuth, onAuthStateChanged, reauthenticateWithCredential, signInWithEmailAndPassword, signOut, updatePassword } from "firebase/auth";
 import app from "../firebase/firebase.config";
 import AuthContext from "../contexts/AuthContext";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import toast from "react-hot-toast";
+import { useQuery } from "@tanstack/react-query";
 
 const auth = getAuth(app);
 
@@ -10,14 +12,22 @@ const AuthProvider = ({ children }) => {
 
     // ---------- user state ----------
     const [user, setUser] = useState(null);
-    const [userDetails, setUserDetails] = useState(null);
+    // const [userDetails, setUserDetails] = useState(null);
+
+    const { data: userDetails = null, refetch: refetchUserDetails, isPending: userDetailsPending } = useQuery({
+        queryKey: ["user-details", user?.email],
+        queryFn: async () => {
+            const res = await axios.post("http://localhost:5000/users/email", { email: user.email });
+            return res.data;
+        },
+        enabled: !!user?.email
+    });
 
     // ---------- loading state ----------
     const [loading, setLoading] = useState(true);
 
     // ---------- register function ----------
     const createUser = (email, password) => {
-        // setLoading(true);
         return createUserWithEmailAndPassword(auth, email, password);
     }
 
@@ -34,46 +44,54 @@ const AuthProvider = ({ children }) => {
     }
 
     // ---------- change password ----------
-    const changePassword = async(oldPassword, newPassword) => {
+    const changePassword = async (oldPassword, newPassword) => {
         const credential = EmailAuthProvider.credential(user.email, oldPassword);
         await reauthenticateWithCredential(user, credential);
         return updatePassword(user, newPassword);
     }
 
-    // ---------- for refetching user details ----------
-    const refetchUserDetails = () => {
-        if (user?.email) {
-            axios.post("http://localhost:5000/users/email", { email: user.email })
-                .then((data) => {
-                    setUserDetails(data.data);
+    const deleteUserAccount = async (password) => {
+
+        // ---------- toast loading ---------- 
+        const toastId = toast.loading('Removing account permanently...');
+
+        try {
+            const credential = EmailAuthProvider.credential(user.email, password);
+            await reauthenticateWithCredential(user, credential);
+
+            // ---------- delete from database ---------- 
+            axios.delete(`http://localhost:5000/users/${userDetails._id}`)
+                .then((res) => {
+
+                    // ---------- if successful ---------- 
+                    if (res?.data?.acknowledged) {
+
+                        deleteUser(user)
+                            .then(() => {
+                                logout();
+                                setUser(null);
+                                // setUserDetails(null);
+                                // ---------- toast success ----------
+                                toast.success('Account Removed', { id: toastId });
+                            })
+
+                    }
+                    // ---------- if failed ---------- 
+                    else {
+                        // ---------- toast error ---------- 
+                        toast.error('Something went wrong', { id: toastId });
+                    }
                 })
-                .catch(() => setUserDetails(null))
-                .finally(() => setLoading(false));
+                .catch(() => {
+                    // ---------- toast error ---------- 
+                    toast.error('Something went wrong', { id: toastId });
+                })
         }
-    };
-
-    // ---------- user observer ----------
-    // useEffect(() => {
-    //     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-    //         setUser(currentUser);
-    //         setLoading(false);
-    //     });
-
-    //     return () => unsubscribe();
-    // }, [])
-
-    // ---------- fetch user data from database if current user is not null ----------
-    // useEffect(() => {
-    //     if (user?.email) {
-    //         axios.post("http://localhost:5000/users/email", { email: user.email })
-    //             .then((data) => {
-    //                 setUserDetails(data.data);
-    //             })
-    //     }
-    //     else {
-    //         setUserDetails(null);
-    //     }
-    // }, [user])
+        catch {
+            // ---------- toast error (incorrect password) ---------- 
+            toast.error('Incorrect current password', { id: toastId });
+        }
+    }
 
     // Firebase observer
     useEffect(() => {
@@ -81,19 +99,17 @@ const AuthProvider = ({ children }) => {
             setUser(currentUser);
 
             if (currentUser?.email) {
-                setLoading(true); // wait for DB fetch
-                axios.post("http://localhost:5000/users/email", { email: currentUser.email })
-                    .then((data) => setUserDetails(data.data))
-                    .catch(() => setUserDetails(null))
-                    .finally(() => setLoading(false));
+                setLoading(true);
+                refetchUserDetails();
+                setLoading(false);
             } else {
-                setUserDetails(null);
+                // setUserDetails(null);
                 setLoading(false);
             }
         });
 
         return () => unsubscribe();
-    }, []);
+    }, [refetchUserDetails]);
 
     // ---------- data available to children ----------
     const authData = {
@@ -105,13 +121,15 @@ const AuthProvider = ({ children }) => {
         createUser,
         login,
         logout,
-        changePassword
+        changePassword,
+        deleteUserAccount,
+        userDetailsPending
     };
 
     return (
-        <AuthContext value={authData}>
+        <AuthContext.Provider value={authData}>
             {children}
-        </AuthContext>
+        </AuthContext.Provider>
     );
 };
 

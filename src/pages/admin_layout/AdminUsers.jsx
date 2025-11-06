@@ -31,40 +31,6 @@ const AdminUsers = () => {
         },
     });
 
-    // ---------- function for removing user ----------
-    const handleRemoveUser = (userId) => {
-
-        // ---------- confirmation alert ----------
-        Swal.fire({
-            html: `
-                    <h2 style="color:#0F172A; font-family:Poppins, sans-serif; font-size:22px; font-weight: bold;">Remove this account?</h2>
-                    <p style="color:#334155; font-family:Open Sans, sans-serif; font-size:16px; margin-top:8px;">This user will no longer be able to access the platform.</p>
-            `,
-            confirmButtonText: "Yes",
-            showCancelButton: true,
-            confirmButtonColor: "#6f16d7",
-            cancelButtonColor: "#d33",
-        }).then((result) => {
-            if (result.isConfirmed) {
-
-                // ---------- after confirmation ----------
-                const toastId = toast.loading("Removing account...");
-                axios
-                    .delete(`http://localhost:5000/users/${userId}`)
-                    .then((data) => {
-                        if (data.data?.acknowledged) {
-                            toast.success("Account removed", { id: toastId });
-                            refetchUsers();
-                        } else {
-                            toast.error("Something went wrong", { id: toastId });
-                        }
-                    })
-                    .catch(() => {
-                        toast.error("Something went wrong", { id: toastId });
-                    });
-            }
-        });
-    };
 
     // ---------- Handle role change ----------
     const handleChangeRole = (userId, currentRole, newRole, resetSelect) => {
@@ -158,7 +124,6 @@ const AdminUsers = () => {
                             <th className="py-3 px-4 font-semibold text-center">
                                 Change Role
                             </th>
-                            <th className="py-3 px-4 font-semibold text-center">Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -176,8 +141,7 @@ const AdminUsers = () => {
                             filteredUsers.map((user, idx) => (
                                 <tr
                                     key={user._id}
-                                    className={`${user?.accountDeletion ? "bg-orange-200 hover:bg-orange-300 transition" : idx % 2 === 0 ? "bg-white hover:bg-slate-100 transition" : "bg-gray-50 hover:bg-slate-100 transition"
-                                        }`}
+                                    className={`${idx % 2 === 0 ? "bg-white hover:bg-slate-100 transition" : "bg-gray-50 hover:bg-slate-100 transition"}`}
                                 >
                                     {/* ---------- serial no ---------- */}
                                     <td className="py-3 px-4">{idx + 1}</td>
@@ -247,17 +211,6 @@ const AdminUsers = () => {
                                                 <option value="Admin">Admin</option>
                                             </select>
                                         )}
-                                    </td>
-
-                                    {/* ---------- Action ---------- */}
-                                    <td className="py-3 px-4 text-center">
-                                        <button
-                                            onClick={() => handleRemoveUser(user._id)}
-                                            className="text-red-500 hover:text-red-700 transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                                            disabled={user._id === userDetails?._id} // disable if current logged-in user
-                                        >
-                                            <MdDeleteOutline size={20} />
-                                        </button>
                                     </td>
                                 </tr>
                             ))

@@ -11,8 +11,6 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
 import UserHeader from "../../components/user_layout/shared/UserHeader";
 import axios from "axios";
-import Swal from "sweetalert2";
-import toast from "react-hot-toast";
 
 const UserProfile = ({ display = "" }) => {
 
@@ -25,65 +23,6 @@ const UserProfile = ({ display = "" }) => {
 
     // ---------- data from auth provider ----------
     const { userDetails } = useContext(AuthContext);
-
-    const handleRequestAccountDeletion = () => {
-        // ---------- sweet alert for confirmation ---------- 
-        Swal.fire({
-            html: `
-                    <h2 style="color:#0F172A; font-family:Poppins, sans-serif; font-size:22px; font-weight: bold;">Confirm Account Deletion</h2>
-                    <p style="color:#2e3a59; font-family:Open Sans, sans-serif; font-size:16px; margin-top:8px; font-weight: 600;">Are you sure you want to delete your account? This action is permanent and cannot be undone.</p>
-                    <p style="color:#334155; font-family:Open Sans, sans-serif; font-size:14px; margin-top:10px;">An admin will review your request before proceeding with the deletion.</p>
-                `,
-            confirmButtonText: 'Yes',
-            showCancelButton: true,
-            denyButtonText: 'No',
-            confirmButtonColor: "#6f16d7",
-            cancelButtonColor: "#d33",
-            customClass: {
-                actions: 'my-actions',
-                cancelButton: 'order-2',
-                confirmButton: 'order-1 right-gap',
-            },
-        }).then((result) => {
-
-            // ---------- actions after confirming change ---------- 
-            if (result.isConfirmed) {
-
-
-                // ---------- toast loading ---------- 
-                const toastId = toast.loading('Sending Request...');
-
-                // ---------- patch ---------- 
-                axios.patch(`http://localhost:5000/users/${userDetails._id}`, { accountDeletion: true })
-                    .then((data) => {
-
-                        // ---------- if successful ---------- 
-                        if (data?.data?.acknowledged) {
-                            // ---------- toast success ---------- 
-                            toast.success('Request Submitted', { id: toastId });
-
-                            // ---------- navigate to profile page ---------- 
-                            navigate('/profile');
-
-                            // ---------- refetching user details after completing the update ----------
-                            // refetchUserDetails();
-                        }
-
-                        // ---------- if failed ---------- 
-                        else {
-
-                            // ---------- toast error ---------- 
-                            toast.error('Something went wrong', { id: toastId });
-                        }
-                    })
-                    .catch(() => {
-
-                        // ---------- toast error ---------- 
-                        toast.error('Something went wrong', { id: toastId });
-                    })
-            }
-        })
-    }
 
 
     useEffect(() => {
@@ -205,7 +144,9 @@ const UserProfile = ({ display = "" }) => {
                         </Link>
 
                         {/* ---------- request account deletion button ---------- */}
-                        <RedButton text='Request Account Deletion' className={`text-sm ${params?.id && "hidden"}`} clickFunction={handleRequestAccountDeletion}></RedButton>
+                        <Link className={`block ${params?.id && "hidden"}`} to='/delete-account'>
+                            <RedButton text='Delete Account' className={`text-sm ${params?.id && "hidden"}`}></RedButton>
+                        </Link>
                     </div>
                 </div>
 
@@ -331,7 +272,9 @@ const UserProfile = ({ display = "" }) => {
                         </Link>
 
                         {/* ---------- request account deletion button ---------- */}
-                        <RedButton text='Request Account Deletion' className={`text-sm ${params?.id && "hidden"}`} clickFunction={handleRequestAccountDeletion}></RedButton>
+                        <Link className="block" to='/delete-account'>
+                            <RedButton text='Delete Account' className={`text-sm ${params?.id && "hidden"}`}></RedButton>
+                        </Link>
                     </div>
                 </div>
             </div>

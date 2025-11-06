@@ -41,6 +41,7 @@ import UserMentorshipRequestDetails from "../pages/user_layout/UserMentorshipReq
 import UserMentorshipInProgressDetailsAlumni from "../pages/user_layout/UserMentorshipInProgressDetailsAlumni";
 import UserChatPage from "../pages/user_layout/UserChatPage";
 import UserChangePassword from "../pages/user_layout/UserChangePassword";
+import UserDeleteAccount from "../pages/user_layout/UserDeleteAccount";
 
 
 const router = createBrowserRouter([
@@ -178,6 +179,11 @@ const router = createBrowserRouter([
                 // ---------- change password ----------
                 path: 'change-password',
                 Component: UserChangePassword
+            },
+            {
+                // ---------- delete account ----------
+                path: 'delete-account',
+                Component: UserDeleteAccount
             }
         ]
     },
