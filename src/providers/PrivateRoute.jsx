@@ -6,10 +6,10 @@ import { Navigate } from 'react-router-dom';
 const PrivateRoute = ({ children }) => {
 
     // ---------- data from auth provider ----------
-    const { user, userDetails, loading, userDetailsPending } = useContext(AuthContext);
+    const { user, userDetails, loading } = useContext(AuthContext);
 
     // ---------- when loading state is true ----------
-    if (loading || (user && userDetailsPending)) {
+    if (loading) {
         return <Loading />;
     }
 

@@ -12,8 +12,11 @@ const AuthProvider = ({ children }) => {
 
     // ---------- user state ----------
     const [user, setUser] = useState(null);
-    // const [userDetails, setUserDetails] = useState(null);
 
+    // ---------- loading state ----------
+    const [initialLoading, setInitialLoading] = useState(true);
+
+    // ---------- userDetails ----------
     const { data: userDetails = null, refetch: refetchUserDetails, isPending: userDetailsPending } = useQuery({
         queryKey: ["user-details", user?.email],
         queryFn: async () => {
@@ -23,8 +26,7 @@ const AuthProvider = ({ children }) => {
         enabled: !!user?.email
     });
 
-    // ---------- loading state ----------
-    const [loading, setLoading] = useState(true);
+    const loading = initialLoading || (user && userDetailsPending);
 
     // ---------- register function ----------
     const createUser = (email, password) => {
@@ -50,6 +52,7 @@ const AuthProvider = ({ children }) => {
         return updatePassword(user, newPassword);
     }
 
+    // account delete function
     const deleteUserAccount = async (password) => {
 
         // ---------- toast loading ---------- 
@@ -97,19 +100,11 @@ const AuthProvider = ({ children }) => {
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
             setUser(currentUser);
-
-            if (currentUser?.email) {
-                setLoading(true);
-                refetchUserDetails();
-                setLoading(false);
-            } else {
-                // setUserDetails(null);
-                setLoading(false);
-            }
+            setInitialLoading(false);
         });
 
         return () => unsubscribe();
-    }, [refetchUserDetails]);
+    }, []);
 
     // ---------- data available to children ----------
     const authData = {
@@ -123,7 +118,6 @@ const AuthProvider = ({ children }) => {
         logout,
         changePassword,
         deleteUserAccount,
-        userDetailsPending
     };
 
     return (

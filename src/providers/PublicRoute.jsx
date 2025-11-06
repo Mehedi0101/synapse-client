@@ -4,10 +4,10 @@ import AuthContext from "../contexts/AuthContext";
 import Loading from "../pages/shared/Loading";
 
 const PublicRoute = ({ children }) => {
-    const { user, loading, userDetailsPending, userDetails } = useContext(AuthContext);
+    const { user, loading, userDetails } = useContext(AuthContext);
 
     // ---------- when loading state is true ----------
-    if (loading || (user && userDetailsPending)) {
+    if (loading) {
         return <Loading />;
     }
 
