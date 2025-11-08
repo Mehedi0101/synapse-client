@@ -25,7 +25,7 @@ const UserMessage = () => {
                     {/* ---------- inbox tab ---------- */}
                     <button
                         onClick={() => setActiveTab("inbox")}
-                        className={`pb-2 px-3 font-semibold transition-all cursor-pointer ${activeTab === "inbox"
+                        className={`pb-2 px-3 font-semibold cursor-pointer ${activeTab === "inbox"
                             ? "text-primary border-b-2 border-primary"
                             : "text-slate-500 hover:text-primary"
                             }`}
@@ -36,7 +36,7 @@ const UserMessage = () => {
                     {/* ---------- new conversation tab ---------- */}
                     <button
                         onClick={() => setActiveTab("new")}
-                        className={`pb-2 px-3 font-semibold transition-all cursor-pointer ${activeTab === "new"
+                        className={`pb-2 px-3 font-semibold cursor-pointer ${activeTab === "new"
                             ? "text-primary border-b-2 border-primary"
                             : "text-slate-500 hover:text-primary"
                             }`}

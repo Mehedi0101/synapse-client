@@ -55,6 +55,37 @@ const Login = () => {
             })
     };
 
+
+    const handleDemoLogin = (role) => {
+        const toastId = toast.loading("Logging in...");
+
+        const demoCredentials = {
+            student: {
+                email: "gueststudent@email.com",
+                password: "Abc@1234"
+            },
+            alumni: {
+                email: "guestalumni@email.com",
+                password: "Abc@1234"
+            },
+            admin: {
+                email: "guestadmin@email.com",
+                password: "Abc@1234"
+            }
+        };
+
+        const { email, password } = demoCredentials[role];
+
+        login(email, password)
+            .then(() => {
+                toast.success("Logged in as Demo " + role, { id: toastId });
+                navigate("/");
+            })
+            .catch(() => {
+                toast.error("Demo login failed", { id: toastId });
+            });
+    };
+
     return (
         <motion.div
 
@@ -148,8 +179,42 @@ const Login = () => {
                             <div className="h-px flex-1 bg-gray-400" />
                         </div>
 
+                        {/* ---------- Demo Accounts Section ---------- */}
+                        <div>
+                            <p className="text-center text-gray-600 mb-3 text-sm">
+                                Explore the platform instantly
+                            </p>
+
+                            <div className="flex flex-col gap-3">
+
+                                {/* Demo Student */}
+                                <button
+                                    onClick={() => handleDemoLogin("student")}
+                                    className="w-full py-2 bg-blue-600 text-white rounded-full shadow hover:bg-blue-700 transition cursor-pointer"
+                                >
+                                    Continue as Demo Student
+                                </button>
+
+                                {/* Demo Alumni */}
+                                <button
+                                    onClick={() => handleDemoLogin("alumni")}
+                                    className="w-full py-2 bg-emerald-600 text-white rounded-full shadow hover:bg-emerald-700 transition cursor-pointer"
+                                >
+                                    Continue as Demo Alumni
+                                </button>
+
+                                {/* Demo Admin */}
+                                <button
+                                    onClick={() => handleDemoLogin("admin")}
+                                    className="w-full py-2 bg-purple-600 text-white rounded-full shadow hover:bg-purple-700 transition cursor-pointer"
+                                >
+                                    Continue as Demo Admin
+                                </button>
+                            </div>
+                        </div>
+
                         {/*---------- Registration link ----------*/}
-                        <div className="text-center text-sm">
+                        <div className="text-center text-sm my-6">
                             <span className="text-gray-600">Don't have an account? </span>
                             <Link to="/auth/register" className="font-medium text-primary hover:underline">
                                 Create an account

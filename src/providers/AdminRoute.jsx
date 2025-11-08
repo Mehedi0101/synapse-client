@@ -13,6 +13,8 @@ const AdminRoute = ({ children }) => {
         return <Loading />;
     }
 
+    if (user && !userDetails) return <Loading />;
+
     // ---------- after loading if user is not null ----------
     if (user && userDetails) {
         if (userDetails.role !== "Admin") return <Navigate to="/"></Navigate>
