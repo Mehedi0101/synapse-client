@@ -146,6 +146,7 @@ const AdminEvents = () => {
                                             {/* ---------- event creator image ---------- */}
                                             <img
                                                 src={event?.creator?.userImage || defaultUser}
+                                                onError={(e) => { e.currentTarget.src = defaultUser; }}
                                                 alt="creator"
                                                 className="w-7 h-7 rounded-full object-cover"
                                             />

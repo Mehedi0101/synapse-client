@@ -92,6 +92,7 @@ const UserUpdateResource = () => {
                     {/* ---------- author image ---------- */}
                     <img
                         src={userDetails?.userImage || defaultUser}
+                        onError={(e) => { e.currentTarget.src = defaultUser; }}
                         alt="author"
                         className="w-12 h-12 rounded-full object-cover"
                     />

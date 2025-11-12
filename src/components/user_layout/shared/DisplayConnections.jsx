@@ -38,7 +38,7 @@ const DisplayConnections = () => {
                                 <div key={connection?._id} className="flex gap-2 items-center">
 
                                     {/* ---------- connected user's image ---------- */}
-                                    <img className="w-12 h-12 rounded-full object-cover" src={connection?.otherUser?.userImage || defaultUser} alt="" />
+                                    <img className="w-12 h-12 rounded-full object-cover" src={connection?.otherUser?.userImage || defaultUser} onError={(e) => { e.currentTarget.src = defaultUser; }} alt="" />
 
                                     {/* ---------- connected user's role and department ---------- */}
                                     <div>

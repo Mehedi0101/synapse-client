@@ -4,9 +4,9 @@ import defaultUser from "../../../assets/default_user.jpg";
 import { Link } from "react-router-dom";
 // eslint-disable-next-line no-unused-vars
 import { motion } from "motion/react";
+import { useEffect, useState } from "react";
 
 const ResourceCard = ({ resource }) => {
-
   // ---------- posted date format convert ----------
   const postedDate = format(new Date(resource?.createdAt), "MMMM d, yyyy");
 
@@ -16,9 +16,30 @@ const ResourceCard = ({ resource }) => {
       ? resource.content.slice(0, 120) + "..."
       : resource.content;
 
+  // ---------- background image fallback logic ----------
+  const [bgImage, setBgImage] = useState(
+    resource?.image || defaultResourceBanner
+  );
+
+  useEffect(() => {
+    if (!resource?.image) {
+      setBgImage(defaultResourceBanner);
+      return;
+    }
+
+    const img = new Image();
+    img.src = resource.image;
+    img.onload = () => setBgImage(resource.image);
+    img.onerror = () => setBgImage(defaultResourceBanner);
+
+    return () => {
+      img.onload = null;
+      img.onerror = null;
+    };
+  }, [resource?.image]);
+
   return (
     <motion.div
-
       // ---------- card animation configuration ----------
       initial={{ opacity: 0, y: 50 }} // start invisible and 50px lower
       whileInView={{ opacity: 1, y: 0 }} // animate into place
@@ -34,15 +55,13 @@ const ResourceCard = ({ resource }) => {
           <div
             className="absolute inset-0 bg-cover bg-no-repeat bg-center transition-transform duration-500 ease-in-out group-hover:scale-110"
             style={{
-              backgroundImage: `linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.6)), url(${resource?.image || defaultResourceBanner
-                })`,
+              backgroundImage: `linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.6)), url(${bgImage})`,
             }}
           ></div>
         </div>
 
         {/* ---------- card content ---------- */}
         <div className="flex flex-col flex-1 p-4">
-
           {/* ---------- Title ---------- */}
           <h3
             className="text-xl text-dark font-semibold font-poppins mb-2 line-clamp-2"
@@ -53,10 +72,12 @@ const ResourceCard = ({ resource }) => {
 
           {/* ---------- Author Info section ---------- */}
           <div className="flex items-center gap-3 mb-3">
-
             {/* ---------- author image ---------- */}
             <img
               src={resource?.author?.userImage || defaultUser}
+              onError={(e) => {
+                e.currentTarget.src = defaultUser;
+              }}
               alt="Author"
               className="w-8 h-8 rounded-full object-cover"
             />

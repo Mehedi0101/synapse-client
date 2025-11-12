@@ -6,6 +6,7 @@ import axios from "axios";
 import { BiEdit } from "react-icons/bi";
 import { AiOutlineDelete } from "react-icons/ai";
 import defaultUser from "../../assets/default_user.jpg";
+import defaultBanner from "../../assets/default_resource_banner.jpg";
 import Swal from "sweetalert2";
 import toast from "react-hot-toast";
 
@@ -106,6 +107,7 @@ const UserResourceDetails = ({ display = "" }) => {
                     {/* ---------- author image ---------- */}
                     <img
                         src={resourceDetails?.author?.userImage || defaultUser}
+                        onError={(e) => { e.currentTarget.src = defaultUser; }}
                         alt="author"
                         className="w-12 h-12 rounded-full object-cover"
                     />
@@ -127,6 +129,7 @@ const UserResourceDetails = ({ display = "" }) => {
                     <div className="mt-6">
                         <img
                             src={resourceDetails?.image}
+                            onError={(e) => { e.currentTarget.src = defaultBanner; }}
                             alt="resource banner"
                             className="w-full h-72 object-cover rounded-xl shadow"
                         />

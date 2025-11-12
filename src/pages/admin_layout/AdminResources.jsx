@@ -140,6 +140,7 @@ const AdminResources = () => {
                       {/* ---------- Author image---------- */}
                       <img
                         src={res?.author?.userImage || defaultUser}
+                        onError={(e) => { e.currentTarget.src = defaultUser; }}
                         alt="avatar"
                         className="w-7 h-7 rounded-full object-cover"
                       />

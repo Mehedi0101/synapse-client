@@ -36,7 +36,7 @@ const UserHome = () => {
                     <div class="p-4 text-left font-sans">
                         <div class="flex items-center gap-2">
                             <div class="min-w-fit">
-                                <img class="w-12 h-12 rounded-full object-cover" src="${userDetails?.userImage || defaultUser}" alt="user image" />
+                                <img class="w-12 h-12 rounded-full object-cover" src="${userDetails?.userImage || defaultUser}" onerror="this.onerror=null; this.src='${defaultUser}'" alt="user image" />
                             </div>
                             <div class="min-w-0">
                                 <h3 class="font-poppins font-semibold truncate">${userDetails?.name || "N/A"}</h3>
@@ -144,7 +144,7 @@ const UserHome = () => {
 
                         {/* ---------- user image ---------- */}
                         <div className="min-w-fit">
-                            <img className="w-12 h-12 rounded-full object-cover" src={userDetails?.userImage || defaultUser} alt="" />
+                            <img className="w-12 h-12 rounded-full object-cover" src={userDetails?.userImage || defaultUser} onError={(e) => { e.currentTarget.src = defaultUser; }} alt="" />
                         </div>
 
                         {/* ---------- create a post alert opening button ---------- */}

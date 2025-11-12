@@ -32,7 +32,7 @@ const UserCommentCard = ({ comment, handleDeleteComment }) => {
 
                 {/* ---------- image container ---------- */}
                 <div className="min-w-fit">
-                    <img className="w-8 h-8 rounded-full object-cover" src={comment?.commenter?.userImage || defaultUser} alt="user image" />
+                    <img className="w-8 h-8 rounded-full object-cover" src={comment?.commenter?.userImage || defaultUser} onError={(e) => { e.currentTarget.src = defaultUser; }} alt="user image" />
                 </div>
 
                 {/* ---------- author info and time ago container ---------- */}

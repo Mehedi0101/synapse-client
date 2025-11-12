@@ -15,6 +15,7 @@ const AlumniInProgressCard = ({ mentorship }) => {
                 {/* ---------- student image ---------- */}
                 <img
                     src={student?.userImage || defaultUser}
+                    onError={(e) => { e.currentTarget.src = defaultUser; }}
                     alt={student?.name}
                     className="w-12 h-12 rounded-full object-cover flex-shrink-0"
                 />

@@ -16,6 +16,7 @@ const StudentMentorshipInProgress = ({ mentorship }) => {
                 {/* ---------- mentor image ---------- */}
                 <img
                     src={mentor?.userImage || defaultUser}
+                    onError={(e) => { e.currentTarget.src = defaultUser; }}
                     alt={mentor?.name}
                     className="w-16 h-16 rounded-full object-cover"
                 />

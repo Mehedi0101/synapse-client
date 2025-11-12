@@ -40,7 +40,7 @@ const UserPostCard = ({ post, refetchMyPosts }) => {
                     <div class="p-4 text-left font-sans">
                         <div class="flex items-center gap-2">
                             <div class="min-w-fit">
-                                <img class="w-12 h-12 rounded-full object-cover" src="${userDetails?.userImage || defaultUser}" alt="user image" />
+                                <img class="w-12 h-12 rounded-full object-cover" src="${userDetails?.userImage || defaultUser}" onerror="this.onerror=null; this.src='${defaultUser}'" alt="user image" />
                             </div>
                             <div class="min-w-0">
                                 <h3 class="font-poppins font-semibold truncate">${userDetails?.name || "N/A"}</h3>
@@ -261,7 +261,7 @@ const UserPostCard = ({ post, refetchMyPosts }) => {
 
                 {/* ---------- image container ---------- */}
                 <div className="min-w-fit">
-                    <img className="w-12 h-12 rounded-full object-cover" src={postData?.author?.userImage || defaultUser} alt="user image" />
+                    <img className="w-12 h-12 rounded-full object-cover" src={postData?.author?.userImage || defaultUser} onError={(e) => { e.currentTarget.src = defaultUser; }} alt="user image" />
                 </div>
 
                 <div className='min-w-0 w-full flex justify-between gap-1'>
@@ -336,7 +336,7 @@ const UserPostCard = ({ post, refetchMyPosts }) => {
 
                 {/* ---------- user image ---------- */}
                 <div className="min-w-fit">
-                    <img className="w-8 h-8 rounded-full object-cover" src={userDetails?.userImage || defaultUser} alt="" />
+                    <img className="w-8 h-8 rounded-full object-cover" src={userDetails?.userImage || defaultUser} onError={(e) => { e.currentTarget.src = defaultUser; }} alt="" />
                 </div>
 
                 {/* ---------- comment text field ---------- */}

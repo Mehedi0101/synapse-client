@@ -70,6 +70,7 @@ const MyConnectionCard = ({ connection }) => {
             <div className="min-w-fit">
                 <img
                     src={connection?.otherUser?.userImage || defaultUser}
+                    onError={(e) => { e.currentTarget.src = defaultUser; }}
                     alt="user image"
                     className="w-24 h-24 rounded-full object-cover"
                 />

@@ -101,7 +101,7 @@ const UserJobDetails = ({ display = "" }) => {
 
                         {/* ---------- company logo ---------- */}
                         <div>
-                            <img className="w-20 h-20 object-cover" src={jobDetails?.company?.logo || defaultLogo} alt="" />
+                            <img className="w-20 h-20 object-cover" src={jobDetails?.company?.logo || defaultLogo} onError={(e) => { e.currentTarget.src = defaultLogo; }} alt="" />
                         </div>
 
                         {/* ---------- company name, location, type container ---------- */}
@@ -275,10 +275,10 @@ const UserJobDetails = ({ display = "" }) => {
                                 </div>
                                 <div className="flex gap-2 items-center text-slate-500 ml-[22px] mt-2">
 
-                                    {/* ---------- connected user's image ---------- */}
-                                    <img className="w-8 h-8 rounded-full object-cover" src={jobDetails?.author?.userImage || defaultUser} alt="" />
+                                    {/* ---------- job poster image ---------- */}
+                                    <img className="w-8 h-8 rounded-full object-cover" src={jobDetails?.author?.userImage || defaultUser} onError={(e) => { e.currentTarget.src = defaultUser; }} alt="" />
 
-                                    {/* ---------- connected user's role and department ---------- */}
+                                    {/* ---------- role and department ---------- */}
                                     <div>
                                         <Link to={`/profile/${jobDetails?.author?._id}`}><p className="text-sm font-semibold hover:underline hover:text-primary transition-all duration-200">{jobDetails?.author?.name}</p></Link>
                                     </div>

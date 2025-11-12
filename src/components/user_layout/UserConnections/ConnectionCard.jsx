@@ -63,6 +63,7 @@ const ConnectionCard = ({ user, refetchPeopleYouMayConnect, refetchSentRequests 
             {/* ---------- User Image ---------- */}
             <img
                 src={user?.userImage || defaultUser}
+                onError={(e) => { e.currentTarget.src = defaultUser; }}
                 alt={user?.name || "User"}
                 className="w-24 h-24 rounded-full object-cover mb-3"
             />

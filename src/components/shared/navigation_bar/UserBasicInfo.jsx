@@ -11,7 +11,7 @@ const UserBasicInfo = () => {
         <div className='flex flex-col items-center justify-center space-y-2 px-4 py-8 bg-white rounded-xl text-center text-normal text-semi-dark'>
 
             {/* ---------- user image ---------- */}
-            <img className='w-24 h-24 rounded-full object-cover' src={userDetails?.userImage ? userDetails.userImage : defaultUser} alt="user image" />
+            <img className='w-24 h-24 rounded-full object-cover' src={userDetails?.userImage ? userDetails.userImage : defaultUser} onError={(e) => { e.currentTarget.src = defaultUser; }} alt="user image" />
 
             {/* ---------- display name ---------- */}
             <p className='max-w-[200px] break-words text-lg font-bold text-dark font-poppins'>{userDetails?.name}</p>

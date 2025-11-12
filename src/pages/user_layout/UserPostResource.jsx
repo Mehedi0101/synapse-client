@@ -92,6 +92,7 @@ const UserPostResource = () => {
                             <img
                                 className="w-12 h-12 rounded-full object-cover"
                                 src={userDetails?.userImage || defaultUser}
+                                onError={(e) => { e.currentTarget.src = defaultUser; }}
                                 alt="author"
                             />
 

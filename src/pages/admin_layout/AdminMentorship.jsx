@@ -188,6 +188,7 @@ const AdminMentorships = () => {
                                             {/* ---------- student image ---------- */}
                                             <img
                                                 src={m?.student?.userImage || defaultUser}
+                                                onError={(e) => { e.currentTarget.src = defaultUser; }}
                                                 alt="student"
                                                 className="w-7 h-7 rounded-full object-cover"
                                             />
@@ -210,6 +211,7 @@ const AdminMentorships = () => {
                                             {/* ---------- mentor image ---------- */}
                                             <img
                                                 src={m?.mentor?.userImage || defaultUser}
+                                                onError={(e) => { e.currentTarget.src = defaultUser; }}
                                                 alt="alumni"
                                                 className="w-7 h-7 rounded-full object-cover"
                                             />

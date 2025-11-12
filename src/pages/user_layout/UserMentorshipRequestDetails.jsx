@@ -178,6 +178,7 @@ const UserMentorshipRequestDetails = () => {
                         {/* ---------- student image ---------- */}
                         <img
                             src={request?.student?.userImage || defaultUser}
+                            onError={(e) => { e.currentTarget.src = defaultUser; }}
                             alt={request?.student?.name}
                             className="w-16 h-16 rounded-full object-cover"
                         />

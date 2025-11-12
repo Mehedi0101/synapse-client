@@ -153,6 +153,7 @@ const AdminUsers = () => {
                                             {/* ---------- user image ---------- */}
                                             <img
                                                 src={user?.userImage || defaultUser}
+                                                onError={(e) => { e.currentTarget.src = defaultUser; }}
                                                 alt="avatar"
                                                 className="w-7 h-7 rounded-full object-cover"
                                             />

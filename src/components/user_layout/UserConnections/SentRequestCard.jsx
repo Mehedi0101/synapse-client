@@ -60,6 +60,7 @@ const SentRequestCard = ({ req, refetchSentRequests, refetchPeopleYouMayConnect 
             {/* ---------- User Image ---------- */}
             <img
                 src={req?.toUser?.userImage || defaultUser}
+                onError={(e) => { e.currentTarget.src = defaultUser; }}
                 alt="user image"
                 className="w-24 h-24 rounded-full object-cover mb-3"
             />

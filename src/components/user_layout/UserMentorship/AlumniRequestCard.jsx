@@ -14,6 +14,7 @@ const AlumniRequestCard = ({ req }) => {
                 {/* ---------- student image ---------- */}
                 <img
                     src={req?.student?.userImage || defaultUser}
+                    onError={(e) => { e.currentTarget.src = defaultUser; }}
                     alt={req?.student?.name}
                     className="w-12 h-12 rounded-full object-cover flex-shrink-0"
                 />

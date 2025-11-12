@@ -131,6 +131,7 @@ const UserEventDetails = ({ display = "" }) => {
             <div className="h-64 md:h-96">
                 <img
                     src={eventDetails?.banner || defaultEventBanner}
+                    onError={(e) => { e.currentTarget.src = defaultEventBanner; }}
                     alt="Event Banner"
                     className="h-full object-cover mx-auto"
                 />
@@ -292,6 +293,7 @@ const UserEventDetails = ({ display = "" }) => {
                                     <img
                                         className="w-8 h-8 rounded-full object-cover"
                                         src={eventDetails?.creator?.userImage || defaultUser}
+                                        onError={(e) => { e.currentTarget.src = defaultUser; }}
                                         alt="Organizer"
                                     />
 

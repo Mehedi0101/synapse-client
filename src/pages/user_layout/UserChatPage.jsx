@@ -115,6 +115,7 @@ const UserChatPage = () => {
                             {/* ---------- friend image ---------- */}
                             <img
                                 src={friend?.userImage || defaultUser}
+                                onError={(e) => { e.currentTarget.src = defaultUser; }}
                                 alt={friend?.name}
                                 className="w-10 h-10 rounded-full object-cover"
                             />

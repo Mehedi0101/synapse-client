@@ -19,7 +19,7 @@ const JobCard = ({ jobPost }) => {
 
                 {/* ---------- company logo section ---------- */}
                 <div className="min-w-fit mx-auto">
-                    <img className="w-20 h-20 object-cover" src={jobPost?.company?.logo || defaultLogo} alt="" />
+                    <img className="w-20 h-20 object-cover" src={jobPost?.company?.logo || defaultLogo} onError={(e) => { e.currentTarget.src = defaultLogo; }} alt="" />
                 </div>
 
                 {/* ---------- basic info section ---------- */}

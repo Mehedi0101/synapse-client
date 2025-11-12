@@ -176,6 +176,7 @@ const UserHeader = ({ searchBar = "", display = "" }) => {
                     <img
                         className="w-10 lg:w-12 h-10 lg:h-12 rounded-full object-cover cursor-pointer"
                         src={userDetails?.userImage || defaultUser}
+                        onError={(e) => { e.currentTarget.src = defaultUser; }}
                         alt="user"
                         onClick={() => setOpen(!open)}
                     />

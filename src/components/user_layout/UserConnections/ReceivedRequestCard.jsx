@@ -86,6 +86,7 @@ const ReceivedRequestCard = ({ req, refetchReceivedRequests, refetchPeopleYouMay
             {/* ---------- User Image ---------- */}
             <img
                 src={req?.fromUser?.userImage || defaultUser}
+                onError={(e) => { e.currentTarget.src = defaultUser; }}
                 alt="user image"
                 className="w-24 h-24 rounded-full object-cover mb-3"
             />

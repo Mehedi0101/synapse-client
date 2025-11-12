@@ -83,7 +83,7 @@ const PostCard = ({ post }) => {
 
                 {/* ---------- image container ---------- */}
                 <div className="min-w-fit">
-                    <img className="w-12 h-12 rounded-full object-cover" src={postData?.author?.userImage || defaultUser} alt="user image" />
+                    <img className="w-12 h-12 rounded-full object-cover" src={postData?.author?.userImage || defaultUser} onError={(e) => { e.currentTarget.src = defaultUser; }} alt="user image" />
                 </div>
 
                 {/* ---------- author info ---------- */}
@@ -113,7 +113,7 @@ const PostCard = ({ post }) => {
 
                 {/* ---------- user image ---------- */}
                 <div className="min-w-fit">
-                    <img className="w-8 h-8 rounded-full object-cover" src={userDetails?.userImage || defaultUser} alt="" />
+                    <img className="w-8 h-8 rounded-full object-cover" src={userDetails?.userImage || defaultUser} onError={(e) => { e.currentTarget.src = defaultUser; }} alt="" />
                 </div>
 
                 {/* ---------- comment text field ---------- */}
