@@ -4,19 +4,19 @@ A modern, responsive, and intuitive user interface built with **React**, **Vite*
 ---
 
 ## 📑 Table of Contents
-- [About the Frontend](#about-the-frontend)
-- [Features](#features)
-- [Tech Stack](#tech-stack)
-- [Folder Structure](#folder-structure)
-- [Environment Variables](#environment-variables)
-- [Installation & Setup](#installation--setup)
-- [Available Scripts](#available-scripts)
-- [Screenshots](#screenshots)
-- [Deployment](#deployment)
-- [API Integration Overview](#api-integration-overview)
-- [Future Enhancements](#future-enhancements)
-- [License](#license)
-- [Contact](#contact)
+- [About the Frontend](#-about-the-frontend)
+- [Features](#-features)
+- [Tech Stack](#-tech-stack)
+- [Folder Structure](#-folder-structure)
+- [Environment Variables](#-environment-variables)
+- [Installation & Setup](#-installation--setup)
+- [Available Scripts](#-available-scripts)
+- [Screenshots](#-screenshots)
+- [Deployment](#-deployment)
+- [API Integration Overview](#-api-integration-overview)
+- [Future Enhancements](#-future-enhancements)
+- [License](#-license)
+- [Contact](#-contact)
 
 ---
 
