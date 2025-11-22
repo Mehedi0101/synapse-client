@@ -1,4 +1,4 @@
-# Synapse – Frontend Web Application
+# Synapse – Student Alumni Networking Platform
 A modern, responsive, and intuitive user interface built with **React**, **Vite**, and **Tailwind CSS**. This repository contains the complete frontend of **Synapse**, a student–alumni networking platform designed to simplify communication, mentorship, job discovery, event management, and resource sharing.
 
 ---
