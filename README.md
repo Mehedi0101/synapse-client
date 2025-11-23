@@ -1,9 +1,11 @@
 # Synapse – Student Alumni Networking Platform
+
 A modern, responsive, and intuitive user interface built with **React**, **Vite**, and **Tailwind CSS**. This repository contains the complete frontend of **Synapse**, a student–alumni networking platform designed to simplify communication, mentorship, job discovery, event management, and resource sharing.
 
 ---
 
 ## 📑 Table of Contents
+
 - [About the Frontend](#-about-the-frontend)
 - [Features](#-features)
 - [Tech Stack](#-tech-stack)
@@ -21,9 +23,11 @@ A modern, responsive, and intuitive user interface built with **React**, **Vite*
 ---
 
 ## 🧩 About the Frontend
+
 The **Synapse Frontend** provides an engaging and fluid interface for students, alumni, and administrators. This is the primary touchpoint for user interaction, offering a smooth experience across social features, mentorship workflows, communication, and content sharing.
 
 It handles:
+
 - Authentication flows (login, registration, password reset)
 - User profile management
 - Post creation and interaction
@@ -38,6 +42,7 @@ It handles:
 ## 🚀 Features
 
 ### **User-Facing Features**
+
 - **Create and manage posts** with comment section
 - **Update profile information**, change password, delete account
 - Send, accept, or reject **connection requests**
@@ -48,13 +53,16 @@ It handles:
 - Read or publish **resources/blog content**
 
 ### **Admin UI Features**
+
 - **Manage users, events, jobs, resources, and mentorship records**
 - View **platform analytics** using clean visual charts
 
 ---
 
 ## 🛠 Tech Stack
+
 ### **Frontend Framework & Tools**
+
 - **React 19** — Component‑based UI
 - **Vite** — Fast dev environment
 - **Tailwind CSS** — Utility-first styling
@@ -66,6 +74,7 @@ It handles:
 - **Recharts** — Analytics charts
 
 ### **Supporting Libraries**
+
 - React Icons
 - React Hot Toast
 - SweetAlert2
@@ -76,6 +85,7 @@ It handles:
 ---
 
 ## 📂 Folder Structure
+
 ```
 src/
 ├── assets/              # Images, icons, static files
@@ -102,16 +112,18 @@ These configure the connection to the backend API and Firebase authentication.
 
 You have two options:
 
-1. **Generate your own Firebase project:**  
-   - Create a Firebase project at [https://firebase.google.com](https://firebase.google.com).  
-   - Add a web app and copy the configuration keys.  
+1. **Generate your own Firebase project:**
+
+   - Create a Firebase project at [https://firebase.google.com](https://firebase.google.com).
+   - Add a web app and copy the configuration keys.
    - Set your backend API URL if running a local or separate backend.
 
-2. **Use the existing Synapse environment (optional):**  
+2. **Use the existing Synapse environment (optional):**
    - Contact me on LinkedIn to get the environment variables for the live project:  
      👉 **LinkedIn:** https://www.linkedin.com/in/mehedi0101/
 
 After you have the values, create a `.env.local` file in the project root:
+
 ```
 VITE_apiKey=
 VITE_authDomain=
@@ -125,7 +137,9 @@ VITE_measurementId=
 ---
 
 ## ⚙ Installation & Setup
+
 ### **1. Clone the Repository**
+
 ```
 git clone https://github.com/Mehedi0101/synapse-client.git
 
@@ -133,19 +147,23 @@ cd synapse-client
 ```
 
 ### **2. Install Dependencies**
+
 ```
 npm install
 ```
 
 ### **3. Configure Environment Variables**
+
 Add all required keys to `.env.local`.
 
 ### **4. Start the Development Server**
+
 ```
 npm run dev
 ```
 
 ### **5. Build for Production**
+
 ```
 npm run build
 ```
@@ -153,84 +171,85 @@ npm run build
 ---
 
 ## 📜 Available Scripts
-| Script | Description |
-|--------|-------------|
-| `npm run dev` | Starts the development server |
-| `npm run build` | Builds the project for production |
-| `npm run lint` | Lints project files |
-| `npm run preview` | Previews the production build |
+
+| Script            | Description                       |
+| ----------------- | --------------------------------- |
+| `npm run dev`     | Starts the development server     |
+| `npm run build`   | Builds the project for production |
+| `npm run lint`    | Lints project files               |
+| `npm run preview` | Previews the production build     |
 
 ---
 
 ## 🖼 Screenshots
 
-### **Home Page**
-```
-<!-- ![Home Page](your-image-link) -->
-```
+### **Authentication Page**
+
+![Authentication Page](./public/screenshots/login-min.png)
+
+### **Home Page & Post Feed**
+
+![Home & Post Feed](./public/screenshots/home-min.png)
 
 ### **User Profile Page**
-```
-<!-- ![Profile Page](your-image-link) -->
-```
 
-### **Post Feed & Post Creation**
-```
-<!-- ![Posts Page](your-image-link) -->
-```
+![Profile Page](./public/screenshots/profile-min.png)
 
 ### **Chat Interface**
-```
-<!-- ![Chat Page](your-image-link) -->
-```
+
+<div style="display: flex; gap: 10px;"> 
+   <img src="./public/screenshots/messages-min.png" width="48%" /> 
+   <img src="./public/screenshots/chat-min.png" width="48%" /> 
+</div>
 
 ### **Mentorship Page**
-```
-<!-- ![Mentorship Page](your-image-link) -->
-```
+
+![Mentorship Page](./public/screenshots/mentorship-min.png)
 
 ### **Connections Page**
-```
-<!-- ![Connections Page](your-image-link) -->
-```
+
+![Connections Page](./public//screenshots/connections-min.png)
 
 ### **Events Page**
-```
-<!-- ![Events Page](your-image-link) -->
-```
+
+<div style="display: flex; gap: 10px;"> 
+   <img src="./public/screenshots/event-min.png" width="48%" /> 
+   <img src="./public/screenshots/event_details-min.png" width="48%" /> 
+</div>
 
 ### **Jobs Page**
-```
-<!-- ![Jobs Page](your-image-link) -->
-```
 
-### **Resources Page**
-```
-<!-- ![Resources Page](your-image-link) -->
-```
+<div style="display: flex; gap: 10px;"> 
+   <img src="./public/screenshots/job-min.png" width="48%" /> 
+   <img src="./public/screenshots/job_details-min.png" width="48%" /> 
+</div>
 
 ### **Admin Dashboard**
-```
-<!-- ![Admin Dashboard](your-image-link) -->
-```
+
+<div style="display: flex; gap: 10px;"> 
+   <img src="./public/screenshots/admin_overview-min.png" width="48%" /> 
+   <img src="./public/screenshots/admin_control-min.png" width="48%" /> 
+</div>
 
 ---
 
 ## 🌐 Deployment
+
 The frontend of Synapse is live and publicly available.
 
 ### **Live URL**
 
 https://synapse-0101.web.app/
 
-
 ### **Hosting Platform**
+
 - **Frontend**: Firebase Hosting
 - **Backend**: Vercel
 
 ---
 
 ## 🔗 API Integration Overview
+
 The frontend interacts with the backend through a dedicated Axios configuration. Key characteristics:
 
 - Automatically attaches **JWT access tokens**
@@ -238,6 +257,7 @@ The frontend interacts with the backend through a dedicated Axios configuration.
 - Uses **React Query** for caching, loading states, and background refetching
 
 ### **Integrated API Modules:**
+
 - Auth
 - Posts & Comments
 - Chat
@@ -251,6 +271,7 @@ The frontend interacts with the backend through a dedicated Axios configuration.
 ---
 
 ## 📈 Future Enhancements
+
 - Dark mode support
 - Real‑time chat using WebSockets
 - Optimistic UI updates for posts and comments
@@ -260,14 +281,17 @@ The frontend interacts with the backend through a dedicated Axios configuration.
 ---
 
 ## 📄 License
+
 Licensed under the **MIT License**.
 
 ---
 
 ## 📬 Contact
+
 **Developer:** Mehedi Hasan
 
 ### **Links:**
-- GitHub: [https://github.com/Mehedi0101](https://github.com/Mehedi0101)  
-- LinkedIn: [https://www.linkedin.com/in/mehedi0101/](https://www.linkedin.com/in/mehedi0101/)  
+
+- GitHub: [https://github.com/Mehedi0101](https://github.com/Mehedi0101)
+- LinkedIn: [https://www.linkedin.com/in/mehedi0101/](https://www.linkedin.com/in/mehedi0101/)
 - Email: [mehedih2909@gmail.com](mailto:mehedih2909@gmail.com)
