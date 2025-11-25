@@ -12,18 +12,22 @@ import PostSkeleton from "../../components/skeletons/PostSkeleton";
 
 const UserHome = () => {
 
+    // ---------- user data from auth provider ----------
+    const { userDetails, user } = useContext(AuthContext);
+
     // ---------- for fetching all the posts ----------
     const { data: posts = [], refetch: refetchPosts, isPending } = useQuery({
         queryKey: ["allPosts"],
         queryFn: async () => {
-            const res = await axios.get('http://localhost:5000/posts');
+            const res = await axios.get('http://localhost:5000/posts', {
+                headers: {
+                    authorization: `Bearer ${user?.accessToken}`
+                }
+            });
             return res.data;
-        }
+        },
+        enabled: !!user?.accessToken
     })
-
-    // ---------- user data from auth provider ----------
-    const { userDetails } = useContext(AuthContext);
-
 
     // ---------- function for creating a post ----------
     const handleCreatePost = () => {

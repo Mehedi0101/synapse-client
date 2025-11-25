@@ -42,6 +42,7 @@ import UserMentorshipInProgressDetailsAlumni from "../pages/user_layout/UserMent
 import UserChatPage from "../pages/user_layout/UserChatPage";
 import UserChangePassword from "../pages/user_layout/UserChangePassword";
 import UserDeleteAccount from "../pages/user_layout/UserDeleteAccount";
+import ForbiddenPage from "../pages/shared/ForbiddenPage";
 
 
 const router = createBrowserRouter([
@@ -280,6 +281,10 @@ const router = createBrowserRouter([
                 element: <UserResourceDetails display="hidden"></UserResourceDetails>
             }
         ]
+    },
+    {
+        path: '/forbidden',
+        Component: ForbiddenPage
     },
     {
         // ---------- any other routes ----------
