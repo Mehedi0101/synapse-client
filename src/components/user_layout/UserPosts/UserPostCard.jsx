@@ -17,7 +17,7 @@ const UserPostCard = ({ post, refetchMyPosts }) => {
     const [postData, setPostData] = useState(post);
 
     // ---------- user details from auth provider ----------
-    const { userDetails } = useContext(AuthContext);
+    const { userDetails, user } = useContext(AuthContext);
 
     // ---------- post control dropdown state ----------
     const [postControlDropdown, setPostControlDropdown] = useState(false);
@@ -94,32 +94,37 @@ const UserPostCard = ({ post, refetchMyPosts }) => {
                 });
 
                 // ---------- when update button is clicked ----------
-                updateBtn.addEventListener("click", () => {
-
-                    // ---------- toast loading ----------
+                updateBtn.addEventListener("click", async () => {
                     const toastId = toast.loading('Updating post...');
 
-                    // ---------- updated post text ----------
-                    const content = textarea.value.trim();
+                    try {
+                        const token = await user.getIdToken();
+                        const content = textarea.value.trim();
 
-                    if (!content) return;
+                        // if no content
+                        if (!content) {
+                            toast.error('Post cannot be empty', { id: toastId });
+                            return;
+                        }
 
-                    // ---------- patch request for updating a post ----------
-                    axios.patch(`http://localhost:5000/posts/${postData?._id}`, { postContent: content })
-                        .then(data => {
-                            // ---------- successful ----------
-                            setPostData(data.data);
+                        // patch post request
+                        const { data } = await axios.patch(
+                            `http://localhost:5000/posts/${postData?._id}`,
+                            { authorId: userDetails?._id, postContent: content },
+                            {
+                                headers: { Authorization: `Bearer ${token}` }
+                            }
+                        );
 
-                            // ---------- toast success ----------
-                            toast.success('Post updated', { id: toastId });
-                        })
-                        .catch(() => {
-                            // ---------- failed ----------
-                            toast.error('Something went wrong', { id: toastId });
-                        })
-
-                    // ---------- alert close ----------
-                    Swal.close();
+                        // successful
+                        setPostData(data);
+                        toast.success('Post updated', { id: toastId });
+                    } catch {
+                        toast.error('Something went wrong', { id: toastId });
+                    } finally {
+                        // close alert
+                        Swal.close();
+                    }
                 });
             },
         });
@@ -146,7 +151,7 @@ const UserPostCard = ({ post, refetchMyPosts }) => {
                 cancelButton: 'order-2',
                 confirmButton: 'order-1 right-gap',
             },
-        }).then((result) => {
+        }).then(async (result) => {
 
             // ---------- actions after confirming ---------- 
             if (result.isConfirmed) {
@@ -155,40 +160,35 @@ const UserPostCard = ({ post, refetchMyPosts }) => {
                 const toastId = toast.loading('Removing Post...');
 
                 // ---------- request to remove a post ----------
-                axios.delete(`http://localhost:5000/posts/${postData?._id}`)
-                    .then((data) => {
+                try {
+                    const token = await user.getIdToken();
 
-                        // ---------- remove successful ----------
-                        if (data?.data?.acknowledged) {
-
-                            // ---------- refetch all posts from the author ----------
-                            refetchMyPosts();
-
-                            // ---------- success toast ----------
-                            toast.success('Removed', { id: toastId });
-                        }
-
-                        // ---------- remove unsuccessful ----------
-                        else {
-
-                            // ---------- error toast ----------
-                            toast.error('Something went wrong', { id: toastId });
+                    const { data } = await axios.delete(`http://localhost:5000/posts/${postData?._id}`, {
+                        headers: {
+                            authorization: `Bearer ${token}`
                         }
                     })
 
-                    // ---------- remove request unsuccessful ----------
-                    .catch(() => {
-
-                        // ---------- error toast ----------
+                    // success
+                    if (data?.acknowledged) {
+                        refetchMyPosts();
+                        toast.success('Removed', { id: toastId });
+                    }
+                    // failed
+                    else {
                         toast.error('Something went wrong', { id: toastId });
-                    })
+                    }
+                }
+                catch {
+                    toast.error('Something went wrong', { id: toastId });
+                }
             }
         })
     }
 
 
     // ---------- comment posting function ----------
-    const handleComment = e => {
+    const handleComment = async (e) => {
         e.preventDefault();
 
         // ---------- comment text ----------
@@ -201,17 +201,22 @@ const UserPostCard = ({ post, refetchMyPosts }) => {
         const commentData = { commenterId: userDetails._id, comment };
 
         // ---------- patch request of post for adding a comment ----------
-        axios.patch(`http://localhost:5000/posts/comments/add/${postData?._id}`, commentData)
-            .then((data) => {
+        try {
+            const token = await user.getIdToken();
 
-                // ---------- if successful then refetch post data ----------
-                setPostData(data.data);
+            const { data } = await axios.patch(`http://localhost:5000/posts/comments/add/${postData?._id}`, commentData, {
+                headers: {
+                    authorization: `Bearer ${token}`
+                }
             })
-            .catch(() => {
 
-                // ---------- error toast ----------
-                toast.error('Something went wrong');
-            })
+            // success
+            setPostData(data);
+        }
+        catch {
+            // error
+            toast.error('Something went wrong');
+        }
 
         // ---------- reset comment field ----------
         setCommentText("");
@@ -219,18 +224,28 @@ const UserPostCard = ({ post, refetchMyPosts }) => {
 
 
     // ---------- comment deleting function ----------
-    const handleDeleteComment = (commentId) => {
-        axios.patch(`http://localhost:5000/posts/comments/delete/${postData?._id}`, { commentId })
-            .then(data => {
+    const handleDeleteComment = async (commentId) => {
 
-                // ---------- if successful then refetch post data ----------
-                setPostData(data.data);
-            })
-            .catch(() => {
+        const commentData = {
+            commentId, authorId: postData?.author?._id, commenterId: userDetails?._id
+        }
 
-                // ---------- error toast ----------
-                toast.error('Something went wrong');
+        // ---------- patch request for deleting a comment ----------
+        try {
+            const token = await user.getIdToken();
+
+            const { data } = await axios.patch(`http://localhost:5000/posts/comments/delete/${postData?._id}`, commentData, {
+                headers: {
+                    authorization: `Bearer ${token}`
+                }
             })
+
+            // successful
+            setPostData(data);
+        }
+        catch {
+            toast.error('Something went wrong');
+        }
     }
 
     // ---------- click outside to close dropdown ----------

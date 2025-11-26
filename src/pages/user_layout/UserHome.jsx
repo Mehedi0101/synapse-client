@@ -19,14 +19,15 @@ const UserHome = () => {
     const { data: posts = [], refetch: refetchPosts, isPending } = useQuery({
         queryKey: ["allPosts"],
         queryFn: async () => {
+            const token = await user.getIdToken();
             const res = await axios.get('http://localhost:5000/posts', {
                 headers: {
-                    authorization: `Bearer ${user?.accessToken}`
+                    authorization: `Bearer ${token}`
                 }
             });
             return res.data;
         },
-        enabled: !!user?.accessToken
+        enabled: !!user
     })
 
     // ---------- function for creating a post ----------
@@ -91,10 +92,12 @@ const UserHome = () => {
                 });
 
                 // ---------- when post button is clicked ----------
-                postBtn.addEventListener("click", () => {
+                postBtn.addEventListener("click", async () => {
 
                     // ---------- toast loading ----------
                     const toastId = toast.loading('Posting...');
+
+                    const token = await user.getIdToken();
 
                     // ---------- post text ----------
                     const content = textarea.value.trim();
@@ -105,26 +108,18 @@ const UserHome = () => {
                     const postData = { authorId: userDetails._id, postContent: content };
 
                     // ---------- post request for creating a post ----------
-                    axios.post('http://localhost:5000/posts', postData)
-                        .then(data => {
+                    try {
+                        const { data } = await axios.post('http://localhost:5000/posts', postData, {
+                            headers: { Authorization: `Bearer ${token}` }
+                        });
 
-                            // ---------- successful ----------
-                            if (data?.data?.acknowledged) {
-
-                                // ---------- refetch post data ----------
-                                refetchPosts();
-
-                                // ---------- toast success ----------
-                                toast.success('Posted', { id: toastId });
-                            }
-
-                            // ---------- failed ----------
-                            else toast.error('Something went wrong', { id: toastId });
-                        })
-                        .catch(() => {
-                            // ---------- failed ----------
-                            toast.error('Something went wrong', { id: toastId });
-                        })
+                        if (data?.acknowledged) {
+                            refetchPosts();
+                            toast.success('Posted', { id: toastId });
+                        } else toast.error('Something went wrong', { id: toastId });
+                    } catch {
+                        toast.error('Something went wrong', { id: toastId });
+                    }
 
                     // ---------- alert close ----------
                     Swal.close();

@@ -14,7 +14,7 @@ const PostCard = ({ post }) => {
     const [postData, setPostData] = useState(post);
 
     // ---------- user details from auth provider ----------
-    const { userDetails } = useContext(AuthContext);
+    const { userDetails, user } = useContext(AuthContext);
 
     // ---------- comment text controlling state ----------
     const [commentText, setCommentText] = useState("");
@@ -23,7 +23,7 @@ const PostCard = ({ post }) => {
     const timeAgo = formatTimeAgo(postData.createdAt);
 
     // ---------- comment posting function ----------
-    const handleComment = e => {
+    const handleComment = async (e) => {
         e.preventDefault();
 
         // ---------- comment text ----------
@@ -36,35 +36,50 @@ const PostCard = ({ post }) => {
         const commentData = { commenterId: userDetails?._id, comment };
 
         // ---------- patch request of post for adding a comment ----------
-        axios.patch(`http://localhost:5000/posts/comments/add/${postData?._id}`, commentData)
-            .then((data) => {
+        try {
+            const token = await user.getIdToken();
 
-                // ---------- if successful then refetch post data ----------
-                setPostData(data.data);
+            const { data } = await axios.patch(`http://localhost:5000/posts/comments/add/${postData?._id}`, commentData, {
+                headers: {
+                    authorization: `Bearer ${token}`
+                }
             })
-            .catch(() => {
 
-                // ---------- error toast ----------
-                toast.error('Something went wrong');
-            })
+            // success
+            setPostData(data);
+        }
+        catch {
+            // error
+            toast.error('Something went wrong');
+        }
 
         // ---------- reset comment field ----------
         setCommentText("");
     }
 
     // ---------- comment deleting function ----------
-    const handleDeleteComment = (commentId) => {
-        axios.patch(`http://localhost:5000/posts/comments/delete/${postData?._id}`, { commentId })
-            .then(data => {
+    const handleDeleteComment = async (commentId) => {
 
-                // ---------- if successful then refetch post data ----------
-                setPostData(data.data);
-            })
-            .catch(() => {
+        const commentData = {
+            commentId, authorId: postData?.author?._id, commenterId: userDetails?._id
+        }
 
-                // ---------- error toast ----------
-                toast.error('Something went wrong');
+        // ---------- patch request for deleting a comment ----------
+        try {
+            const token = await user.getIdToken();
+
+            const { data } = await axios.patch(`http://localhost:5000/posts/comments/delete/${postData?._id}`, commentData, {
+                headers: {
+                    authorization: `Bearer ${token}`
+                }
             })
+
+            // successful
+            setPostData(data);
+        }
+        catch {
+            toast.error('Something went wrong');
+        }
     }
 
     return (

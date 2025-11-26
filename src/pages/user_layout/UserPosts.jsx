@@ -6,21 +6,37 @@ import DisplayConnections from "../../components/user_layout/shared/DisplayConne
 import UserPostCard from "../../components/user_layout/UserPosts/UserPostCard";
 import { useQuery } from "@tanstack/react-query";
 import PostSkeleton from "../../components/skeletons/PostSkeleton";
+import { useNavigate } from "react-router-dom";
 
 const UserPosts = () => {
 
     // ---------- user data from auth provider ----------
-    const { userDetails } = useContext(AuthContext);
+    const { userDetails, user } = useContext(AuthContext);
 
-    // ---------- for fetching my posts ----------
+    // ---------- hooks ----------
+    const navigate = useNavigate();
+
     const { data: myPosts = [], refetch: refetchMyPosts, isPending } = useQuery({
         queryKey: ["my-posts", userDetails?._id],
         queryFn: async () => {
-            const res = await axios.get(`http://localhost:5000/posts/author/${userDetails._id}`);
-            return res.data;
+            try {
+                const token = await user.getIdToken();
+                const res = await axios.get(`http://localhost:5000/posts/author/${userDetails._id}`, {
+                    headers: {
+                        authorization: `Bearer ${token}`
+                    }
+                });
+                return res.data;
+            } catch (error) {
+                if (error.response?.status === 403) {
+                    navigate('/forbidden');
+                    return [];
+                }
+                throw error;
+            }
         },
         enabled: !!userDetails?._id
-    })
+    });
 
     return (
         <div>
