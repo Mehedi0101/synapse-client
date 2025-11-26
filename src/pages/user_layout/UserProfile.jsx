@@ -22,28 +22,44 @@ const UserProfile = ({ display = "" }) => {
     const [displayData, setDisplayData] = useState({});
 
     // ---------- data from auth provider ----------
-    const { userDetails } = useContext(AuthContext);
+    const { userDetails, user } = useContext(AuthContext);
 
 
     useEffect(() => {
-        // ---------- if params contains id ----------
-        if (params?.id) {
 
-            // ---------- fetch user data by id ----------
-            axios.get(`http://localhost:5000/users/${params?.id}`)
-                .then((data) => {
-                    if (data.data) setDisplayData(data.data);
-                    else navigate('/error');
-                })
-                .catch(() => {
+        // ---------- fetch user function ----------
+        const fetchUserData = async () => {
+            try {
+
+                const token = await user.getIdToken();
+
+                let response;
+
+                // ---------- if params?.id exists then fetch profile details based on the id ----------
+                if (params?.id) {
+                    response = await axios.get(`http://localhost:5000/users/${params?.id}`, {
+                        headers: {
+                            authorization: `Bearer ${token}`
+                        }
+                    });
+                } else {
+                    setDisplayData(userDetails);
+                    return;
+                }
+
+                // ---------- if response found then set in display data ----------
+                if (response.data) {
+                    setDisplayData(response.data);
+                } else {
                     navigate('/error');
-                })
-        }
-        // ---------- if params doesn't contain any id ----------
-        else {
-            setDisplayData(userDetails);
-        }
-    }, [params, userDetails, navigate])
+                }
+            } catch {
+                navigate('/error');
+            }
+        };
+
+        fetchUserData();
+    }, [params, userDetails, user, navigate]);
 
     return (
         <>

@@ -16,14 +16,19 @@ const UserConnections = () => {
 
 
     // ---------- user data from auth provider ----------
-    const { userDetails } = useContext(AuthContext);
+    const { userDetails, user } = useContext(AuthContext);
 
 
     // ---------- for fetching people you connect ----------
     const { data: peopleYouMayConnect = [], isPending: peopleYouMayKnowLoading, refetch: refetchPeopleYouMayConnect } = useQuery({
         queryKey: ["people-you-may-connect", userDetails?._id],
         queryFn: async () => {
-            const res = await axios.get(`http://localhost:5000/users/available/${userDetails._id}`);
+            const token = await user.getIdToken();
+            const res = await axios.get(`http://localhost:5000/users/available/${userDetails?._id}`, {
+                headers: {
+                    authorization: `Bearer ${token}`
+                }
+            });
             return res.data;
         },
         enabled: !!userDetails?._id

@@ -1,6 +1,6 @@
 import { useContext, useState } from "react";
 import { IoSearch } from "react-icons/io5";
-import { MdDeleteOutline } from "react-icons/md";
+// import { MdDeleteOutline } from "react-icons/md";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import Swal from "sweetalert2";
@@ -13,7 +13,7 @@ import AuthContext from "../../contexts/AuthContext";
 const AdminUsers = () => {
 
     // ---------- user details from auth provider ----------
-    const { userDetails } = useContext(AuthContext);
+    const { userDetails, user } = useContext(AuthContext);
 
     // ---------- search box content ----------
     const [searchText, setSearchText] = useState("");
@@ -26,7 +26,12 @@ const AdminUsers = () => {
     } = useQuery({
         queryKey: ["users"],
         queryFn: async () => {
-            const res = await axios.get("http://localhost:5000/users");
+            const token = await user.getIdToken();
+            const res = await axios.get("http://localhost:5000/users", {
+                headers: {
+                    authorization: `Bearer ${token}`
+                }
+            });
             return res.data;
         },
     });

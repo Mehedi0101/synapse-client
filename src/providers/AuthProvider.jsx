@@ -20,7 +20,12 @@ const AuthProvider = ({ children }) => {
     const { data: userDetails = null, refetch: refetchUserDetails, isPending: userDetailsPending } = useQuery({
         queryKey: ["user-details", user?.email],
         queryFn: async () => {
-            const res = await axios.post("http://localhost:5000/users/email", { email: user.email });
+            const token = await user.getIdToken();
+            const res = await axios.post("http://localhost:5000/users/email", { email: user.email }, {
+                headers: {
+                    authorization: `Bearer ${token}`
+                }
+            });
             return res.data;
         },
         enabled: !!user?.email
@@ -62,33 +67,28 @@ const AuthProvider = ({ children }) => {
             const credential = EmailAuthProvider.credential(user.email, password);
             await reauthenticateWithCredential(user, credential);
 
-            // ---------- delete from database ---------- 
-            axios.delete(`http://localhost:5000/users/${userDetails._id}`)
-                .then((res) => {
+            const token = await user.getIdToken();
 
-                    // ---------- if successful ---------- 
-                    if (res?.data?.acknowledged) {
-
-                        deleteUser(user)
-                            .then(() => {
-                                logout();
-                                setUser(null);
-                                // setUserDetails(null);
-                                // ---------- toast success ----------
-                                toast.success('Account Removed', { id: toastId });
-                            })
-
-                    }
-                    // ---------- if failed ---------- 
-                    else {
-                        // ---------- toast error ---------- 
-                        toast.error('Something went wrong', { id: toastId });
+            try {
+                // ---------- delete from database ----------
+                const { data } = await axios.delete(`http://localhost:5000/users/${userDetails._id}`, {
+                    headers: {
+                        authorization: `Bearer ${token}`
                     }
                 })
-                .catch(() => {
-                    // ---------- toast error ---------- 
+
+                if (data?.acknowledged) {
+                    await deleteUser(user);
+                    logout();
+                    setUser(null);
+                    toast.success('Account Removed', { id: toastId });
+                } else {
                     toast.error('Something went wrong', { id: toastId });
-                })
+                }
+            }
+            catch {
+                toast.error('Failed to remove account from server', { id: toastId });
+            }
         }
         catch {
             // ---------- toast error (incorrect password) ---------- 

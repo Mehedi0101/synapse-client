@@ -11,7 +11,7 @@ import UserHeader from "../../components/user_layout/shared/UserHeader";
 const UpdateUserProfile = () => {
 
     // ---------- user details from auth provider ----------
-    const { userDetails, refetchUserDetails } = useContext(AuthContext);
+    const { userDetails, refetchUserDetails, user } = useContext(AuthContext);
 
     // ---------- hooks ----------
     const navigate = useNavigate();
@@ -60,7 +60,7 @@ const UpdateUserProfile = () => {
                 cancelButton: 'order-2',
                 confirmButton: 'order-1 right-gap',
             },
-        }).then((result) => {
+        }).then(async (result) => {
 
             // ---------- actions after confirming change ---------- 
             if (result.isConfirmed) {
@@ -106,34 +106,29 @@ const UpdateUserProfile = () => {
                     }
                 }
 
-                // ---------- patch ---------- 
-                axios.patch(`http://localhost:5000/users/${userDetails._id}`, updatedData)
-                    .then((data) => {
+                // ---------- patch ----------
+                try {
+                    const token = await user.getIdToken();
 
-                        // ---------- if successful ---------- 
-                        if (data?.data?.acknowledged) {
-                            // ---------- toast success ---------- 
-                            toast.success('Changes Saved Successfully', { id: toastId });
-
-                            // ---------- navigate to profile page ---------- 
-                            navigate('/profile');
-
-                            // ---------- refetching user details after completing the update ----------
-                            refetchUserDetails();
-                        }
-
-                        // ---------- if failed ---------- 
-                        else {
-
-                            // ---------- toast error ---------- 
-                            toast.error('Something went wrong', { id: toastId });
+                    const { data } = await axios.patch(`http://localhost:5000/users/${userDetails._id}`, updatedData, {
+                        headers: {
+                            authorization: `Bearer ${token}`
                         }
                     })
-                    .catch(() => {
 
-                        // ---------- toast error ---------- 
+                    if (data?.acknowledged) {
+                        toast.success('Changes Saved Successfully', { id: toastId });
+                        navigate('/profile');
+                        refetchUserDetails();
+                    }
+                    else {
                         toast.error('Something went wrong', { id: toastId });
-                    })
+                    }
+
+                }
+                catch {
+                    toast.error('Something went wrong', { id: toastId });
+                }
             }
         })
     };
