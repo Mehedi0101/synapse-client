@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useContext, useEffect } from "react";
 import {
     PieChart, Pie, Cell, Legend, Tooltip, ResponsiveContainer,
     BarChart, Bar, XAxis, YAxis, CartesianGrid,
@@ -13,6 +13,7 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import StatsSkeleton from "../../components/skeletons/StatsSkeleton";
+import AuthContext from "../../contexts/AuthContext";
 
 // ---------- Card Components ----------
 // eslint-disable-next-line no-unused-vars
@@ -53,11 +54,18 @@ const StatCard = ({ title, value, icon: Icon, color }) => (
 
 const AdminOverview = () => {
 
+    const { user } = useContext(AuthContext);
+
     // ---------- fetch admin overview data from the server ----------
     const { data, isPending, isError } = useQuery({
         queryKey: ["admin-overview"],
         queryFn: async () => {
-            const res = await axios.get("http://localhost:5000/admin/overview");
+            const token = await user.getIdToken();
+            const res = await axios.get("http://localhost:5000/admin/overview", {
+                headers: {
+                    authorization: `Bearer ${token}`
+                }
+            });
             return res.data;
         }
     });

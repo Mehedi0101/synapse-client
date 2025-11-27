@@ -15,7 +15,7 @@ import Swal from "sweetalert2";
 const UserHeader = ({ searchBar = "", display = "" }) => {
 
     // ---------- user details and logout from auth provider ----------
-    const { userDetails, logout } = useContext(AuthContext);
+    const { userDetails, logout, user } = useContext(AuthContext);
 
     // ---------- avatar dropdown status ----------
     const [open, setOpen] = useState(false);
@@ -32,7 +32,12 @@ const UserHeader = ({ searchBar = "", display = "" }) => {
     const { data: notifications = [] } = useQuery({
         queryKey: ["notifications", userDetails?._id],
         queryFn: async () => {
-            const res = await axios.get(`http://localhost:5000/notifications/${userDetails._id}`);
+            const token = await user.getIdToken();
+            const res = await axios.get(`http://localhost:5000/notifications/${userDetails._id}`, {
+                headers: {
+                    authorization: `Bearer ${token}`
+                }
+            });
             return res.data;
         },
         enabled: !!userDetails?._id,
@@ -42,7 +47,12 @@ const UserHeader = ({ searchBar = "", display = "" }) => {
     // ---------- Delete Notifications ----------
     const deleteMutation = useMutation({
         mutationFn: async () => {
-            await axios.delete(`http://localhost:5000/notifications/${userDetails._id}`);
+            const token = await user.getIdToken();
+            await axios.delete(`http://localhost:5000/notifications/${userDetails._id}`, {
+                headers: {
+                    authorization: `Bearer ${token}`
+                }
+            });
         },
         onSuccess: () => {
             queryClient.invalidateQueries(["notifications", userDetails._id]);
