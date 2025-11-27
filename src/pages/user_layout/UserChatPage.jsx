@@ -16,7 +16,7 @@ const UserChatPage = () => {
     const { id: friendId } = useParams();
 
     // ---------- user details from auth provider ----------
-    const { userDetails } = useContext(AuthContext);
+    const { userDetails, user } = useContext(AuthContext);
 
     // ---------- hooks ----------
     const queryClient = useQueryClient();
@@ -39,7 +39,12 @@ const UserChatPage = () => {
     } = useQuery({
         queryKey: ["friend-info", friendId],
         queryFn: async () => {
-            const res = await axios.get(`http://localhost:5000/users/${friendId}`);
+            const token = await user.getIdToken();
+            const res = await axios.get(`http://localhost:5000/users/${friendId}`, {
+                headers: {
+                    authorization: `Bearer ${token}`
+                }
+            });
             return res.data;
         },
         enabled: !!friendId,

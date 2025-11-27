@@ -10,7 +10,7 @@ import formatTimeAgo from "../../../functions/formatTimeAgo";
 const InboxTab = () => {
 
     // ---------- user details from auth provider ----------
-    const { userDetails } = useContext(AuthContext);
+    const { userDetails, user } = useContext(AuthContext);
 
     // ---------- hooks ----------
     const navigate = useNavigate();
@@ -20,7 +20,12 @@ const InboxTab = () => {
     const { data: chats = [], isPending } = useQuery({
         queryKey: ["chat-info", userDetails?._id],
         queryFn: async () => {
-            const res = await axios.get(`http://localhost:5000/chat-info/${userDetails?._id}`);
+            const token = await user.getIdToken();
+            const res = await axios.get(`http://localhost:5000/chat-info/${userDetails?._id}`, {
+                headers: {
+                    authorization: `Bearer ${token}`
+                }
+            });
             return res.data;
         },
         enabled: !!userDetails?._id,
@@ -29,7 +34,12 @@ const InboxTab = () => {
     // ---------- mark as read (tanstack mutation) ----------
     const markAsRead = useMutation({
         mutationFn: async ({ chatId, userId }) => {
-            await axios.patch(`http://localhost:5000/chat-info/read/${chatId}/${userId}`);
+            const token = await user.getIdToken();
+            await axios.patch(`http://localhost:5000/chat-info/read/${chatId}/${userId}`, {}, {
+                headers: {
+                    authorization: `Bearer ${token}`
+                }
+            });
         },
         onSuccess: () => {
             // Refresh inbox to show updated unread count
