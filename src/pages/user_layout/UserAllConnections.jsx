@@ -9,13 +9,18 @@ import ConnectedUsersCardSkeleton from "../../components/skeletons/ConnectedUser
 const UserAllConnections = () => {
 
     // ---------- user data from auth provider ----------
-    const { userDetails } = useContext(AuthContext);
+    const { userDetails, user } = useContext(AuthContext);
 
     // ---------- for fetching my posts ----------
     const { data: myConnections = [], isPending } = useQuery({
         queryKey: ["connected-users", userDetails?._id],
         queryFn: async () => {
-            const res = await axios.get(`http://localhost:5000/connections/accepted/${userDetails._id}`);
+            const token = await user.getIdToken();
+            const res = await axios.get(`http://localhost:5000/connections/accepted/${userDetails._id}`, {
+                headers: {
+                    authorization: `Bearer ${token}`
+                }
+            });
             return res.data;
         },
         enabled: !!userDetails?._id

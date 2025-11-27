@@ -1,15 +1,19 @@
 import { Link } from "react-router-dom";
 import defaultUser from "../../../assets/default_user.jpg";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import GrayButton from "../../shared/buttons/GrayButton";
 import RedButton from "../../shared/buttons/RedButton";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { format } from "date-fns";
 import Swal from "sweetalert2";
+import AuthContext from "../../../contexts/AuthContext";
 
 
 const MyConnectionCard = ({ connection }) => {
+
+    const { userDetails, user } = useContext(AuthContext);
+
     const [clicked, setClicked] = useState(false);
     const connectionDate = format(new Date(connection.createdAt), "MMMM d, yyyy");
 
@@ -31,7 +35,7 @@ const MyConnectionCard = ({ connection }) => {
                 cancelButton: 'order-2',
                 confirmButton: 'order-1 right-gap',
             },
-        }).then((result) => {
+        }).then(async (result) => {
 
             // ---------- actions after confirming ---------- 
             if (result.isConfirmed) {
@@ -40,25 +44,25 @@ const MyConnectionCard = ({ connection }) => {
                 const toastId = toast.loading('Removing...');
 
                 // ---------- request to delete a connection based on it's id ----------
-                axios.delete(`http://localhost:5000/connections/${connection._id}`,)
-                    .then((data) => {
-
-                        // ---------- remove successful ----------
-                        if (data?.data?.acknowledged) {
-                            toast.success('Removed', { id: toastId });
-                            setClicked(true);
-                        }
-
-                        // ---------- remove unsuccessful ----------
-                        else {
-                            toast.error('Something went wrong', { id: toastId });
+                try {
+                    const token = await user.getIdToken();
+                    const { data } = await axios.delete(`http://localhost:5000/connections/${userDetails?._id}/${connection._id}`, {
+                        headers: {
+                            authorization: `Bearer ${token}`
                         }
                     })
 
-                    // ---------- remove request unsuccessful ----------
-                    .catch(() => {
+                    if (data?.acknowledged) {
+                        toast.success('Removed', { id: toastId });
+                        setClicked(true);
+                    }
+                    else {
                         toast.error('Something went wrong', { id: toastId });
-                    })
+                    }
+                }
+                catch {
+                    toast.error('Something went wrong', { id: toastId });
+                }
             }
         })
     }

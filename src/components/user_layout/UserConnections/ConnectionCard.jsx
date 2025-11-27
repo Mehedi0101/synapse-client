@@ -11,12 +11,12 @@ import { motion } from "motion/react";
 
 const ConnectionCard = ({ user, refetchPeopleYouMayConnect, refetchSentRequests }) => {
     // ---------- user data from auth provider ----------
-    const { userDetails } = useContext(AuthContext);
+    const { userDetails, user: auth } = useContext(AuthContext);
 
     // ---------- button status ----------
     const [clicked, setClicked] = useState(false);
 
-    const handleConnect = () => {
+    const handleConnect = async () => {
         // ---------- loading toast ----------
         const toastId = toast.loading('Sending Request...');
 
@@ -25,28 +25,49 @@ const ConnectionCard = ({ user, refetchPeopleYouMayConnect, refetchSentRequests 
         const to = user?._id;
         const status = "pending";
 
-        const data = { from, to, status };
-
         // ---------- post request to insert a connection request to database ----------
-        axios.post("http://localhost:5000/connections", data)
-            .then((data) => {
+        try {
+            const connectionData = { from, to, status };
 
-                // ---------- post request successful ----------
-                if (data?.data?.acknowledged) {
-                    toast.success('Request Sent', { id: toastId });
-                    setClicked(true);
-                    refetchPeopleYouMayConnect();
-                    refetchSentRequests();
-                }
-
-                // ---------- post request unsuccessful ----------
-                else {
-                    toast.error('Something went wrong', { id: toastId });
+            const token = await auth.getIdToken();
+            const { data } = await axios.post("http://localhost:5000/connections", connectionData, {
+                headers: {
+                    authorization: `Bearer ${token}`
                 }
             })
-            .catch(() => {
+
+            if (data?.acknowledged) {
+                toast.success('Request Sent', { id: toastId });
+                setClicked(true);
+                refetchPeopleYouMayConnect();
+                refetchSentRequests();
+            }
+            else {
                 toast.error('Something went wrong', { id: toastId });
-            })
+            }
+        }
+        catch {
+            toast.error('Something went wrong', { id: toastId });
+        }
+        // axios.post("http://localhost:5000/connections", data)
+        //     .then((data) => {
+
+        //         // ---------- post request successful ----------
+        //         if (data?.data?.acknowledged) {
+        //             toast.success('Request Sent', { id: toastId });
+        //             setClicked(true);
+        //             refetchPeopleYouMayConnect();
+        //             refetchSentRequests();
+        //         }
+
+        //         // ---------- post request unsuccessful ----------
+        //         else {
+        //             toast.error('Something went wrong', { id: toastId });
+        //         }
+        //     })
+        //     .catch(() => {
+        //         toast.error('Something went wrong', { id: toastId });
+        //     })
     }
 
     return (

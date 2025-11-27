@@ -38,7 +38,12 @@ const UserConnections = () => {
     const { data: receivedRequests = [], isPending: receivedRequestsLoading, refetch: refetchReceivedRequests } = useQuery({
         queryKey: ["received-requests", userDetails?._id],
         queryFn: async () => {
-            const res = await axios.get(`http://localhost:5000/connections/received/${userDetails._id}`);
+            const token = await user.getIdToken();
+            const res = await axios.get(`http://localhost:5000/connections/received/${userDetails._id}`, {
+                headers: {
+                    authorization: `Bearer ${token}`
+                }
+            });
             return res.data;
         },
         enabled: !!userDetails?._id
@@ -48,7 +53,12 @@ const UserConnections = () => {
     const { data: sentRequests = [], isPending: sentRequestsLoading, refetch: refetchSentRequests } = useQuery({
         queryKey: ["sent-requests", userDetails?._id],
         queryFn: async () => {
-            const res = await axios.get(`http://localhost:5000/connections/sent/${userDetails._id}`);
+            const token = await user.getIdToken();
+            const res = await axios.get(`http://localhost:5000/connections/sent/${userDetails._id}`, {
+                headers: {
+                    authorization: `Bearer ${token}`
+                }
+            });
             return res.data;
         },
         enabled: !!userDetails?._id

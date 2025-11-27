@@ -11,7 +11,7 @@ import { useNavigate } from "react-router-dom";
 const UserMentorshipRequest = () => {
 
     // ---------- user data from auth provider ----------
-    const { userDetails } = useContext(AuthContext);
+    const { userDetails, user } = useContext(AuthContext);
 
     // ---------- hooks ----------
     const navigate = useNavigate();
@@ -25,7 +25,12 @@ const UserMentorshipRequest = () => {
     const { data: connections = [] } = useQuery({
         queryKey: ["connected-users"],
         queryFn: async () => {
-            const res = await axios.get(`http://localhost:5000/connections/accepted/${userDetails._id}`);
+            const token = await user.getIdToken();
+            const res = await axios.get(`http://localhost:5000/connections/accepted/${userDetails._id}`, {
+                headers: {
+                    authorization: `Bearer ${token}`
+                }
+            });
             return res?.data?.filter(connection => connection?.otherUser?.role === "Alumni");
         },
         enabled: !!userDetails?._id

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import defaultUser from "../../../assets/default_user.jpg";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -8,8 +8,11 @@ import { formatDistanceToNow } from "date-fns";
 import { Link } from "react-router-dom";
 // eslint-disable-next-line no-unused-vars
 import { motion } from "motion/react";
+import AuthContext from "../../../contexts/AuthContext";
 
 const SentRequestCard = ({ req, refetchSentRequests, refetchPeopleYouMayConnect }) => {
+
+    const { userDetails, user } = useContext(AuthContext);
 
     // ---------- button status ----------
     const [clicked, setClicked] = useState(false);
@@ -18,32 +21,32 @@ const SentRequestCard = ({ req, refetchSentRequests, refetchPeopleYouMayConnect 
     let timeAgo = formatDistanceToNow(new Date(req.createdAt), { addSuffix: true });
     timeAgo = timeAgo.replace("less than a minute ago", "Just now");
 
-    const handleCancelRequest = () => {
+    const handleCancelRequest = async () => {
         // ---------- loading toast ----------
         const toastId = toast.loading('Cancelling Request...');
 
-        // ---------- request to delete a connection request based on it's id ----------
-        axios.delete(`http://localhost:5000/connections/${req._id}`,)
-            .then((data) => {
+        try {
+            const token = await user.getIdToken();
 
-                // ---------- delete request successful ----------
-                if (data?.data?.acknowledged) {
-                    toast.success('Request Cancelled', { id: toastId });
-                    setClicked(true);
-                    refetchSentRequests();
-                    refetchPeopleYouMayConnect();
-                }
-
-                // ---------- delete request unsuccessful ----------
-                else {
-                    toast.error('Something went wrong', { id: toastId });
+            const { data } = await axios.delete(`http://localhost:5000/connections/${userDetails._id}/${req._id}`, {
+                headers: {
+                    authorization: `Bearer ${token}`
                 }
             })
 
-            // ---------- delete request unsuccessful ----------
-            .catch(() => {
+            if (data?.acknowledged) {
+                toast.success('Request Cancelled', { id: toastId });
+                setClicked(true);
+                refetchSentRequests();
+                refetchPeopleYouMayConnect();
+            }
+            else {
                 toast.error('Something went wrong', { id: toastId });
-            })
+            }
+        }
+        catch {
+            toast.error('Something went wrong', { id: toastId });
+        }
     }
 
     return (

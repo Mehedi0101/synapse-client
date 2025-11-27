@@ -10,14 +10,20 @@ import { LuMessageCircleMore } from "react-icons/lu";
 const StartConversationTab = () => {
 
     // ---------- user details from auth provider ----------
-    const { userDetails } = useContext(AuthContext);
+    const { userDetails, user } = useContext(AuthContext);
 
     // ---------- fetch all accepted connections ----------
     const { data: connections = [], isPending } = useQuery({
         queryKey: ["connections", userDetails?._id],
         queryFn: async () => {
+            const token = await user.getIdToken();
             const res = await axios.get(
-                `http://localhost:5000/connections/accepted/${userDetails?._id}`
+                `http://localhost:5000/connections/accepted/${userDetails?._id}`,
+                {
+                    headers: {
+                        authorization: `Bearer ${token}`
+                    }
+                }
             );
             return res.data;
         },

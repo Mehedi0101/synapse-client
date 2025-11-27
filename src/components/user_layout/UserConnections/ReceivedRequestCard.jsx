@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import defaultUser from "../../../assets/default_user.jpg";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -9,67 +9,72 @@ import PurpleButton from "../../shared/buttons/PurpleButton";
 import { Link } from "react-router-dom";
 // eslint-disable-next-line no-unused-vars
 import { motion } from "motion/react";
+import AuthContext from "../../../contexts/AuthContext";
 
 const ReceivedRequestCard = ({ req, refetchReceivedRequests, refetchPeopleYouMayConnect }) => {
+
+    const { userDetails, user } = useContext(AuthContext);
 
     // ---------- button status ----------
     const [requestStatus, setRequestStatus] = useState("pending");
     let timeAgo = formatDistanceToNow(new Date(req.createdAt), { addSuffix: true });
     timeAgo = timeAgo.replace("less than a minute ago", "Just now");
 
-    const handleAcceptRequest = () => {
+    const handleAcceptRequest = async () => {
         // ---------- loading toast ----------
         const toastId = toast.loading('Accepting...');
 
         // ---------- patch request when accepting connection request ----------
-        axios.patch("http://localhost:5000/connections/accept", { id: req._id })
-            .then((data) => {
+        try {
+            const token = await user.getIdToken();
 
-                // ---------- accept successful ----------
-                if (data?.data?.acknowledged) {
-                    toast.success('Accepted', { id: toastId });
-                    setRequestStatus("accepted");
-                    refetchReceivedRequests();
-                }
-
-                // ---------- accept unsuccessful ----------
-                else {
-                    toast.error('Something went wrong', { id: toastId });
+            const { data } = await axios.patch("http://localhost:5000/connections/accept", { connectionId: req._id, userId: userDetails?._id }, {
+                headers: {
+                    authorization: `Bearer ${token}`
                 }
             })
-            .catch(() => {
 
-                // ---------- accept unsuccessful ----------
+            if (data?.acknowledged) {
+                toast.success('Accepted', { id: toastId });
+                setRequestStatus("accepted");
+                refetchReceivedRequests();
+            }
+            else {
                 toast.error('Something went wrong', { id: toastId });
-            })
+            }
+        }
+        catch {
+            toast.error('Something went wrong', { id: toastId });
+        }
     }
 
-    const handleCancelRequest = () => {
+    const handleCancelRequest = async () => {
         // ---------- loading toast ----------
         const toastId = toast.loading('Cancelling...');
 
-        // ---------- post request to insert a connection request to database ----------
-        axios.delete(`http://localhost:5000/connections/${req._id}`,)
-            .then((data) => {
+        // ---------- post request to remove a connection request to database ----------
+        try {
+            const token = await user.getIdToken();
 
-                // ---------- delete request successful ----------
-                if (data?.data?.acknowledged) {
-                    toast.success('Cancelled', { id: toastId });
-                    setRequestStatus("cancelled");
-                    refetchReceivedRequests();
-                    refetchPeopleYouMayConnect();
-                }
-
-                // ---------- delete request unsuccessful ----------
-                else {
-                    toast.error('Something went wrong', { id: toastId });
+            const { data } = await axios.delete(`http://localhost:5000/connections/${userDetails?._id}/${req._id}`, {
+                headers: {
+                    authorization: `Bearer ${token}`
                 }
             })
-            .catch(() => {
 
-                // ---------- delete request unsuccessful ----------
+            if (data?.acknowledged) {
+                toast.success('Cancelled', { id: toastId });
+                setRequestStatus("cancelled");
+                refetchReceivedRequests();
+                refetchPeopleYouMayConnect();
+            }
+            else {
                 toast.error('Something went wrong', { id: toastId });
-            })
+            }
+        }
+        catch {
+            toast.error('Something went wrong', { id: toastId });
+        }
     }
 
     return (

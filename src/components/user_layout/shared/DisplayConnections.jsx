@@ -8,13 +8,18 @@ import ConnectionsSkeleton from '../../skeletons/ConnectionsSkeleton';
 const DisplayConnections = () => {
 
     // ---------- user data from auth provider ----------
-    const { userDetails } = useContext(AuthContext);
+    const { userDetails, user } = useContext(AuthContext);
 
     // ---------- for fetching all my connections ----------
     const { data: myConnections = [], isPending } = useQuery({
         queryKey: ["my-connections", userDetails?._id],
         queryFn: async () => {
-            const res = await axios.get(`http://localhost:5000/connections/accepted/${userDetails._id}`)
+            const token = await user.getIdToken();
+            const res = await axios.get(`http://localhost:5000/connections/accepted/${userDetails._id}`, {
+                headers: {
+                    authorization: `Bearer ${token}`
+                }
+            })
             return res.data;
         },
         enabled: !!userDetails?._id
