@@ -41,7 +41,7 @@ const UserPosts = () => {
     return (
         <div>
             {/* ---------- user header with searchbar ---------- */}
-            <UserHeader></UserHeader>
+            <UserHeader searchBar="invisible"></UserHeader>
 
             {/* ---------- main section ---------- */}
             <div className="mx-2 md:mx-5 my-8 text-semi-dark grid gap-4 md:gap-8 lg:gap-12 grid-cols-1 sm:grid-cols-3">

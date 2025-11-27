@@ -49,7 +49,7 @@ const UserEvents = () => {
     return (
         <div>
             {/* ---------- user header with searchbar ---------- */}
-            <UserHeader searchBar=""></UserHeader>
+            <UserHeader searchBar="invisible"></UserHeader>
 
             {/* ---------- main section ---------- */}
             <div className="mx-2 md:mx-5 my-8 text-semi-dark">

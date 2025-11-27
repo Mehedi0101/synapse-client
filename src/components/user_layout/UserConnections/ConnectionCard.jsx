@@ -49,25 +49,6 @@ const ConnectionCard = ({ user, refetchPeopleYouMayConnect, refetchSentRequests 
         catch {
             toast.error('Something went wrong', { id: toastId });
         }
-        // axios.post("http://localhost:5000/connections", data)
-        //     .then((data) => {
-
-        //         // ---------- post request successful ----------
-        //         if (data?.data?.acknowledged) {
-        //             toast.success('Request Sent', { id: toastId });
-        //             setClicked(true);
-        //             refetchPeopleYouMayConnect();
-        //             refetchSentRequests();
-        //         }
-
-        //         // ---------- post request unsuccessful ----------
-        //         else {
-        //             toast.error('Something went wrong', { id: toastId });
-        //         }
-        //     })
-        //     .catch(() => {
-        //         toast.error('Something went wrong', { id: toastId });
-        //     })
     }
 
     return (
