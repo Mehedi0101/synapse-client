@@ -56,7 +56,7 @@ const UserMentorshipRequest = () => {
             showCancelButton: true,
             confirmButtonColor: "#6f16d7",
             cancelButtonColor: "#d33",
-        }).then((result) => {
+        }).then(async (result) => {
 
             // ---------- after confirmation ----------
             if (result.isConfirmed) {
@@ -70,19 +70,25 @@ const UserMentorshipRequest = () => {
                     description
                 };
 
-                // ---------- post request to server ----------
-                axios.post("http://localhost:5000/mentorship", requestData)
-                    .then((res) => {
-                        if (res.data?.acknowledged) {
-                            toast.success("Request submitted successfully!", { id: toastId });
-
-                            // ---------- navigate to mentorship page ----------
-                            navigate("/mentorship");
-                        } else {
-                            toast.error("Something went wrong", { id: toastId });
+                try {
+                    const token = await user.getIdToken();
+                    const { data } = await axios.post("http://localhost:5000/mentorship", requestData, {
+                        headers: {
+                            authorization: `Bearer ${token}`
                         }
                     })
-                    .catch(() => toast.error("Something went wrong", { id: toastId }));
+
+                    if (data?.acknowledged) {
+                        toast.success("Request submitted successfully!", { id: toastId });
+                        navigate("/mentorship");
+                    }
+                    else {
+                        toast.error("Something went wrong", { id: toastId });
+                    }
+                }
+                catch {
+                    toast.error("Something went wrong", { id: toastId });
+                }
             }
         });
     };

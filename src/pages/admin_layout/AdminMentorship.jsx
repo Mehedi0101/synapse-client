@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { IoSearch } from "react-icons/io5";
 import { MdDeleteOutline } from "react-icons/md";
 import { useQuery } from "@tanstack/react-query";
@@ -9,8 +9,11 @@ import defaultUser from "../../assets/default_user.jpg";
 import { Link } from "react-router-dom";
 import { format } from "date-fns";
 import TableSkeleton from "../../components/skeletons/TableSkeleton";
+import AuthContext from "../../contexts/AuthContext";
 
 const AdminMentorships = () => {
+
+    const { user } = useContext(AuthContext);
 
     // ---------- search text state ----------
     const [searchText, setSearchText] = useState("");
@@ -19,7 +22,13 @@ const AdminMentorships = () => {
     const { data: mentorships = [], isPending, refetch } = useQuery({
         queryKey: ["mentorships"],
         queryFn: async () => {
-            const res = await axios.get("http://localhost:5000/mentorship");
+
+            const token = await user.getIdToken();
+            const res = await axios.get("http://localhost:5000/mentorship", {
+                headers: {
+                    authorization: `Bearer ${token}`
+                }
+            });
             return res.data;
         },
     });
@@ -37,23 +46,32 @@ const AdminMentorships = () => {
             showCancelButton: true,
             confirmButtonColor: "#6f16d7",
             cancelButtonColor: "#d33",
-        }).then((result) => {
+        }).then(async (result) => {
 
             // ---------- if confirmed ----------
             if (result.isConfirmed) {
                 const toastId = toast.loading("Deleting request...");
 
                 // ---------- delete request to server ----------
-                axios.delete(`http://localhost:5000/mentorship/${id}`)
-                    .then((res) => {
-                        if (res.data?.acknowledged) {
-                            toast.success("Request deleted", { id: toastId });
-                            refetch();
-                        } else {
-                            toast.error("Failed to delete request", { id: toastId });
+                try {
+                    const token = await user.getIdToken();
+                    const { data } = await axios.delete(`http://localhost:5000/mentorship/${id}`, {
+                        headers: {
+                            authorization: `Bearer ${token}`
                         }
                     })
-                    .catch(() => toast.error("Something went wrong", { id: toastId }));
+
+                    if (data?.acknowledged) {
+                        toast.success("Request deleted", { id: toastId });
+                        refetch();
+                    }
+                    else {
+                        toast.error("Failed to delete request", { id: toastId });
+                    }
+                }
+                catch {
+                    toast.error("Failed to delete request", { id: toastId });
+                }
             }
         });
     };
@@ -71,27 +89,35 @@ const AdminMentorships = () => {
             showCancelButton: true,
             confirmButtonColor: "#6f16d7",
             cancelButtonColor: "#d33",
-        }).then((result) => {
+        }).then(async (result) => {
 
             // ---------- if confirmed ----------
             if (result.isConfirmed) {
                 const toastId = toast.loading("Updating status...");
 
                 // ---------- patch request to server to update status ----------
-                axios.patch(`http://localhost:5000/mentorship/${id}`, { status: newStatus })
-                    .then((res) => {
-                        if (res.data?.acknowledged) {
-                            toast.success("Status updated", { id: toastId });
-                            refetch();
-                        } else {
-                            toast.error("Failed to update status", { id: toastId });
-                            resetSelect(currentStatus); // rollback if backend failed
+                try {
+                    const token = await user.getIdToken();
+                    const { data } = await axios.patch(`http://localhost:5000/mentorship/${id}`, { status: newStatus }, {
+                        headers: {
+                            authorization: `Bearer ${token}`
                         }
                     })
-                    .catch(() => {
-                        toast.error("Something went wrong", { id: toastId });
-                        resetSelect(currentStatus); // rollback on error
-                    });
+
+                    if (data?.acknowledged) {
+                        toast.success("Status updated", { id: toastId });
+                        refetch();
+                    }
+                    else {
+                        toast.error("Failed to update status", { id: toastId });
+                        resetSelect(currentStatus);
+                    }
+
+                }
+                catch {
+                    toast.error("Something went wrong", { id: toastId });
+                    resetSelect(currentStatus);
+                }
             } else {
                 resetSelect(currentStatus);
             }
@@ -271,6 +297,10 @@ const AdminMentorships = () => {
                                         >
                                             <option value="pending">Pending</option>
                                             <option value="assigned">Assigned</option>
+                                            <option value="cancelled" disabled>Cancelled</option>
+                                            <option value="rejected" disabled>Rejected</option>
+                                            <option value="completed" disabled>Completed</option>
+                                            <option value="accepted" disabled>Accepted</option>
                                         </select>
                                     </td>
 

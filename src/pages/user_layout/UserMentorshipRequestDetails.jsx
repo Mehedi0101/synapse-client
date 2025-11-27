@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import axios from "axios";
@@ -9,8 +9,11 @@ import UserHeader from "../../components/user_layout/shared/UserHeader";
 import { format } from "date-fns";
 import PurpleButton from "../../components/shared/buttons/PurpleButton";
 import RedButton from "../../components/shared/buttons/RedButton";
+import AuthContext from "../../contexts/AuthContext";
 
 const UserMentorshipRequestDetails = () => {
+
+    const { user } = useContext(AuthContext);
 
     // ---------- id from url ----------
     const { id } = useParams();
@@ -22,7 +25,12 @@ const UserMentorshipRequestDetails = () => {
     const { data: request, isPending, refetch } = useQuery({
         queryKey: ["mentorship-request", id],
         queryFn: async () => {
-            const res = await axios.get(`http://localhost:5000/mentorship/${id}`);
+            const token = await user.getIdToken();
+            const res = await axios.get(`http://localhost:5000/mentorship/${id}`, {
+                headers: {
+                    authorization: `Bearer ${token}`
+                }
+            });
             return res.data;
         },
         enabled: !!id,
@@ -41,7 +49,12 @@ const UserMentorshipRequestDetails = () => {
     // ---------- mutation for approve/reject ----------
     const mutation = useMutation({
         mutationFn: async (updateData) => {
-            return axios.patch(`http://localhost:5000/mentorship/${id}`, updateData);
+            const token = await user.getIdToken();
+            return axios.patch(`http://localhost:5000/mentorship/${id}`, updateData, {
+                headers: {
+                    authorization: `Bearer ${token}`
+                }
+            });
         },
         onSuccess: () => {
             refetch();
@@ -147,18 +160,27 @@ const UserMentorshipRequestDetails = () => {
     // ---------- if data loading ----------
     if (isPending) {
         return (
-            <div className="mx-2 md:mx-5 my-8 text-center text-slate-500">
-                Loading request details...
-            </div>
+            <>
+                {/* ---------- header ---------- */}
+                <UserHeader searchBar="invisible" />
+                <div className="mx-2 md:mx-5 my-8 text-center text-slate-500">
+                    Loading request details...
+                </div>
+            </>
         );
     }
 
     // ---------- if no request data is found ----------
     if (!request) {
         return (
-            <div className="mx-2 md:mx-5 my-8 text-center text-slate-500">
-                Request not found
-            </div>
+            <>
+                {/* ---------- header ---------- */}
+                <UserHeader searchBar="invisible" />
+
+                <div className="mx-2 md:mx-5 my-8 text-center text-slate-500">
+                    Request not found
+                </div>
+            </>
         );
     }
 

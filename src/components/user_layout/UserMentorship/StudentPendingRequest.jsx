@@ -21,7 +21,7 @@ const StudentPendingRequest = ({ mentorship }) => {
             </p>
 
             {/* ---------- request overview ---------- */}
-            <div className="mt-4 p-3 rounded-lg bg-slate-50 border border-slate-200 text-sm text-slate-600 max-w-md">
+            <div className="mt-4 p-3 rounded-lg text-sm text-slate-600 max-w-md">
                 <p><span className="font-semibold">Goal:</span> {mentorship?.goal}</p>
                 <p><span className="font-semibold">Chosen Mentor:</span> {mentorship?.mentor?.name || "N/A"}</p>
                 <p><span className="font-semibold">Status:</span> <span className="text-yellow-600">Pending</span></p>

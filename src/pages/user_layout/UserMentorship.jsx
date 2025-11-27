@@ -13,7 +13,7 @@ import StudentMentorshipInProgress from "../../components/user_layout/UserMentor
 
 const UserMentorship = () => {
     // ---------- user details from context ----------
-    const { userDetails } = useContext(AuthContext);
+    const { userDetails, user } = useContext(AuthContext);
 
     // ---------- role detection ----------
     const isStudent = userDetails?.role === "Student";
@@ -23,7 +23,12 @@ const UserMentorship = () => {
     const { data: mentorship = null, isPending: mentorshipPending } = useQuery({
         queryKey: ["mentorship-student", userDetails?._id],
         queryFn: async () => {
-            const res = await axios.get(`http://localhost:5000/mentorship/student/${userDetails?._id}`);
+            const token = await user.getIdToken();
+            const res = await axios.get(`http://localhost:5000/mentorship/student/${userDetails?._id}`, {
+                headers: {
+                    authorization: `Bearer ${token}`
+                }
+            });
             return res.data;
         },
         enabled: isStudent && !!userDetails?._id
@@ -33,7 +38,12 @@ const UserMentorship = () => {
     const { data: mentor = [], isPending: mentorPending } = useQuery({
         queryKey: ["mentorship-alumni", userDetails?._id],
         queryFn: async () => {
-            const res = await axios.get(`http://localhost:5000/mentorship/mentor/${userDetails?._id}`);
+            const token = await user.getIdToken();
+            const res = await axios.get(`http://localhost:5000/mentorship/mentor/${userDetails?._id}`, {
+                headers: {
+                    authorization: `Bearer ${token}`
+                }
+            });
             return res.data;
         },
         enabled: isAlumni && !!userDetails?._id

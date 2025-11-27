@@ -2,7 +2,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { format } from "date-fns";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { MdCheckCircle, MdCancel } from "react-icons/md";
 import { FaFlagCheckered } from "react-icons/fa";
 import toast from "react-hot-toast";
@@ -10,8 +10,11 @@ import Swal from "sweetalert2";
 import defaultUser from "../../assets/default_user.jpg";
 import UserHeader from "../../components/user_layout/shared/UserHeader";
 import PurpleButton from "../../components/shared/buttons/PurpleButton";
+import AuthContext from "../../contexts/AuthContext";
 
 const UserMentorshipInProgressDetailsAlumni = () => {
+
+    const { user } = useContext(AuthContext);
 
     // ---------- id from url ----------
     const { id } = useParams();
@@ -23,7 +26,12 @@ const UserMentorshipInProgressDetailsAlumni = () => {
     const { data: mentorship = null, isPending, refetch } = useQuery({
         queryKey: ["mentorship-details", id],
         queryFn: async () => {
-            const res = await axios.get(`http://localhost:5000/mentorship/${id}`);
+            const token = await user.getIdToken();
+            const res = await axios.get(`http://localhost:5000/mentorship/${id}`, {
+                headers: {
+                    authorization: `Bearer ${token}`
+                }
+            });
             return res.data;
         },
         enabled: !!id,
@@ -72,24 +80,33 @@ const UserMentorshipInProgressDetailsAlumni = () => {
             showCancelButton: true,
             confirmButtonColor: "#6f16d7",
             cancelButtonColor: "#d33",
-        }).then((result) => {
+        }).then(async (result) => {
 
             // ---------- after confirmation ----------
             if (result.isConfirmed) {
                 const toastId = toast.loading("Updating step...");
 
                 // ---------- patch request to server ----------
-                axios.patch(`http://localhost:5000/mentorship/${id}`, { currentStep: selectedStep })
-                    .then((res) => {
-                        if (res.data?.acknowledged) {
-                            toast.success("Current step updated!", { id: toastId });
-                            refetch();
-                            setSelectedStep("");
-                        } else {
-                            toast.error("Update failed", { id: toastId });
+                try {
+                    const token = await user.getIdToken();
+                    const { data } = await axios.patch(`http://localhost:5000/mentorship/${id}`, { currentStep: selectedStep }, {
+                        headers: {
+                            authorization: `Bearer ${token}`
                         }
                     })
-                    .catch(() => toast.error("Something went wrong", { id: toastId }));
+
+                    if (data?.acknowledged) {
+                        toast.success("Current step updated!", { id: toastId });
+                        refetch();
+                        setSelectedStep("");
+                    }
+                    else {
+                        toast.error("Update failed", { id: toastId });
+                    }
+                }
+                catch {
+                    toast.error("Update failed", { id: toastId });
+                }
             }
         });
     };
@@ -105,22 +122,31 @@ const UserMentorshipInProgressDetailsAlumni = () => {
             showCancelButton: true,
             confirmButtonColor: "#6f16d7",
             cancelButtonColor: "#d33",
-        }).then((result) => {
+        }).then(async (result) => {
             if (result.isConfirmed) {
                 const toastId = toast.loading("Marking as completed...");
 
                 // ---------- patch request to server ----------
-                axios.patch(`http://localhost:5000/mentorship/${id}`, { status: "completed" })
-                    .then((res) => {
-                        if (res.data?.acknowledged) {
-                            toast.success("Mentorship completed!", { id: toastId });
-                            refetch();
-                            navigate("/mentorship");
-                        } else {
-                            toast.error("Failed to complete mentorship", { id: toastId });
+                try {
+                    const token = await user.getIdToken();
+                    const { data } = await axios.patch(`http://localhost:5000/mentorship/${id}`, { status: "completed" }, {
+                        headers: {
+                            authorization: `Bearer ${token}`
                         }
                     })
-                    .catch(() => toast.error("Something went wrong", { id: toastId }));
+
+                    if (data?.acknowledged) {
+                        toast.success("Mentorship completed!", { id: toastId });
+                        refetch();
+                        navigate("/mentorship");
+                    }
+                    else {
+                        toast.error("Something went wrong", { id: toastId });
+                    }
+                }
+                catch {
+                    toast.error("Something went wrong", { id: toastId });
+                }
             }
         });
     };
@@ -138,24 +164,33 @@ const UserMentorshipInProgressDetailsAlumni = () => {
             showCancelButton: true,
             confirmButtonColor: "#d33",
             cancelButtonColor: "#6f16d7",
-        }).then((result) => {
+        }).then(async (result) => {
 
             // ---------- if confirmed ----------
             if (result.isConfirmed) {
-                const toastId = toast.loading("Marking as completed...");
+                const toastId = toast.loading("Cancelling...");
 
                 // ---------- patch request to server ----------
-                axios.patch(`http://localhost:5000/mentorship/${id}`, { status: "cancelled" })
-                    .then((res) => {
-                        if (res.data?.acknowledged) {
-                            toast.success("Mentorship cancelled!", { id: toastId });
-                            refetch();
-                            navigate("/mentorship");
-                        } else {
-                            toast.error("Something went wrong", { id: toastId });
+                try {
+                    const token = await user.getIdToken();
+                    const { data } = await axios.patch(`http://localhost:5000/mentorship/${id}`, { status: "cancelled" }, {
+                        headers: {
+                            authorization: `Bearer ${token}`
                         }
                     })
-                    .catch(() => toast.error("Something went wrong", { id: toastId }));
+
+                    if (data?.acknowledged) {
+                        toast.success("Mentorship cancelled!", { id: toastId });
+                        refetch();
+                        navigate("/mentorship");
+                    }
+                    else {
+                        toast.error("Something went wrong", { id: toastId });
+                    }
+                }
+                catch {
+                    toast.error("Something went wrong", { id: toastId });
+                }
             }
         });
     };
