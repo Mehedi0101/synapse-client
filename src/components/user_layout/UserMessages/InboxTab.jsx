@@ -7,6 +7,8 @@ import { useNavigate } from "react-router-dom";
 import { formatDistanceToNow } from "date-fns";
 import formatTimeAgo from "../../../functions/formatTimeAgo";
 
+const POLLING_INTERVAL = 3000; // refresh every 3 seconds
+
 const InboxTab = () => {
 
     // ---------- user details from auth provider ----------
@@ -29,6 +31,7 @@ const InboxTab = () => {
             return res.data;
         },
         enabled: !!userDetails?._id,
+        refetchInterval: POLLING_INTERVAL,
     });
 
     // ---------- mark as read (tanstack mutation) ----------

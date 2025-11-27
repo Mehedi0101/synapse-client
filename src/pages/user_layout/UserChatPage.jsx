@@ -7,8 +7,9 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import AuthContext from "../../contexts/AuthContext";
 import defaultUser from "../../assets/default_user.jpg";
 import UserHeader from "../../components/user_layout/shared/UserHeader";
+import toast from "react-hot-toast";
 
-// const POLLING_INTERVAL = 3000; // refresh every 3 seconds
+const POLLING_INTERVAL = 2000; // refresh every 2 seconds
 
 const UserChatPage = () => {
 
@@ -57,22 +58,39 @@ const UserChatPage = () => {
     } = useQuery({
         queryKey: ["chat-messages", userDetails?._id, friendId],
         queryFn: async () => {
+            const token = await user.getIdToken();
             const res = await axios.get(
-                `http://localhost:5000/messages/${userDetails._id}/${friendId}`
+                `http://localhost:5000/messages/${userDetails._id}/${friendId}`, {
+                headers: {
+                    authorization: `Bearer ${token}`
+                }
+            }
             );
             return res.data;
         },
         enabled: !!userDetails?._id && !!friendId,
-        // refetchInterval: POLLING_INTERVAL, // auto refetch every 3 sec
+        refetchInterval: POLLING_INTERVAL, // auto refetch every 2 sec
     });
 
     // ---------- Send Message (Mutation) ----------
     const sendMessageMutation = useMutation({
         mutationFn: async (messageData) => {
-            await axios.post("http://localhost:5000/messages", messageData);
+            const token = await user.getIdToken();
+            await axios.post("http://localhost:5000/messages", messageData, {
+                headers: {
+                    authorization: `Bearer ${token}`
+                }
+            });
         },
         onSuccess: () => {
             queryClient.invalidateQueries(["chat-messages", userDetails?._id, friendId]);
+        },
+        onError: (error) => {
+            // Extract message from server or fallback
+            const serverMessage =
+                error.response?.data?.message || "Failed to send message";
+
+            toast.error(serverMessage);
         },
     });
 
