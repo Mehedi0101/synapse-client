@@ -10,7 +10,7 @@ import toast from "react-hot-toast";
 const UserPostResource = () => {
 
     // ---------- user data from auth provider ----------
-    const { userDetails } = useContext(AuthContext);
+    const { userDetails, user } = useContext(AuthContext);
 
     // ---------- react hooks ----------
     const navigate = useNavigate();
@@ -41,21 +41,44 @@ const UserPostResource = () => {
         };
 
         // ---------- post request ----------
-        axios.post("http://localhost:5000/resources", resourceData)
-            .then(data => {
-                if (data?.data?.acknowledged) {
-                    toast.success("Added", { id: toastId });
+        try {
+            const token = await user.getIdToken();
+            const { data } = await axios.post("http://localhost:5000/resources", resourceData, {
+                headers: {
+                    authorization: `Bearer ${token}`
+                }
+            })
 
-                    // ---------- navigate to resources page ----------F
-                    navigate("/resources");
-                }
-                else {
-                    toast.error("Something went wrong", { id: toastId });
-                }
-            })
-            .catch(() => {
+            if (data?.acknowledged) {
+                toast.success("Added", { id: toastId });
+                navigate("/resources");
+            }
+            else {
                 toast.error("Something went wrong", { id: toastId });
-            })
+            }
+        }
+        catch {
+            toast.error("Something went wrong", { id: toastId });
+        }
+        // axios.post("http://localhost:5000/resources", resourceData, {
+        //     headers: {
+        //         authorization: `Bearer ${token}`
+        //     }
+        // })
+        //     .then(data => {
+        //         if (data?.data?.acknowledged) {
+        //             toast.success("Added", { id: toastId });
+
+        //             // ---------- navigate to resources page ----------
+        //             navigate("/resources");
+        //         }
+        //         else {
+        //             toast.error("Something went wrong", { id: toastId });
+        //         }
+        //     })
+        //     .catch(() => {
+        //         toast.error("Something went wrong", { id: toastId });
+        //     })
     };
 
     return (

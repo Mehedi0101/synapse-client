@@ -12,13 +12,18 @@ import ResourceCardSkeleton from "../../components/skeletons/ResourceCardSkeleto
 
 const UserResources = () => {
     // ---------- user data from auth provider ----------
-    const { userDetails } = useContext(AuthContext);
+    const { userDetails, user } = useContext(AuthContext);
 
     // ---------- for fetching all resources ----------
     const { data: allResources = [], isPending: allResourcesPending } = useQuery({
         queryKey: ["all-resources", userDetails?._id],
         queryFn: async () => {
-            const res = await axios.get(`http://localhost:5000/resources/all/${userDetails?._id}`);
+            const token = await user.getIdToken();
+            const res = await axios.get(`http://localhost:5000/resources/all/${userDetails?._id}`, {
+                headers: {
+                    authorization: `Bearer ${token}`
+                }
+            });
             return res.data;
         },
         enabled: !!userDetails?._id
@@ -28,7 +33,12 @@ const UserResources = () => {
     const { data: myResources = [], isPending: myResourcesPending } = useQuery({
         queryKey: ["my-resources", userDetails?._id],
         queryFn: async () => {
-            const res = await axios.get(`http://localhost:5000/resources/my/${userDetails?._id}`);
+            const token = await user.getIdToken();
+            const res = await axios.get(`http://localhost:5000/resources/my/${userDetails?._id}`, {
+                headers: {
+                    authorization: `Bearer ${token}`
+                }
+            });
             return res.data;
         },
         enabled: !!userDetails?._id

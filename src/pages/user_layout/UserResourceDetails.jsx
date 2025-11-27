@@ -16,7 +16,7 @@ const UserResourceDetails = ({ display = "" }) => {
     const { id } = useParams();
 
     // ---------- user data from auth provider ----------
-    const { userDetails } = useContext(AuthContext);
+    const { userDetails, user } = useContext(AuthContext);
 
     // ---------- react hooks ----------
     const navigate = useNavigate();
@@ -26,13 +26,30 @@ const UserResourceDetails = ({ display = "" }) => {
 
     // ---------- fetch resource details ----------
     useEffect(() => {
-        axios.get(`http://localhost:5000/resources/details/${id}`)
-            .then((data) => {
-                if (data.data) setResourceDetails(data.data);
-                else navigate("/error");
-            })
-            .catch(() => navigate("/error"));
-    }, [id, navigate]);
+        const fetchResourceDetails = async () => {
+
+            try {
+                const token = await user.getIdToken();
+                const { data } = await axios.get(`http://localhost:5000/resources/details/${id}`, {
+                    headers: {
+                        authorization: `Bearer ${token}`
+                    }
+                })
+
+                if (data) {
+                    setResourceDetails(data);
+                }
+                else {
+                    navigate("/error");
+                }
+            }
+            catch {
+                navigate("/error");
+            }
+        }
+
+        fetchResourceDetails();
+    }, [user, id, navigate]);
 
     // ---------- resource delete function ----------
     const handleRemoveResource = () => {
@@ -47,25 +64,32 @@ const UserResourceDetails = ({ display = "" }) => {
             showCancelButton: true,
             confirmButtonColor: "#d33",
             cancelButtonColor: "#6f16d7",
-        }).then((result) => {
+        }).then(async (result) => {
 
             // ---------- after confirmation ----------
             if (result.isConfirmed) {
                 const toastId = toast.loading("Removing...");
 
                 // ---------- delete request ----------
-                axios.delete(`http://localhost:5000/resources/${id}`)
-                    .then((res) => {
-                        if (res.data?.acknowledged) {
-                            toast.success("Removed successfully!", { id: toastId });
-
-                            // ---------- navigate to resources page ----------
-                            navigate("/resources");
-                        } else {
-                            toast.error("Something went wrong", { id: toastId });
+                try {
+                    const token = await user.getIdToken();
+                    const { data } = await axios.delete(`http://localhost:5000/resources/${id}`, {
+                        headers: {
+                            authorization: `Bearer ${token}`
                         }
                     })
-                    .catch(() => toast.error("Something went wrong"));
+
+                    if (data?.acknowledged) {
+                        toast.success("Removed successfully!", { id: toastId });
+                        navigate("/resources");
+                    }
+                    else {
+                        toast.error("Something went wrong", { id: toastId });
+                    }
+                }
+                catch {
+                    toast.error("Something went wrong", { id: toastId });
+                }
             }
         });
     };

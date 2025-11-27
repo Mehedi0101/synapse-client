@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { IoSearch } from "react-icons/io5";
 import { MdDeleteOutline } from "react-icons/md";
 import { useQuery } from "@tanstack/react-query";
@@ -9,8 +9,12 @@ import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
 import defaultUser from "../../assets/default_user.jpg";
 import TableSkeleton from "../../components/skeletons/TableSkeleton";
+import AuthContext from "../../contexts/AuthContext";
 
 const AdminResources = () => {
+
+  const { user } = useContext(AuthContext);
+
   // ---------- search text ----------
   const [searchText, setSearchText] = useState("");
 
@@ -21,7 +25,12 @@ const AdminResources = () => {
   } = useQuery({
     queryKey: ["resources"],
     queryFn: async () => {
-      const res = await axios.get("http://localhost:5000/resources");
+      const token = await user.getIdToken();
+      const res = await axios.get("http://localhost:5000/resources", {
+        headers: {
+          authorization: `Bearer ${token}`
+        }
+      });
       return res.data;
     },
   });
@@ -39,24 +48,44 @@ const AdminResources = () => {
       showCancelButton: true,
       confirmButtonColor: "#6f16d7",
       cancelButtonColor: "#d33",
-    }).then((result) => {
+    }).then(async (result) => {
 
       // ---------- if confirmed ----------
       if (result.isConfirmed) {
         const toastId = toast.loading("Removing Resource...");
-        axios
-          .delete(`http://localhost:5000/resources/${resourceId}`)
-          .then((data) => {
-            if (data.data?.acknowledged) {
-              toast.success("Removed", { id: toastId });
-              refetchResources();
-            } else {
-              toast.error("Something went wrong", { id: toastId });
+
+        try {
+          const token = await user.getIdToken();
+          const { data } = await axios.delete(`http://localhost:5000/resources/${resourceId}`, {
+            headers: {
+              authorization: `Bearer ${token}`
             }
-          })
-          .catch(() => {
-            toast.error("Something went wrong", { id: toastId });
           });
+
+          if (data?.acknowledged) {
+            toast.success("Removed", { id: toastId });
+            refetchResources();
+          }
+          else {
+            toast.error("Something went wrong", { id: toastId });
+          }
+        }
+        catch {
+          toast.error("Something went wrong", { id: toastId });
+        }
+        // axios
+        //   .delete(`http://localhost:5000/resources/${resourceId}`)
+        //   .then((data) => {
+        //     if (data.data?.acknowledged) {
+        //       toast.success("Removed", { id: toastId });
+        //       refetchResources();
+        //     } else {
+        //       toast.error("Something went wrong", { id: toastId });
+        //     }
+        //   })
+        //   .catch(() => {
+        //     toast.error("Something went wrong", { id: toastId });
+        //   });
       }
     });
   };

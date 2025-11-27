@@ -11,7 +11,7 @@ import defaultUser from "../../assets/default_user.jpg";
 const UserUpdateResource = () => {
 
     // ---------- user data from auth provider ----------
-    const { userDetails } = useContext(AuthContext);
+    const { userDetails, user } = useContext(AuthContext);
 
     // ---------- resource id from url ----------
     const { id } = useParams();
@@ -28,13 +28,31 @@ const UserUpdateResource = () => {
 
     // ---------- fetch resource details ----------
     useEffect(() => {
-        axios.get(`http://localhost:5000/resources/details/${id}`)
-            .then((res) => {
-                if (res.data) setResourceData(res.data);
-                else navigate("/error");
-            })
-            .catch(() => navigate("/error"));
-    }, [id, navigate]);
+
+        const fetchResourceDetails = async () => {
+
+            try {
+                const token = await user.getIdToken();
+                const { data } = await axios.get(`http://localhost:5000/resources/details/${id}`, {
+                    headers: {
+                        authorization: `Bearer ${token}`
+                    }
+                })
+
+                if (data) {
+                    setResourceData(data);
+                }
+                else {
+                    navigate("/error");
+                }
+            }
+            catch {
+                navigate("/error");
+            }
+        }
+
+        fetchResourceDetails();
+    }, [user, id, navigate]);
 
     // ---------- update resource function ----------
     const handleUpdateResource = (e) => {
@@ -50,25 +68,45 @@ const UserUpdateResource = () => {
             showCancelButton: true,
             confirmButtonColor: "#6f16d7",
             cancelButtonColor: "#d33",
-        }).then((result) => {
+        }).then(async (result) => {
 
             // ---------- after confirmation ----------
             if (result.isConfirmed) {
                 const toastId = toast.loading("Updating Resource...");
 
-                // ---------- patch request to server ----------
-                axios.patch(`http://localhost:5000/resources/${id}`, resourceData)
-                    .then((res) => {
-                        if (res.data?.acknowledged) {
-                            toast.success("Updated successfully!", { id: toastId });
-
-                            // ---------- navigate to resource details page ----------
-                            navigate(`/resources/${id}`);
-                        } else {
-                            toast.error("Something went wrong", { id: toastId });
+                try {
+                    const token = await user.getIdToken();
+                    const { data } = await axios.patch(`http://localhost:5000/resources/${id}`, resourceData, {
+                        headers: {
+                            authorization: `Bearer ${token}`
                         }
                     })
-                    .catch(() => toast.error("Something went wrong", { id: toastId }));
+
+                    if (data?.acknowledged) {
+                        toast.success("Updated successfully!", { id: toastId });
+                        navigate(`/resources/${id}`);
+                    }
+                    else {
+                        toast.error("Something went wrong", { id: toastId });
+                    }
+                }
+                catch {
+                    toast.error("Something went wrong", { id: toastId });
+                }
+
+                // ---------- patch request to server ----------
+                // axios.patch(`http://localhost:5000/resources/${id}`, resourceData)
+                //     .then((res) => {
+                //         if (res.data?.acknowledged) {
+                //             toast.success("Updated successfully!", { id: toastId });
+
+                //             // ---------- navigate to resource details page ----------
+                //             navigate(`/resources/${id}`);
+                //         } else {
+                //             toast.error("Something went wrong", { id: toastId });
+                //         }
+                //     })
+                //     .catch(() => toast.error("Something went wrong", { id: toastId }));
             }
         });
     };
