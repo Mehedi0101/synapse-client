@@ -3,7 +3,7 @@ import defaultEventBanner from "../../../assets/default_event_banner.jpg";
 import hourFormatConverter from "../../../functions/formatTimeString";
 import { FaRegStar, FaStar } from "react-icons/fa";
 import { useContext, useEffect, useState } from "react";
-import axios from "axios";
+import axios, { AxiosHeaders } from "axios";
 import AuthContext from "../../../contexts/AuthContext";
 import toast from "react-hot-toast";
 import { ClipLoader } from "react-spinners";
@@ -15,7 +15,7 @@ import { motion } from "motion/react";
 const EventCard = ({ event, isMyEvent = false }) => {
 
     // ---------- user details from auth provider ----------
-    const { userDetails } = useContext(AuthContext);
+    const { userDetails, user } = useContext(AuthContext);
 
     // ---------- event data for display ----------
     const [eventData, setEventData] = useState(event);
@@ -50,23 +50,33 @@ const EventCard = ({ event, isMyEvent = false }) => {
     const month = format(eventData?.date, "MMM").toUpperCase();
 
     // ---------- toggle interested function ----------
-    const handleToggleInterested = (e) => {
+    const handleToggleInterested = async (e) => {
         e.preventDefault();
 
         setLoading(true);
 
-        axios
-            .patch(`http://localhost:5000/events/interested/${eventData?._id}`, {
-                userId: userDetails?._id,
-            })
-            .then((data) => {
-                setEventData(data.data);
+        try {
+            const token = await user.getIdToken();
+
+            const { data } = await axios.patch(`http://localhost:5000/events/interested/${eventData?._id}`, { userId: userDetails?._id }, {
+                headers: {
+                    authorization: `Bearer ${token}`
+                }
+            });
+
+            if (data) {
+                setEventData(data);
                 setLoading(false);
-            })
-            .catch(() => {
+            }
+            else {
                 toast.error("Something went wrong");
                 setLoading(false);
-            });
+            }
+        }
+        catch {
+            toast.error("Something went wrong");
+            setLoading(false);
+        }
     };
 
     return (

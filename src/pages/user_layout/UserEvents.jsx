@@ -12,23 +12,33 @@ import EventCardSkeleton from "../../components/skeletons/EventCardSkeleton";
 const UserEvents = () => {
 
     // ---------- user details from auth provider ----------
-    const { userDetails } = useContext(AuthContext);
+    const { userDetails, user } = useContext(AuthContext);
 
     // ---------- for fetching my created events ----------
     const { data: myEvents = [], isPending: myEventsPending } = useQuery({
         queryKey: ["my-events", userDetails?._id],
         queryFn: async () => {
-            const res = await axios.get(`http://localhost:5000/events/user/${userDetails?._id}`);
+            const token = await user.getIdToken();
+            const res = await axios.get(`http://localhost:5000/events/user/${userDetails?._id}`, {
+                headers: {
+                    authorization: `Bearer ${token}`
+                }
+            });
             return res.data;
         },
         enabled: !!userDetails?._id
     })
-    
+
     // ---------- for fetching upcoming events ----------
     const { data: upcomingEvents = [], isPending: upcomingEventsPending } = useQuery({
         queryKey: ["upcoming-events", userDetails?._id],
         queryFn: async () => {
-            const res = await axios.get(`http://localhost:5000/events/all/${userDetails?._id}`);
+            const token = await user.getIdToken();
+            const res = await axios.get(`http://localhost:5000/events/all/${userDetails?._id}`,{
+                headers: {
+                    authorization: `Bearer ${token}`
+                }
+            });
             return res.data;
         },
         enabled: !!userDetails?._id

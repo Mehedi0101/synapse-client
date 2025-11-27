@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import defaultUser from "../../assets/default_user.jpg";
 import { IoSearch } from "react-icons/io5";
 import { MdDeleteOutline } from "react-icons/md";
@@ -10,8 +10,12 @@ import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
 import TableSkeleton from "../../components/skeletons/TableSkeleton";
 import hourFormatConverter from "../../functions/formatTimeString";
+import AuthContext from "../../contexts/AuthContext";
 
 const AdminEvents = () => {
+
+    const { user } = useContext(AuthContext);
+
     const [searchText, setSearchText] = useState("");
 
     // ---------- fetch all events ----------
@@ -22,7 +26,12 @@ const AdminEvents = () => {
     } = useQuery({
         queryKey: ["events"],
         queryFn: async () => {
-            const res = await axios.get("http://localhost:5000/events");
+            const token = await user.getIdToken();
+            const res = await axios.get("http://localhost:5000/events", {
+                headers: {
+                    authorization: `Bearer ${token}`
+                }
+            });
             return res.data;
         },
     });
@@ -40,25 +49,32 @@ const AdminEvents = () => {
             showCancelButton: true,
             confirmButtonColor: "#6f16d7",
             cancelButtonColor: "#d33",
-        }).then((result) => {
+        }).then(async (result) => {
 
             // ---------- confirmed ----------
             if (result.isConfirmed) {
                 const toastId = toast.loading("Removing Event...");
 
-                axios
-                    .delete(`http://localhost:5000/events/${eventId}`)
-                    .then((data) => {
-                        if (data.data?.acknowledged) {
-                            toast.success("Removed", { id: toastId });
-                            refetchEvents();
-                        } else {
-                            toast.error("Something went wrong", { id: toastId });
+                // DELETE event request to server
+                try {
+                    const token = await user.getIdToken();
+                    const { data } = await axios.delete(`http://localhost:5000/events/${eventId}`, {
+                        headers: {
+                            authorization: `Bearer ${token}`
                         }
                     })
-                    .catch(() => {
+
+                    if (data?.acknowledged) {
+                        toast.success("Removed", { id: toastId });
+                        refetchEvents();
+                    }
+                    else {
                         toast.error("Something went wrong", { id: toastId });
-                    });
+                    }
+                }
+                catch {
+                    toast.error("Something went wrong", { id: toastId });
+                }
             }
         });
     };

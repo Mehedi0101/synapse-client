@@ -27,7 +27,7 @@ const departments = [
 const UserUpdateEvent = () => {
 
     // ---------- data from auth provider ----------
-    const { userDetails } = useContext(AuthContext);
+    const { userDetails, user } = useContext(AuthContext);
 
     // ---------- react hooks ----------
     const navigate = useNavigate();
@@ -47,31 +47,59 @@ const UserUpdateEvent = () => {
     useEffect(() => {
 
         // ---------- get request for event details ----------
-        axios
-            .get(`http://localhost:5000/events/details/${id}`, {
-                params: { userId: userDetails?._id },
-            })
-            .then((res) => {
-                if (res.data) {
+        const fetchEventDetails = async () => {
+            try {
+                const token = await user.getIdToken();
+                const { data } = await axios.get(`http://localhost:5000/events/details/${id}`, {
+                    params: { userId: userDetails?._id },
+                    headers: {
+                        authorization: `Bearer ${token}`
+                    }
+                })
 
-                    // ---------- set fetched data to form states ----------
-                    setEventData(res.data);
-                    setEventType(res.data.type);
-                    setSelectedAudience(res.data.audience || []);
-                    setSelectedDate(new Date(res.data.date));
-                    setStartTime(res.data.timeRange?.start || "");
-                    setEndTime(res.data.timeRange?.end || "");
-                } else {
-
-                    // ---------- navigate to error page ----------
+                if (data) {
+                    setEventData(data);
+                    setEventType(data.type);
+                    setSelectedAudience(data.audience || []);
+                    setSelectedDate(new Date(data.date));
+                    setStartTime(data.timeRange?.start || "");
+                    setEndTime(data.timeRange?.end || "");
+                }
+                else {
                     navigate("/error");
                 }
-            })
+            }
+            catch {
+                navigate("/error");
+            }
+        }
+        // axios
+        //     .get(`http://localhost:5000/events/details/${id}`, {
+        //         params: { userId: userDetails?._id },
+        //     })
+        //     .then((res) => {
+        //         if (res.data) {
 
-            // ---------- navigate to error page ----------
-            .catch(() => navigate("/error"));
+        //             // ---------- set fetched data to form states ----------
+        //             setEventData(res.data);
+        //             setEventType(res.data.type);
+        //             setSelectedAudience(res.data.audience || []);
+        //             setSelectedDate(new Date(res.data.date));
+        //             setStartTime(res.data.timeRange?.start || "");
+        //             setEndTime(res.data.timeRange?.end || "");
+        //         } else {
 
-    }, [id, navigate, userDetails?._id]);
+        //             // ---------- navigate to error page ----------
+        //             navigate("/error");
+        //         }
+        //     })
+
+        //     // ---------- navigate to error page ----------
+        //     .catch(() => navigate("/error"));
+
+        fetchEventDetails();
+
+    }, [user, id, navigate, userDetails?._id]);
 
     // ---------- audience select function ----------
     const handleAudienceChange = (e) => {
@@ -105,7 +133,7 @@ const UserUpdateEvent = () => {
             showCancelButton: true,
             confirmButtonColor: "#6f16d7",
             cancelButtonColor: "#d33",
-        }).then((result) => {
+        }).then(async (result) => {
 
             // ---------- after confirmation ----------
             if (result.isConfirmed) {
@@ -127,19 +155,25 @@ const UserUpdateEvent = () => {
                 };
 
                 // ---------- patch request for updating event ----------
-                axios
-                    .patch(`http://localhost:5000/events/${id}`, updatedEventData)
-                    .then((res) => {
-                        if (res.data?.acknowledged) {
-                            toast.success("Event updated successfully!", { id: toastId });
-
-                            // ---------- navigate to event details ----------
-                            navigate(`/events/${id}`);
-                        } else {
-                            toast.error("Something went wrong", { id: toastId });
+                try {
+                    const token = await user.getIdToken();
+                    const { data } = await axios.patch(`http://localhost:5000/events/${id}`, updatedEventData, {
+                        headers: {
+                            authorization: `Bearer ${token}`
                         }
                     })
-                    .catch(() => toast.error("Something went wrong", { id: toastId }));
+
+                    if (data?.acknowledged) {
+                        toast.success("Event updated successfully!", { id: toastId });
+                        navigate(`/events/${id}`);
+                    }
+                    else {
+                        toast.error("Something went wrong", { id: toastId });
+                    }
+                }
+                catch {
+                    toast.error("Something went wrong", { id: toastId });
+                }
             }
         });
     };

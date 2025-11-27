@@ -1,4 +1,4 @@
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState, useContext, useCallback } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import UserHeader from "../../components/user_layout/shared/UserHeader";
@@ -19,7 +19,7 @@ import hourFormatConverter from "../../functions/formatTimeString";
 const UserEventDetails = ({ display = "" }) => {
 
     // ---------- data from auth provider ----------
-    const { userDetails } = useContext(AuthContext);
+    const { userDetails, user } = useContext(AuthContext);
 
     // ---------- event id from url ----------
     const { id } = useParams();
@@ -36,32 +36,33 @@ const UserEventDetails = ({ display = "" }) => {
     // ---------- loading state for interested button ----------
     const [loading, setLoading] = useState(false);
 
-    // ---------- fetch event details function ----------
-    const fetchEventDetails = () => {
-        axios.get(`http://localhost:5000/events/details/${id}`, {
-            params: { userId: userDetails?._id }
-        })
-            .then((data) => {
-                if (data.data) setEventDetails(data.data);
-                else navigate("/error");
+    const fetchEventDetails = useCallback(async () => {
+        try {
+            const token = await user.getIdToken();
+            const { data } = await axios.get(`http://localhost:5000/events/details/${id}`, {
+                params: { userId: userDetails?._id },
+                headers: {
+                    authorization: `Bearer ${token}`
+                }
             })
-            .catch(() => navigate("/error"));
-    };
+
+            if (data) {
+                setEventDetails(data);
+            }
+            else {
+                navigate("/error");
+            }
+        }
+        catch {
+            navigate("/error");
+        }
+    }, [id, userDetails?._id, navigate, user]);
 
     // ---------- fetch event details when page loads ----------
     useEffect(() => {
         if (!userDetails?._id) return;
-
-        axios
-            .get(`http://localhost:5000/events/details/${id}`, {
-                params: { userId: userDetails._id }
-            })
-            .then((data) => {
-                if (data.data) setEventDetails(data.data);
-                else navigate("/error");
-            })
-            .catch(() => navigate("/error"));
-    }, [id, navigate, userDetails?._id]);
+        fetchEventDetails();
+    }, [id, navigate, userDetails?._id, fetchEventDetails]);
 
     // ---------- format event date when eventDetails state is changed ----------
     useEffect(() => {
@@ -71,21 +72,27 @@ const UserEventDetails = ({ display = "" }) => {
     }, [eventDetails]);
 
     // ---------- toggle interested function ----------
-    const handleToggleInterested = (e) => {
+    const handleToggleInterested = async (e) => {
         e.preventDefault();
 
         setLoading(true);
 
         // ---------- patch request ----------
-        axios.patch(`http://localhost:5000/events/interested/${eventDetails?._id}`, { userId: userDetails?._id })
-            .then(() => {
-                fetchEventDetails();
-                setLoading(false);
+        try {
+            const token = await user.getIdToken();
+            await axios.patch(`http://localhost:5000/events/interested/${eventDetails?._id}`, { userId: userDetails?._id }, {
+                headers: {
+                    authorization: `Bearer ${token}`
+                }
             })
-            .catch(() => {
-                toast.error("Something went wrong");
-                setLoading(false);
-            })
+
+            fetchEventDetails();
+            setLoading(false);
+        }
+        catch {
+            toast.error("Something went wrong");
+            setLoading(false);
+        }
     }
 
     // ---------- event delete function ----------
@@ -101,23 +108,30 @@ const UserEventDetails = ({ display = "" }) => {
             showCancelButton: true,
             confirmButtonColor: "#6f16d7",
             cancelButtonColor: "#d33",
-        }).then((result) => {
+        }).then(async (result) => {
             if (result.isConfirmed) {
                 const toastId = toast.loading("Removing Event...");
 
-                // ---------- delete request ----------
-                axios.delete(`http://localhost:5000/events/${eventDetails?._id}`)
-                    .then((res) => {
-                        if (res.data?.acknowledged) {
-
-                            // ---------- navigate to events page ----------
-                            navigate("/events");
-                            toast.success("Removed", { id: toastId });
-                        } else {
-                            toast.error("Something went wrong", { id: toastId });
+                // DELETE event request to server
+                try {
+                    const token = await user.getIdToken();
+                    const { data } = await axios.delete(`http://localhost:5000/events/${eventDetails?._id}`, {
+                        headers: {
+                            authorization: `Bearer ${token}`
                         }
                     })
-                    .catch(() => toast.error("Something went wrong", { id: toastId }));
+
+                    if (data?.acknowledged) {
+                        navigate("/events");
+                        toast.success("Removed", { id: toastId });
+                    }
+                    else {
+                        toast.error("Something went wrong", { id: toastId });
+                    }
+                }
+                catch {
+                    toast.error("Something went wrong", { id: toastId });
+                }
             }
         });
     };

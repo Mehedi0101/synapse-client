@@ -27,7 +27,7 @@ const departments = [
 const UserCreateEvent = () => {
 
     // ---------- user data from auth provider ----------
-    const { userDetails } = useContext(AuthContext);
+    const { userDetails, user } = useContext(AuthContext);
 
     // ---------- react hooks ----------
     const navigate = useNavigate();
@@ -71,7 +71,7 @@ const UserCreateEvent = () => {
             showCancelButton: true,
             confirmButtonColor: "#6f16d7",
             cancelButtonColor: "#d33",
-        }).then((result) => {
+        }).then(async (result) => {
             if (result.isConfirmed) {
                 const toastId = toast.loading("Creating Event...");
 
@@ -92,20 +92,25 @@ const UserCreateEvent = () => {
                 };
 
                 // ---------- post request to server ----------
-                axios.post("http://localhost:5000/events", eventData)
-                    .then((data) => {
-                        if (data?.data?.acknowledged) {
-                            toast.success("Event created successfully!", { id: toastId });
-
-                            // ---------- navigate to events page ----------
-                            navigate("/events");
-                        } else {
-                            toast.error("Something went wrong", { id: toastId });
+                try {
+                    const token = await user.getIdToken();
+                    const { data } = await axios.post("http://localhost:5000/events", eventData, {
+                        headers: {
+                            authorization: `Bearer ${token}`
                         }
-                    })
-                    .catch(() => {
-                        toast.error("Something went wrong", { id: toastId });
                     });
+
+                    if (data?.acknowledged) {
+                        toast.success("Event created successfully!", { id: toastId });
+                        navigate("/events");
+                    }
+                    else {
+                        toast.error("Something went wrong", { id: toastId });
+                    }
+                }
+                catch {
+                    toast.error("Something went wrong", { id: toastId });
+                }
             }
         });
     };
@@ -232,7 +237,7 @@ const UserCreateEvent = () => {
                             Event Date & Time
                         </h2>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            
+
                             {/* ---------- event date ---------- */}
                             <div className="relative w-full">
                                 <DatePicker
