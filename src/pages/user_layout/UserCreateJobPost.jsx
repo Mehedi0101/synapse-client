@@ -11,7 +11,7 @@ import { ImCancelCircle } from "react-icons/im";
 const UserCreateJobPost = () => {
 
     // ---------- data from auth provider ----------
-    const { userDetails } = useContext(AuthContext);
+    const { userDetails, user } = useContext(AuthContext);
 
     // ---------- react hooks ----------
     const navigate = useNavigate();
@@ -62,7 +62,7 @@ const UserCreateJobPost = () => {
             showCancelButton: true,
             confirmButtonColor: "#6f16d7",
             cancelButtonColor: "#d33",
-        }).then((result) => {
+        }).then(async (result) => {
 
             // ---------- when confirmed ----------
             if (result.isConfirmed) {
@@ -88,22 +88,26 @@ const UserCreateJobPost = () => {
                     applyLink: form.applyLink.value,
                 };
 
-                // ---------- send to backend ----------
-                axios.post("http://localhost:5000/jobs", jobData)
-                    .then((data) => {
-                        if (data.data?.acknowledged) {
-
-                            // ---------- navigate to the jobs page ----------
-                            navigate("/jobs");
-
-                            toast.success("Job Posted Successfully!", { id: toastId });
-                        } else {
-                            toast.error("Something went wrong", { id: toastId });
+                // ---------- job POST request ----------
+                try {
+                    const token = await user.getIdToken();
+                    const { data } = await axios.post("http://localhost:5000/jobs", jobData, {
+                        headers: {
+                            authorization: `Bearer ${token}`
                         }
                     })
-                    .catch(() => {
+
+                    if (data.acknowledged) {
+                        navigate("/jobs");
+                        toast.success("Job Posted Successfully!", { id: toastId });
+                    }
+                    else {
                         toast.error("Something went wrong", { id: toastId });
-                    });
+                    }
+                }
+                catch {
+                    toast.error("Something went wrong", { id: toastId });
+                }
             }
         });
     };

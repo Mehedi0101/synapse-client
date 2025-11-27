@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import defaultUser from "../../assets/default_user.jpg";
 import { IoSearch } from "react-icons/io5";
 import { MdDeleteOutline } from "react-icons/md";
@@ -9,8 +9,11 @@ import Swal from "sweetalert2";
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
 import TableSkeleton from "../../components/skeletons/TableSkeleton";
+import AuthContext from "../../contexts/AuthContext";
 
 const AdminJobs = () => {
+
+    const { user } = useContext(AuthContext);
 
     // ---------- search text in the search box ----------
     const [searchText, setSearchText] = useState("");
@@ -19,7 +22,12 @@ const AdminJobs = () => {
     const { data: jobs = [], refetch: refetchJobs, isPending } = useQuery({
         queryKey: ["jobs"],
         queryFn: async () => {
-            const res = await axios.get("http://localhost:5000/jobs");
+            const token = await user.getIdToken();
+            const res = await axios.get("http://localhost:5000/jobs", {
+                headers: {
+                    authorization: `Bearer ${token}`
+                }
+            });
             return res.data;
         },
     });
@@ -35,25 +43,32 @@ const AdminJobs = () => {
             showCancelButton: true,
             confirmButtonColor: "#6f16d7",
             cancelButtonColor: "#d33",
-        }).then((result) => {
+        }).then(async (result) => {
 
             // ---------- when confirmed ----------
             if (result.isConfirmed) {
                 const toastId = toast.loading("Removing Job Post...");
 
                 // ---------- delete request to backend ----------
-                axios.delete(`http://localhost:5000/jobs/${jobId}`)
-                    .then((data) => {
-                        if (data.data?.acknowledged) {
-                            toast.success("Removed", { id: toastId });
-                            refetchJobs();
-                        } else {
-                            toast.error("Something went wrong", { id: toastId });
+                try {
+                    const token = await user.getIdToken();
+                    const { data } = await axios.delete(`http://localhost:5000/jobs/${jobId}`, {
+                        headers: {
+                            authorization: `Bearer ${token}`
                         }
                     })
-                    .catch(() => {
+
+                    if (data?.acknowledged) {
+                        toast.success("Removed", { id: toastId });
+                        refetchJobs();
+                    }
+                    else {
                         toast.error("Something went wrong", { id: toastId });
-                    });
+                    }
+                }
+                catch {
+                    toast.error("Something went wrong", { id: toastId });
+                }
             }
         });
     }

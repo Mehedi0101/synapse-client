@@ -18,7 +18,7 @@ import toast from "react-hot-toast";
 const UserJobDetails = ({ display = "" }) => {
 
     // ---------- data from auth provider ----------
-    const { userDetails } = useContext(AuthContext);
+    const { userDetails, user } = useContext(AuthContext);
 
     // ---------- react hooks ----------
     const navigate = useNavigate();
@@ -42,43 +42,61 @@ const UserJobDetails = ({ display = "" }) => {
             showCancelButton: true,
             confirmButtonColor: "#6f16d7",
             cancelButtonColor: "#d33",
-        }).then((result) => {
+        }).then(async (result) => {
 
             // ---------- when confirmed ----------
             if (result.isConfirmed) {
                 const toastId = toast.loading("Removing Job Post...");
 
-                // ---------- delete request to backend ----------
-                axios.delete(`http://localhost:5000/jobs/${jobDetails?._id}`)
-                    .then((data) => {
-                        if (data.data?.acknowledged) {
-
-                            // ---------- navigate to the jobs page ----------
-                            navigate("/jobs");
-
-                            toast.success("Removed", { id: toastId });
-                        } else {
-                            toast.error("Something went wrong", { id: toastId });
+                try {
+                    const token = await user.getIdToken();
+                    const { data } = await axios.delete(`http://localhost:5000/jobs/${jobDetails?._id}`, {
+                        headers: {
+                            authorization: `Bearer ${token}`
                         }
-                    })
-                    .catch(() => {
-                        toast.error("Something went wrong", { id: toastId });
                     });
+
+                    if (data?.acknowledged) {
+                        navigate("/jobs");
+                        toast.success("Removed", { id: toastId });
+                    }
+                    else {
+                        toast.error("Something went wrong", { id: toastId });
+                    }
+                }
+                catch {
+                    toast.error("Something went wrong", { id: toastId });
+                }
             }
         });
     }
 
     useEffect(() => {
-        // ---------- fetch job details by id ----------
-        axios.get(`http://localhost:5000/jobs/details/${id}`)
-            .then((data) => {
-                if (data.data) setJobDetails(data.data);
-                else navigate('/error');
-            })
-            .catch(() => {
+
+        // ---------- fetch job details by id function ----------
+        const fetchJobDetails = async () => {
+            try {
+                const token = await user.getIdToken();
+                const { data } = await axios.get(`http://localhost:5000/jobs/details/${id}`, {
+                    headers: {
+                        authorization: `Bearer ${token}`
+                    }
+                });
+
+                if (data) {
+                    setJobDetails(data)
+                }
+                else {
+                    navigate('/error');
+                }
+            }
+            catch {
                 navigate('/error');
-            })
-    }, [id, navigate])
+            }
+        }
+
+        fetchJobDetails();
+    }, [user, id, navigate])
 
     // ---------- set posted date ----------
     useEffect(() => {

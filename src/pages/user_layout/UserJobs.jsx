@@ -10,13 +10,18 @@ import JobCardSkeleton from "../../components/skeletons/JobCardSkeleton";
 const UserJobs = () => {
 
     // ---------- data from auth provider ----------
-    const { userDetails } = useContext(AuthContext);
+    const { userDetails, user } = useContext(AuthContext);
 
     // ---------- for fetching all jobs ----------
     const { data: allJobs = [], isPending } = useQuery({
         queryKey: ["all-jobs", userDetails?._id],
         queryFn: async () => {
-            const res = await axios.get(`http://localhost:5000/jobs/${userDetails?._id}`);
+            const token = await user.getIdToken();
+            const res = await axios.get(`http://localhost:5000/jobs/${userDetails?._id}`, {
+                headers: {
+                    authorization: `Bearer ${token}`
+                }
+            });
             return res.data;
         },
         enabled: !!userDetails?._id

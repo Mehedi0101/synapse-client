@@ -11,7 +11,7 @@ import { ImCancelCircle } from "react-icons/im";
 const UserUpdateJobPost = () => {
 
     // ---------- data from auth provider ----------
-    const { userDetails } = useContext(AuthContext);
+    const { userDetails, user } = useContext(AuthContext);
 
     // ---------- id from url ----------
     const { id } = useParams();
@@ -36,25 +36,43 @@ const UserUpdateJobPost = () => {
 
     // ---------- fetch existing job ----------
     useEffect(() => {
-        axios.get(`http://localhost:5000/jobs/details/${id}`)
-            .then((res) => {
-                const job = res.data;
-                setAuthorId(job?.author?._id);
-                setJobTitle(job.jobTitle || "");
-                setCompanyName(job.company?.name || "");
-                setCompanyLogo(job.company?.logo || "");
-                setCompanyType(job.company?.type || "");
-                setCompanyLocation(job.company?.location || "");
-                setJobType(job.jobType || "");
-                setSalary(job.salary || "");
-                setCategory(job.category || "");
-                setDescription(job.description || "");
-                setApplyLink(job.applyLink || "");
-                setJobResponsibilities(job.responsibility || []);
-                setJobRequirements(job.requirements || []);
-            })
-            .catch(() => toast.error("Something went wrong"));
-    }, [id]);
+
+        const getJobDetails = async () => {
+
+            try {
+                const token = await user.getIdToken();
+                const { data } = await axios.get(`http://localhost:5000/jobs/details/${id}`, {
+                    headers: {
+                        authorization: `Bearer ${token}`
+                    }
+                })
+                if (data) {
+                    const job = data;
+                    setAuthorId(job?.author?._id);
+                    setJobTitle(job.jobTitle || "");
+                    setCompanyName(job.company?.name || "");
+                    setCompanyLogo(job.company?.logo || "");
+                    setCompanyType(job.company?.type || "");
+                    setCompanyLocation(job.company?.location || "");
+                    setJobType(job.jobType || "");
+                    setSalary(job.salary || "");
+                    setCategory(job.category || "");
+                    setDescription(job.description || "");
+                    setApplyLink(job.applyLink || "");
+                    setJobResponsibilities(job.responsibility || []);
+                    setJobRequirements(job.requirements || []);
+                }
+                else {
+                    toast.error("Something went wrong");
+                }
+            }
+            catch {
+                toast.error("Something went wrong");
+            }
+        }
+
+        getJobDetails();
+    }, [user, id]);
 
     // ---------- if authorId and userId don't match then navigate to error page ----------
     useEffect(() => {
@@ -105,7 +123,7 @@ const UserUpdateJobPost = () => {
             showCancelButton: true,
             confirmButtonColor: "#6f16d7",
             cancelButtonColor: "#d33",
-        }).then((result) => {
+        }).then(async (result) => {
 
             // ---------- if confirmed ----------
             if (result.isConfirmed) {
@@ -131,21 +149,25 @@ const UserUpdateJobPost = () => {
                 };
 
                 // ---------- patch requrest to server ----------
-                axios.patch(`http://localhost:5000/jobs/${id}`, jobData)
-                    .then((res) => {
-                        if (res.data?.acknowledged) {
-
-                            // ---------- navigate to jobs page ----------
-                            navigate(`/jobs/${id}`);
-                            toast.success("Updated", { id: toastId });
-
-                        } else {
-                            toast.error("Something went wrong", { id: toastId });
+                try {
+                    const token = await user.getIdToken();
+                    const { data } = await axios.patch(`http://localhost:5000/jobs/${id}`, jobData, {
+                        headers: {
+                            authorization: `Bearer ${token}`
                         }
                     })
-                    .catch(() => {
+
+                    if (data?.acknowledged) {
+                        navigate(`/jobs/${id}`);
+                        toast.success("Updated", { id: toastId });
+                    }
+                    else {
                         toast.error("Something went wrong", { id: toastId });
-                    });
+                    }
+                }
+                catch {
+                    toast.error("Something went wrong", { id: toastId });
+                }
             }
         });
     };
