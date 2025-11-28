@@ -20,11 +20,22 @@ const UpdateUserProfile = () => {
     const [formRole, setFormRole] = useState("");
     const [formSkills, setFormSkills] = useState([]);
 
+    // ---------- image upload states ----------
+    const [selectedFile, setSelectedFile] = useState(null);
+    const [uploadedImageUrl, setUploadedImageUrl] = useState(userDetails?.userImage || "");
+
     // ---------- setting role and skills when userDetails state is changed ---------- 
     useEffect(() => {
         setFormRole(userDetails?.role);
         setFormSkills(userDetails?.skills || []);
     }, [userDetails])
+
+    // ---------- handle image selection ----------
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        setSelectedFile(file);
+    };
 
     // ---------- skill add function ---------- 
     const handleSkillAdd = (e) => {
@@ -38,6 +49,28 @@ const UpdateUserProfile = () => {
     // ---------- skill remove function ---------- 
     const handleSkillRemove = (idx) => {
         setFormSkills(formSkills?.filter((_, index) => index != idx));
+    };
+
+    const uploadImageToCloudinary = async (file) => {
+        if (!file) return null;
+
+        const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+        const uploadPreset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
+
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("upload_preset", uploadPreset); // Use env variable
+        formData.append("folder", "synapse/users"); // Optional folder path
+
+        try {
+            const response = await axios.post(
+                `https://api.cloudinary.com/v1_1/${cloudName}/upload`, // Use env variable
+                formData
+            );
+            return response.data.secure_url; // The URL of uploaded image
+        } catch {
+            return null;
+        }
     };
 
     // ---------- profile update function ---------- 
@@ -68,11 +101,26 @@ const UpdateUserProfile = () => {
                 // ---------- toast loading ---------- 
                 const toastId = toast.loading('Updating Profile...');
 
+                let userImage = uploadedImageUrl; // current image
+
+                // uploading image to cloudinary(if attached)
+                if (selectedFile) {
+                    const uploadedUrl = await uploadImageToCloudinary(selectedFile);
+                    if (uploadedUrl) {
+                        userImage = uploadedUrl;
+                        setUploadedImageUrl(uploadedUrl);
+                    } else {
+                        toast.error("Failed to upload profile image", { id: toastId });
+
+                        // stop the updating process if fails
+                        return;
+                    }
+                }
+
                 // ---------- form data ---------- 
                 const form = e.target;
 
                 const role = formRole;
-                const userImage = form?.userImage?.value;
                 const bio = form?.bio?.value;
                 const phone = form?.phone?.value;
                 const facebook = form?.facebook?.value;
@@ -178,13 +226,35 @@ const UpdateUserProfile = () => {
                         </select>
 
                         {/* ---------- Image URL ---------- */}
-                        <input
+                        {/* <input
                             type="text"
                             name="userImage"
                             defaultValue={userDetails?.userImage || ""}
                             className="mb-2 font-poppins w-full border-b border-slate-400 outline-none mt-3"
                             placeholder="Image URL"
-                        />
+                        /> */}
+
+                        {/* ---------- Profile Image Upload ---------- */}
+                        <div className="mt-6 mb-3 w-full">
+                            <label className="flex flex-col items-center justify-center border-2 border-dashed border-slate-400 rounded-lg p-6 cursor-pointer hover:border-purple-600 hover:bg-purple-50 transition-colors duration-200 text-center relative">
+                                <span className="text-lg text-slate-500 mb-2">📁 Upload Profile Image</span>
+                                <span className="text-sm text-slate-400 mb-2">Click to select your image</span>
+
+                                {/* Display selected file name */}
+                                {selectedFile && (
+                                    <span className="absolute bottom-2 text-sm text-slate-600 truncate w-full px-2">
+                                        {selectedFile.name}
+                                    </span>
+                                )}
+
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={handleImageChange}
+                                    className="hidden"
+                                />
+                            </label>
+                        </div>
                     </div>
 
                     {/* ---------- About Section Container ---------- */}
