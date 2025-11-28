@@ -32,10 +32,10 @@ const UserCreateEvent = () => {
     // ---------- react hooks ----------
     const navigate = useNavigate();
 
-    // ---------- Company Logo State ----------
+    // ---------- Event banner State ----------
     const [eventBannerFile, setEventBannerFile] = useState(null);
 
-    // ---------- Upload logo function ----------
+    // ---------- upload banner function ----------
     const uploadEventBanner = async (file) => {
         if (!file) return null;
 

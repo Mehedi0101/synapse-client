@@ -15,9 +15,34 @@ const UserPostResource = () => {
     // ---------- react hooks ----------
     const navigate = useNavigate();
 
+    // ---------- Resource banner State ----------
+    const [resourceBannerFile, setResourceBannerFile] = useState(null);
+
+    // ---------- upload banner function ----------
+    const uploadResourceBanner = async (file) => {
+        if (!file) return null;
+
+        const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+        const uploadPreset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
+
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("upload_preset", uploadPreset);
+        formData.append("folder", "synapse/resource-banners");
+
+        try {
+            const response = await axios.post(
+                `https://api.cloudinary.com/v1_1/${cloudName}/upload`,
+                formData
+            );
+            return response.data.secure_url;
+        } catch {
+            return null;
+        }
+    };
+
     // ---------- form states ----------
     const [title, setTitle] = useState("");
-    const [imageUrl, setImageUrl] = useState("");
     const [content, setContent] = useState("");
 
     // ---------- resource submit function ----------
@@ -32,11 +57,23 @@ const UserPostResource = () => {
 
         const toastId = toast.loading("Adding resource...");
 
+        // ---------- upload event banner when uploading ----------
+        let uploadedBannerUrl = "";
+
+        if (resourceBannerFile) {
+            uploadedBannerUrl = await uploadResourceBanner(resourceBannerFile);
+
+            if (!uploadedBannerUrl) {
+                toast.error("Banner upload failed", { id: toastId });
+                return;
+            }
+        }
+
         // ---------- resource data ----------
         const resourceData = {
             authorId: userDetails?._id,
             title: title.trim(),
-            image: imageUrl.trim(),
+            image: uploadedBannerUrl,
             content: content.trim(),
         };
 
@@ -60,25 +97,6 @@ const UserPostResource = () => {
         catch {
             toast.error("Something went wrong", { id: toastId });
         }
-        // axios.post("http://localhost:5000/resources", resourceData, {
-        //     headers: {
-        //         authorization: `Bearer ${token}`
-        //     }
-        // })
-        //     .then(data => {
-        //         if (data?.data?.acknowledged) {
-        //             toast.success("Added", { id: toastId });
-
-        //             // ---------- navigate to resources page ----------
-        //             navigate("/resources");
-        //         }
-        //         else {
-        //             toast.error("Something went wrong", { id: toastId });
-        //         }
-        //     })
-        //     .catch(() => {
-        //         toast.error("Something went wrong", { id: toastId });
-        //     })
     };
 
     return (
@@ -134,14 +152,51 @@ const UserPostResource = () => {
 
                     {/* ---------- banner image url (optional) ---------- */}
                     <div>
-                        <input
+                        {/* <input
                             type="text"
                             name="image"
                             placeholder="Banner URL (optional)"
                             value={imageUrl}
                             onChange={(e) => setImageUrl(e.target.value)}
                             className="w-full border-b border-slate-400 outline-none py-2"
-                        />
+                        /> */}
+                        <div
+                            className="mt-2 border-2 border-dashed border-slate-400 rounded-lg p-6 text-center cursor-pointer
+                                    hover:border-purple-600 hover:bg-purple-50 transition-colors duration-200"
+                            onDragOver={(e) => e.preventDefault()}
+                            onDrop={(e) => {
+                                e.preventDefault();
+                                const file = e.dataTransfer.files[0];
+                                if (!file || !file.type.startsWith("image/")) {
+                                    toast.error("Only image files are allowed!");
+                                    return;
+                                }
+                                setResourceBannerFile(file);
+                            }}
+                            onClick={() => document.getElementById("resource-file-input").click()}
+                        >
+                            <span className="text-lg text-slate-500">📁 Upload Resource Banner</span>
+                            <p className="text-sm text-slate-400 mt-1">
+                                Click or drag an image here
+                            </p>
+
+                            {resourceBannerFile && (
+                                <p className="mt-2 text-sm text-slate-600">
+                                    {resourceBannerFile.name}
+                                </p>
+                            )}
+
+                            <input
+                                id="resource-file-input"
+                                type="file"
+                                accept="image/*"
+                                className="hidden"
+                                onChange={(e) => {
+                                    const file = e.target.files[0];
+                                    if (file) setResourceBannerFile(file);
+                                }}
+                            />
+                        </div>
                     </div>
 
                     {/* ---------- resource main content ---------- */}

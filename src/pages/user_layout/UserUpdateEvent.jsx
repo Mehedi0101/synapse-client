@@ -56,7 +56,7 @@ const UserUpdateEvent = () => {
         const formData = new FormData();
         formData.append("file", file);
         formData.append("upload_preset", uploadPreset);
-        formData.append("folder", "synapse/event-banner");
+        formData.append("folder", "synapse/event-banners");
 
         try {
             const response = await axios.post(

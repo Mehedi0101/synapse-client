@@ -19,6 +19,32 @@ const UserUpdateResource = () => {
     // ---------- react hooks ----------
     const navigate = useNavigate();
 
+    // ---------- Event Banner State ----------
+    const [resourceBannerFile, setResourceBannerFile] = useState(null);
+
+    // ---------- Update Event Banner Function ----------
+    const updateResourceBanner = async (file) => {
+        if (!file) return null;
+
+        const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+        const uploadPreset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
+
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("upload_preset", uploadPreset);
+        formData.append("folder", "synapse/resource-banners");
+
+        try {
+            const response = await axios.post(
+                `https://api.cloudinary.com/v1_1/${cloudName}/upload`,
+                formData
+            );
+            return response.data.secure_url;
+        } catch {
+            return null;
+        }
+    };
+
     // ---------- resource data for display ----------
     const [resourceData, setResourceData] = useState({
         title: "",
@@ -74,9 +100,31 @@ const UserUpdateResource = () => {
             if (result.isConfirmed) {
                 const toastId = toast.loading("Updating Resource...");
 
+                // ---------- Upload logo only when submitting ----------
+                let finalBannerUrl = resourceData?.image
+
+                if (resourceBannerFile) {
+                    const uploaded = await updateResourceBanner(resourceBannerFile);
+                    if (!uploaded) {
+                        toast.error("Banner update failed", { id: toastId });
+                        return;
+                    }
+                    finalBannerUrl = uploaded;
+                }
+
+                // ---------- updated event data ----------
+                const updatedResourceData = {
+                    ...resourceData
+                    // title: resourceData?.title,
+                    // image: finalBannerUrl,
+                    // content: resourceData?.content,
+                };
+
+                updatedResourceData.image = finalBannerUrl;
+
                 try {
                     const token = await user.getIdToken();
-                    const { data } = await axios.patch(`http://localhost:5000/resources/${id}`, resourceData, {
+                    const { data } = await axios.patch(`http://localhost:5000/resources/${id}`, updatedResourceData, {
                         headers: {
                             authorization: `Bearer ${token}`
                         }
@@ -93,20 +141,6 @@ const UserUpdateResource = () => {
                 catch {
                     toast.error("Something went wrong", { id: toastId });
                 }
-
-                // ---------- patch request to server ----------
-                // axios.patch(`http://localhost:5000/resources/${id}`, resourceData)
-                //     .then((res) => {
-                //         if (res.data?.acknowledged) {
-                //             toast.success("Updated successfully!", { id: toastId });
-
-                //             // ---------- navigate to resource details page ----------
-                //             navigate(`/resources/${id}`);
-                //         } else {
-                //             toast.error("Something went wrong", { id: toastId });
-                //         }
-                //     })
-                //     .catch(() => toast.error("Something went wrong", { id: toastId }));
             }
         });
     };
@@ -159,14 +193,52 @@ const UserUpdateResource = () => {
 
                 {/* ---------- Image ---------- */}
                 <div>
-                    <input
+                    {/* <input
                         type="text"
                         name="image"
                         placeholder="Resource banner URL (optional)"
                         value={resourceData.image}
                         onChange={(e) => setResourceData({ ...resourceData, image: e.target.value })}
                         className="border-b border-slate-400 outline-none w-full py-1"
-                    />
+                    /> */}
+
+                    <div
+                        className="mt-2 border-2 border-dashed border-slate-400 rounded-lg p-6 text-center cursor-pointer
+                                    hover:border-purple-600 hover:bg-purple-50 transition-colors duration-200"
+                        onDragOver={(e) => e.preventDefault()}
+                        onDrop={(e) => {
+                            e.preventDefault();
+                            const file = e.dataTransfer.files[0];
+                            if (!file || !file.type.startsWith("image/")) {
+                                toast.error("Only image files are allowed!");
+                                return;
+                            }
+                            setResourceBannerFile(file);
+                        }}
+                        onClick={() => document.getElementById("resource-file-input").click()}
+                    >
+                        <span className="text-lg text-slate-500">📁 Update Resource Banner</span>
+                        <p className="text-sm text-slate-400 mt-1">
+                            Click or drag an image here
+                        </p>
+
+                        {resourceBannerFile && (
+                            <p className="mt-2 text-sm text-slate-600">
+                                {resourceBannerFile.name}
+                            </p>
+                        )}
+
+                        <input
+                            id="resource-file-input"
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            onChange={(e) => {
+                                const file = e.target.files[0];
+                                if (file) setResourceBannerFile(file);
+                            }}
+                        />
+                    </div>
                 </div>
 
                 {/* ---------- Content ---------- */}
