@@ -34,6 +34,32 @@ const UserUpdateJobPost = () => {
     const [jobResponsibilities, setJobResponsibilities] = useState([]);
     const [jobRequirements, setJobRequirements] = useState([]);
 
+    // ---------- Company Logo State ----------
+    const [companyLogoFile, setCompanyLogoFile] = useState(null);
+
+    // ---------- Upload logo function ----------
+    const uploadCompanyLogo = async (file) => {
+        if (!file) return null;
+
+        const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+        const uploadPreset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
+
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("upload_preset", uploadPreset);
+        formData.append("folder", "synapse/company-logos");
+
+        try {
+            const response = await axios.post(
+                `https://api.cloudinary.com/v1_1/${cloudName}/upload`,
+                formData
+            );
+            return response.data.secure_url;
+        } catch {
+            return null;
+        }
+    };
+
     // ---------- fetch existing job ----------
     useEffect(() => {
 
@@ -41,7 +67,7 @@ const UserUpdateJobPost = () => {
 
             try {
                 const token = await user.getIdToken();
-                const { data } = await axios.get(`http://localhost:5000/jobs/details/${id}`, {
+                const { data } = await axios.get(`https://synapse-server-flax.vercel.app/jobs/details/${id}`, {
                     headers: {
                         authorization: `Bearer ${token}`
                     }
@@ -129,13 +155,25 @@ const UserUpdateJobPost = () => {
             if (result.isConfirmed) {
                 const toastId = toast.loading("Updating Job Post...");
 
+                // ---------- Upload logo only when submitting ----------
+                let finalLogoUrl = companyLogo;
+
+                if (companyLogoFile) {
+                    const uploaded = await uploadCompanyLogo(companyLogoFile);
+                    if (!uploaded) {
+                        toast.error("Logo update failed", { id: toastId });
+                        return;
+                    }
+                    finalLogoUrl = uploaded;
+                }
+
                 // ---------- updated job data ----------
                 const jobData = {
                     authorId: userDetails?._id,
                     jobTitle,
                     company: {
                         name: companyName,
-                        logo: companyLogo,
+                        logo: finalLogoUrl,
                         type: companyType,
                         location: companyLocation,
                     },
@@ -151,7 +189,7 @@ const UserUpdateJobPost = () => {
                 // ---------- patch requrest to server ----------
                 try {
                     const token = await user.getIdToken();
-                    const { data } = await axios.patch(`http://localhost:5000/jobs/${id}`, jobData, {
+                    const { data } = await axios.patch(`https://synapse-server-flax.vercel.app/jobs/${id}`, jobData, {
                         headers: {
                             authorization: `Bearer ${token}`
                         }
@@ -200,9 +238,6 @@ const UserUpdateJobPost = () => {
                             {/* ---------- job category ---------- */}
                             <input type="text" value={category} onChange={(e) => setCategory(e.target.value)} placeholder="Job Category (e.g. Software, Marketing)" className="border-b border-slate-400 outline-none" required />
 
-                            {/* ---------- company logo ---------- */}
-                            <input type="text" value={companyLogo} onChange={(e) => setCompanyLogo(e.target.value)} placeholder="Company Logo URL (optional)" className="border-b border-slate-400 outline-none" />
-
                             {/* ---------- job type ---------- */}
                             <select value={jobType} onChange={(e) => setJobType(e.target.value)} className="py-1 font-poppins border-b border-slate-400 w-full outline-none" required>
                                 <option value="" disabled>Select Job Type</option>
@@ -221,6 +256,49 @@ const UserUpdateJobPost = () => {
 
                             {/* ---------- company location ---------- */}
                             <input type="text" value={companyLocation} onChange={(e) => setCompanyLocation(e.target.value)} placeholder="Company Location" className="border-b border-slate-400 outline-none" required />
+
+                            {/* ---------- company logo ---------- */}
+                            {/* <input type="text" value={companyLogo} onChange={(e) => setCompanyLogo(e.target.value)} placeholder="Company Logo URL (optional)" className="border-b border-slate-400 outline-none" /> */}
+
+                            <div className="lg:col-span-2 mt-2">
+                                <div
+                                    className="mt-2 border-2 border-dashed border-slate-400 rounded-lg p-6 text-center cursor-pointer
+                                    hover:border-purple-600 hover:bg-purple-50 transition-colors duration-200"
+                                    onDragOver={(e) => e.preventDefault()}
+                                    onDrop={(e) => {
+                                        e.preventDefault();
+                                        const file = e.dataTransfer.files[0];
+                                        if (!file || !file.type.startsWith("image/")) {
+                                            toast.error("Only image files are allowed!");
+                                            return;
+                                        }
+                                        setCompanyLogoFile(file);
+                                    }}
+                                    onClick={() => document.getElementById("logo-file-input").click()}
+                                >
+                                    <span className="text-lg text-slate-500">📁 Update Company Logo</span>
+                                    <p className="text-sm text-slate-400 mt-1">
+                                        Click or drag an image here
+                                    </p>
+
+                                    {companyLogoFile && (
+                                        <p className="mt-2 text-sm text-slate-600">
+                                            {companyLogoFile.name}
+                                        </p>
+                                    )}
+
+                                    <input
+                                        id="logo-file-input"
+                                        type="file"
+                                        accept="image/*"
+                                        className="hidden"
+                                        onChange={(e) => {
+                                            const file = e.target.files[0];
+                                            if (file) setCompanyLogoFile(file);
+                                        }}
+                                    />
+                                </div>
+                            </div>
                         </div>
                     </div>
 
