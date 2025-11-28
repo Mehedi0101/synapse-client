@@ -1,7 +1,14 @@
 import { Link } from "react-router-dom";
 import not_found from "../../assets/404_not_found.svg";
+import { useEffect } from "react";
 
 const ErrorPage = () => {
+
+    // ---------- page title ----------
+    useEffect(() => {
+        document.title = "Not Found";
+    }, []);
+
     return (
         <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 px-6 text-center font-open-sans">
             <img

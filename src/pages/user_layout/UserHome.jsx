@@ -1,5 +1,5 @@
 import defaultUser from "../../assets/default_user.jpg";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import UserHeader from "../../components/user_layout/shared/UserHeader";
 import AuthContext from "../../contexts/AuthContext";
 import axios from "axios";
@@ -127,6 +127,11 @@ const UserHome = () => {
             },
         });
     };
+
+    // ---------- page title ----------
+    useEffect(() => {
+        document.title = "Home";
+    }, []);
 
 
     return (

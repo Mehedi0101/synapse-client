@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import UserHeader from "../../components/user_layout/shared/UserHeader";
 import { IoEyeOffOutline, IoEyeOutline } from "react-icons/io5";
 import RedButton from "../../components/shared/buttons/RedButton";
@@ -45,6 +45,11 @@ const UserDeleteAccount = () => {
             }
         })
     }
+
+    // ---------- page title ----------
+    useEffect(() => {
+        document.title = "Delete Account";
+    }, []);
 
     return (
         <div>

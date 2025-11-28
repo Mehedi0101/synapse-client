@@ -174,6 +174,11 @@ const UpdateUserProfile = () => {
         })
     };
 
+    // ---------- page title ----------
+    useEffect(() => {
+        document.title = "Update Profile";
+    }, []);
+
     return (
         <>
             {/* ---------- user header (search bar invisible) ---------- */}

@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { CiWarning } from "react-icons/ci";
 import AuthContext from "../../contexts/AuthContext";
 import toast from "react-hot-toast";
@@ -85,6 +85,11 @@ const Login = () => {
                 toast.error("Demo login failed", { id: toastId });
             });
     };
+
+    // ---------- page title ----------
+    useEffect(() => {
+        document.title = "Login";
+    }, []);
 
     return (
         <motion.div

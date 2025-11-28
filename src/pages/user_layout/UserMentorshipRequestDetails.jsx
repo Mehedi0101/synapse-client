@@ -157,6 +157,11 @@ const UserMentorshipRequestDetails = () => {
         });
     };
 
+    // ---------- page title ----------
+    useEffect(() => {
+        document.title = "Mentorship";
+    }, []);
+
     // ---------- if data loading ----------
     if (isPending) {
         return (

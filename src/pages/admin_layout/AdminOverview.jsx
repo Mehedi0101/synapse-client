@@ -72,6 +72,9 @@ const AdminOverview = () => {
 
     useEffect(() => {
         window.scrollTo(0, 0);
+
+        // ---------- page title ----------
+        document.title = "Overview";
     }, []);
 
     // ---------- show skeleton when data loading ----------

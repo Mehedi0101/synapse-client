@@ -210,6 +210,11 @@ const UserUpdateJobPost = () => {
         });
     };
 
+    // ---------- page title ----------
+    useEffect(() => {
+        jobTitle && companyName ? document.title = `Update: ${jobTitle} | ${companyName}` : document.title = "Update: Job Post";
+    }, [jobTitle, companyName]);
+
     return (
         <>
             <UserHeader />

@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import AuthContext from "../../contexts/AuthContext";
 import { CiWarning } from "react-icons/ci";
@@ -110,6 +110,11 @@ const Register = () => {
       })
 
   };
+
+  // ---------- page title ----------
+  useEffect(() => {
+    document.title = "Register";
+  }, []);
 
   return (
     <motion.div

@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { IoSearch } from "react-icons/io5";
 import { MdDeleteOutline } from "react-icons/md";
 import { useQuery } from "@tanstack/react-query";
@@ -73,19 +73,6 @@ const AdminResources = () => {
         catch {
           toast.error("Something went wrong", { id: toastId });
         }
-        // axios
-        //   .delete(`http://localhost:5000/resources/${resourceId}`)
-        //   .then((data) => {
-        //     if (data.data?.acknowledged) {
-        //       toast.success("Removed", { id: toastId });
-        //       refetchResources();
-        //     } else {
-        //       toast.error("Something went wrong", { id: toastId });
-        //     }
-        //   })
-        //   .catch(() => {
-        //     toast.error("Something went wrong", { id: toastId });
-        //   });
       }
     });
   };
@@ -99,6 +86,11 @@ const AdminResources = () => {
           .toLowerCase()
           .includes(searchText.toLowerCase())
       );
+
+  // ---------- page title ----------
+  useEffect(() => {
+    document.title = "Resources";
+  }, []);
 
   return (
     <div>

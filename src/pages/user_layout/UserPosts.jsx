@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import UserHeader from "../../components/user_layout/shared/UserHeader";
 import AuthContext from "../../contexts/AuthContext";
 import axios from "axios";
@@ -37,6 +37,11 @@ const UserPosts = () => {
         },
         enabled: !!userDetails?._id
     });
+
+    // ---------- page title ----------
+    useEffect(() => {
+        document.title = "My Posts";
+    }, []);
 
     return (
         <div>

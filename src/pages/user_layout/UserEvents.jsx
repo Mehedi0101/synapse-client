@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import UserHeader from "../../components/user_layout/shared/UserHeader";
 import { Link } from "react-router-dom";
 import PurpleButton from "../../components/shared/buttons/PurpleButton";
@@ -34,7 +34,7 @@ const UserEvents = () => {
         queryKey: ["upcoming-events", userDetails?._id],
         queryFn: async () => {
             const token = await user.getIdToken();
-            const res = await axios.get(`http://localhost:5000/events/all/${userDetails?._id}`,{
+            const res = await axios.get(`http://localhost:5000/events/all/${userDetails?._id}`, {
                 headers: {
                     authorization: `Bearer ${token}`
                 }
@@ -44,7 +44,10 @@ const UserEvents = () => {
         enabled: !!userDetails?._id
     })
 
-
+    // ---------- page title ----------
+    useEffect(() => {
+        document.title = "Events";
+    }, []);
 
     return (
         <div>

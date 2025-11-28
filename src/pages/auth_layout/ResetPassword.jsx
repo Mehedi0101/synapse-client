@@ -4,6 +4,7 @@ import toast from "react-hot-toast";
 import ButtonWide from "../../components/shared/buttons/ButtonWide";
 // eslint-disable-next-line no-unused-vars
 import { motion } from "motion/react";
+import { useEffect } from "react";
 
 const auth = getAuth(app);
 
@@ -29,6 +30,11 @@ const ResetPassword = () => {
                 toast.error('Something went wrong. Try again later.', { id: toastId });
             })
     }
+
+    // ---------- page title ----------
+    useEffect(() => {
+        document.title = "Reset Password";
+    }, []);
 
     return (
         <motion.div

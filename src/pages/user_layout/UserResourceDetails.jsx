@@ -94,6 +94,11 @@ const UserResourceDetails = ({ display = "" }) => {
         });
     };
 
+    // ---------- page title ----------
+    useEffect(() => {
+        document.title = resourceDetails?.title || "Resources";
+    }, [resourceDetails]);
+
     return (
         <div>
             <UserHeader searchBar="invisible" display={display} />

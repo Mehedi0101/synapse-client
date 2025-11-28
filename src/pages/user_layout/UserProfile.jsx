@@ -61,6 +61,16 @@ const UserProfile = ({ display = "" }) => {
         fetchUserData();
     }, [params, userDetails, user, navigate]);
 
+    // ---------- page title ----------
+    useEffect(() => {
+        if (params?.id) {
+            document.title = displayData?.name || "User Profile";
+        }
+        else {
+            document.title = "My Profile";
+        }
+    }, [displayData, params]);
+
     return (
         <>
             {/* ---------- header without searchbar ---------- */}

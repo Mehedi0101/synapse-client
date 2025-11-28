@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import defaultUser from "../../assets/default_user.jpg";
 import { IoSearch } from "react-icons/io5";
 import { MdDeleteOutline } from "react-icons/md";
@@ -82,6 +82,11 @@ const AdminJobs = () => {
                 .toLowerCase()
                 .includes(searchText.toLowerCase())
         );
+
+    // ---------- page title ----------
+    useEffect(() => {
+        document.title = "Jobs";
+    }, []);
 
     return (
         <div>

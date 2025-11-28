@@ -119,6 +119,11 @@ const UserChatPage = () => {
         scrollToBottom();
     }, [messages]);
 
+    // ---------- page title ----------
+    useEffect(() => {
+        document.title = friend?.name || "Chat";
+    }, [friend]);
+
     return (
         <>
             {/* ---------- Header ---------- */}

@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import UserHeader from "../../components/user_layout/shared/UserHeader";
 import { Link } from "react-router-dom";
 import PurpleButton from "../../components/shared/buttons/PurpleButton";
@@ -43,6 +43,11 @@ const UserResources = () => {
         },
         enabled: !!userDetails?._id
     })
+
+    // ---------- page title ----------
+    useEffect(() => {
+        document.title = "Resources";
+    }, []);
 
 
     return (

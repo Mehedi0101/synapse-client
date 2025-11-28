@@ -1,5 +1,5 @@
 import UserHeader from "../../components/user_layout/shared/UserHeader";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import AuthContext from "../../contexts/AuthContext";
 import axios from "axios";
 import MyConnectionCard from "../../components/user_layout/UserAllConnections/MyConnectionCard";
@@ -25,6 +25,11 @@ const UserAllConnections = () => {
         },
         enabled: !!userDetails?._id
     })
+
+    // ---------- page title ----------
+    useEffect(() => {
+        document.title = "Connected Users";
+    }, []);
 
 
     return (

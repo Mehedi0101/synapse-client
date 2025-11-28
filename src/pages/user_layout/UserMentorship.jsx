@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import AuthContext from "../../contexts/AuthContext";
 import UserHeader from "../../components/user_layout/shared/UserHeader";
 import { useQuery } from "@tanstack/react-query";
@@ -48,6 +48,11 @@ const UserMentorship = () => {
         },
         enabled: isAlumni && !!userDetails?._id
     })
+
+    // ---------- page title ----------
+    useEffect(() => {
+        document.title = "Mentorship";
+    }, []);
 
     return (
         <div>

@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import AuthContext from "../../contexts/AuthContext";
 import UserHeader from "../../components/user_layout/shared/UserHeader";
 import PurpleButton from "../../components/shared/buttons/PurpleButton";
@@ -152,6 +152,11 @@ const UserCreateEvent = () => {
             }
         });
     };
+
+    // ---------- page title ----------
+    useEffect(() => {
+        document.title = "Create Event";
+    }, []);
 
     return (
         <>

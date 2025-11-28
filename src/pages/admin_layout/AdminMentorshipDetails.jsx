@@ -4,7 +4,7 @@ import axios from "axios";
 import defaultUser from "../../assets/default_user.jpg";
 import { MdArrowBack } from "react-icons/md";
 import { format } from "date-fns";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import AuthContext from "../../contexts/AuthContext";
 
 const AdminMentorshipDetails = () => {
@@ -26,6 +26,11 @@ const AdminMentorshipDetails = () => {
         },
         enabled: !!id,
     });
+
+    // ---------- page title ----------
+    useEffect(() => {
+        document.title = "Mentorship";
+    }, []);
 
     // ---------- if data loading ----------
     if (isPending) {

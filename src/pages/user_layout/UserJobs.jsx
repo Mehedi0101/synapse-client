@@ -1,5 +1,5 @@
 import UserHeader from "../../components/user_layout/shared/UserHeader";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import AuthContext from "../../contexts/AuthContext";
 import AlumniJobPost from "../../components/user_layout/UserJobs/AlumniJobPost";
 import axios from "axios";
@@ -26,6 +26,11 @@ const UserJobs = () => {
         },
         enabled: !!userDetails?._id
     })
+
+    // ---------- page title ----------
+    useEffect(() => {
+        document.title = "Jobs";
+    }, []);
 
     return (
         <div>

@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import AuthContext from "../../contexts/AuthContext";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -92,6 +92,11 @@ const UserMentorshipRequest = () => {
             }
         });
     };
+
+    // ---------- page title ----------
+    useEffect(() => {
+        document.title = "Mentorship Request";
+    }, []);
 
     return (
         <div>

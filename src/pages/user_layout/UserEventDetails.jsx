@@ -136,6 +136,11 @@ const UserEventDetails = ({ display = "" }) => {
         });
     };
 
+    // ---------- page title ----------
+    useEffect(() => {
+        document.title = eventDetails?.title || "Events";
+    }, [eventDetails]);
+
     return (
         <div>
             {/* ---------- header without searchbar ---------- */}

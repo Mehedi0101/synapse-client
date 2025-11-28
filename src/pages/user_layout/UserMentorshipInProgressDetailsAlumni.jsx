@@ -2,7 +2,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { format } from "date-fns";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { MdCheckCircle, MdCancel } from "react-icons/md";
 import { FaFlagCheckered } from "react-icons/fa";
 import toast from "react-hot-toast";
@@ -39,6 +39,11 @@ const UserMentorshipInProgressDetailsAlumni = () => {
 
     // ---------- selected step state ----------
     const [selectedStep, setSelectedStep] = useState("");
+
+    // ---------- page title ----------
+    useEffect(() => {
+        document.title = "Mentorship";
+    }, []);
 
     // ---------- if data loading or no mentorship details available ----------
     if (isPending) {

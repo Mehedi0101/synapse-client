@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import AuthContext from "../../contexts/AuthContext";
 import PurpleButton from "../../components/shared/buttons/PurpleButton";
 import Swal from "sweetalert2";
@@ -142,6 +142,11 @@ const UserCreateJobPost = () => {
             }
         });
     };
+
+    // ---------- page title ----------
+    useEffect(() => {
+        document.title = "Create Job Post";
+    }, []);
 
     return (
         <>

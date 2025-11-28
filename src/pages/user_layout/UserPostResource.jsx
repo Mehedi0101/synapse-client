@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import UserHeader from "../../components/user_layout/shared/UserHeader";
 import AuthContext from "../../contexts/AuthContext";
@@ -98,6 +98,11 @@ const UserPostResource = () => {
             toast.error("Something went wrong", { id: toastId });
         }
     };
+
+    // ---------- page title ----------
+    useEffect(() => {
+        document.title = "Post Resource";
+    }, []);
 
     return (
         <>

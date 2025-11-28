@@ -1,7 +1,7 @@
 import { IoEyeOffOutline, IoEyeOutline } from "react-icons/io5";
 import PurpleButton from "../../components/shared/buttons/PurpleButton";
 import UserHeader from "../../components/user_layout/shared/UserHeader";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { CiWarning } from "react-icons/ci";
 import AuthContext from "../../contexts/AuthContext";
 import toast from "react-hot-toast";
@@ -72,6 +72,11 @@ const UserChangePassword = () => {
                 toast.error('Incorrect current password', { id: toastId });
             })
     };
+
+    // ---------- page title ----------
+    useEffect(() => {
+        document.title = "Change Password";
+    }, []);
 
     return (
         <div>

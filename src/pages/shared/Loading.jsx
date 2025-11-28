@@ -1,6 +1,13 @@
+import { useEffect } from "react";
 import { ClipLoader } from "react-spinners";
 
 const Loading = () => {
+
+    // ---------- page title ----------
+    useEffect(() => {
+        document.title = "Synapse";
+    }, []);
+
     return (
         <div className='min-h-screen w-full flex flex-col items-center justify-center'>
             <ClipLoader

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import UserHeader from "../../components/user_layout/shared/UserHeader";
 import InboxTab from "../../components/user_layout/UserMessages/InboxTab";
 import StartConversationTab from "../../components/user_layout/UserMessages/StartConversationTab";
@@ -7,6 +7,11 @@ const UserMessage = () => {
 
     // ---------- tab state ----------
     const [activeTab, setActiveTab] = useState("inbox");
+
+    // ---------- page title ----------
+    useEffect(() => {
+        document.title = "Messages";
+    }, []);
 
     return (
         <div className="font-open-sans">

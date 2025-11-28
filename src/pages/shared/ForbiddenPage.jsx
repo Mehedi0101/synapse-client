@@ -1,7 +1,14 @@
 import { Link } from "react-router-dom";
 import forbidden from "../../assets/403_forbidden.svg";
+import { useEffect } from "react";
 
 const ForbiddenPage = () => {
+
+    // ---------- page title ----------
+    useEffect(() => {
+        document.title = "Forbidden";
+    }, []);
+
     return (
         <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 px-6 text-center font-open-sans">
             <img

@@ -115,9 +115,6 @@ const UserUpdateResource = () => {
                 // ---------- updated event data ----------
                 const updatedResourceData = {
                     ...resourceData
-                    // title: resourceData?.title,
-                    // image: finalBannerUrl,
-                    // content: resourceData?.content,
                 };
 
                 updatedResourceData.image = finalBannerUrl;
@@ -144,6 +141,11 @@ const UserUpdateResource = () => {
             }
         });
     };
+
+    // ---------- page title ----------
+    useEffect(() => {
+        resourceData?.title ? document.title = `Update: ${resourceData?.title}` : document.title = "Update: Resource";
+    }, [resourceData]);
 
     return (
         <>

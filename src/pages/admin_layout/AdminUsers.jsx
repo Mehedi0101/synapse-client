@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { IoSearch } from "react-icons/io5";
 // import { MdDeleteOutline } from "react-icons/md";
 import { useQuery } from "@tanstack/react-query";
@@ -96,6 +96,11 @@ const AdminUsers = () => {
                         .toLowerCase()
                         .includes(searchText.toLowerCase())
             );
+
+    // ---------- page title ----------
+    useEffect(() => {
+        document.title = "Users";
+    }, []);
 
     return (
         <div>

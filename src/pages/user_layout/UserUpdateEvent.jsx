@@ -193,6 +193,11 @@ const UserUpdateEvent = () => {
         });
     };
 
+    // ---------- page title ----------
+    useEffect(() => {
+        eventData?.title ? document.title = `Update: ${eventData?.title}` : document.title = "Update: Event";
+    }, [eventData]);
+
     return (
         <>
             {/* ---------- user header without searchbar ---------- */}

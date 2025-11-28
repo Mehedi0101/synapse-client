@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { IoSearch } from "react-icons/io5";
 import { MdDeleteOutline } from "react-icons/md";
 import { useQuery } from "@tanstack/react-query";
@@ -153,6 +153,11 @@ const AdminMentorships = () => {
                 return "text-slate-600 bg-slate-100";
         }
     };
+
+    // ---------- page title ----------
+    useEffect(() => {
+        document.title = "Mentorship";
+    }, []);
 
     return (
         <div>

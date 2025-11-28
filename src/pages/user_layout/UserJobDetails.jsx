@@ -101,6 +101,9 @@ const UserJobDetails = ({ display = "" }) => {
     // ---------- set posted date ----------
     useEffect(() => {
         jobDetails?.createdAt ? setPostedDate(format(new Date(jobDetails?.createdAt), "MMMM d, yyyy")) : setPostedDate("N/A");
+
+        // ---------- page title ----------
+        jobDetails?.jobTitle && jobDetails?.company?.name ? document.title = `${jobDetails?.jobTitle} | ${jobDetails?.company?.name}` : document.title = "Jobs";
     }, [jobDetails])
 
     return (
