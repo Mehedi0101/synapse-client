@@ -30,13 +30,6 @@ const UpdateUserProfile = () => {
         setFormSkills(userDetails?.skills || []);
     }, [userDetails])
 
-    // ---------- handle image selection ----------
-    const handleImageChange = (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
-        setSelectedFile(file);
-    };
-
     // ---------- skill add function ---------- 
     const handleSkillAdd = (e) => {
         if (e.key === "Enter" && e.target.value.trim() !== "") {
@@ -235,10 +228,26 @@ const UpdateUserProfile = () => {
                         /> */}
 
                         {/* ---------- Profile Image Upload ---------- */}
-                        <div className="mt-6 mb-3 w-full">
+                        <div
+                            className="mt-6 mb-3 w-full"
+                            onDragOver={(e) => e.preventDefault()}
+                            onDrop={(e) => {
+                                e.preventDefault();
+                                const file = e.dataTransfer.files[0];
+                                if (!file) return;
+
+                                // Only allow image files
+                                if (!file.type.startsWith("image/")) {
+                                    toast.error("Only image files are allowed!");
+                                    return;
+                                }
+
+                                setSelectedFile(file);
+                            }}
+                        >
                             <label className="flex flex-col items-center justify-center border-2 border-dashed border-slate-400 rounded-lg p-6 cursor-pointer hover:border-purple-600 hover:bg-purple-50 transition-colors duration-200 text-center relative">
                                 <span className="text-lg text-slate-500 mb-2">📁 Upload Profile Image</span>
-                                <span className="text-sm text-slate-400 mb-2">Click to select your image</span>
+                                <span className="text-sm text-slate-400 mb-2">Click or drag an image here</span>
 
                                 {/* Display selected file name */}
                                 {selectedFile && (
@@ -250,7 +259,11 @@ const UpdateUserProfile = () => {
                                 <input
                                     type="file"
                                     accept="image/*"
-                                    onChange={handleImageChange}
+                                    onChange={(e) => {
+                                        const file = e.target.files[0];
+                                        if (!file) return;
+                                        setSelectedFile(file);
+                                    }}
                                     className="hidden"
                                 />
                             </label>
