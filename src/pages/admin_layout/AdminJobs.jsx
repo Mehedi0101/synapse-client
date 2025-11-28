@@ -142,7 +142,7 @@ const AdminJobs = () => {
 
                                         {/* ---------- Job title ---------- */}
                                         <td className="py-3 px-4 max-w-[220px] truncate">
-                                            <Link title={job?.jobTitle} className="hover:underline hover:text-primary transition-all duration-200" to={`http://localhost:5173/admin/jobs/${job._id}`}>{job?.jobTitle || "N/A"}</Link>
+                                            <Link title={job?.jobTitle} className="hover:underline hover:text-primary transition-all duration-200" to={`/admin/jobs/${job._id}`}>{job?.jobTitle || "N/A"}</Link>
                                         </td>
 
                                         {/* ---------- Posted by ---------- */}
@@ -159,7 +159,7 @@ const AdminJobs = () => {
 
                                                 {/* ---------- job poster's name ---------- */}
                                                 <span className="truncate max-w-[100px]">
-                                                    <Link title={job?.author?.name} className="hover:underline hover:text-primary transition-all duration-200" to={`http://localhost:5173/admin/users/${job?.author?._id}`}>{job?.author?.name || "N/A"}</Link>
+                                                    <Link title={job?.author?.name} className="hover:underline hover:text-primary transition-all duration-200" to={`/admin/users/${job?.author?._id}`}>{job?.author?.name || "N/A"}</Link>
                                                 </span>
                                             </div>
                                         </td>

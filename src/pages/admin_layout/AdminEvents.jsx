@@ -149,7 +149,7 @@ const AdminEvents = () => {
                                         <Link
                                             title={event?.title}
                                             className="hover:underline hover:text-primary transition-all duration-200"
-                                            to={`http://localhost:5173/admin/events/${event._id}`}
+                                            to={`/admin/events/${event._id}`}
                                         >
                                             {event?.title || "N/A"}
                                         </Link>
@@ -171,7 +171,7 @@ const AdminEvents = () => {
                                                 <Link
                                                     title={event?.creator?.name}
                                                     className="hover:underline hover:text-primary transition-all duration-200"
-                                                    to={`http://localhost:5173/admin/users/${event?.creator?._id}`}
+                                                    to={`/admin/users/${event?.creator?._id}`}
                                                 >
                                                     {event?.creator?.name || "N/A"}
                                                 </Link>

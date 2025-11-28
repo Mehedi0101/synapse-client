@@ -17,7 +17,7 @@ const NavBarXlMd = () => {
                     userLinks.map((item, idx) => {
                         return (
                             // ---------- Menu button ----------
-                            <NavLink key={idx} className={'text-ash'} to={item.link} title={item.name}><NavButtonXlMd icon={item.icon}></NavButtonXlMd></NavLink>
+                            <NavLink key={idx} className={'text-ash'} to={item.link} title={item.name}><NavButtonXlMd icon={item.icon} text={item.name}></NavButtonXlMd></NavLink>
                         );
                     })
                 }

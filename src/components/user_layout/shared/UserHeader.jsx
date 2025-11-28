@@ -41,7 +41,7 @@ const UserHeader = ({ searchBar = "", display = "" }) => {
             return res.data;
         },
         enabled: !!userDetails?._id,
-        // refetchInterval: 5000, // optional: poll every 5 sec
+        refetchInterval: 5000, // optional: poll every 5 sec
     });
 
     // ---------- Delete Notifications ----------
