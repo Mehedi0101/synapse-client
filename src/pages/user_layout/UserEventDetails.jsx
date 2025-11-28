@@ -147,7 +147,7 @@ const UserEventDetails = ({ display = "" }) => {
                     src={eventDetails?.banner || defaultEventBanner}
                     onError={(e) => { e.currentTarget.src = defaultEventBanner; }}
                     alt="Event Banner"
-                    className="h-full object-cover mx-auto"
+                    className="h-full w-full object-cover mx-auto"
                 />
             </div>
 

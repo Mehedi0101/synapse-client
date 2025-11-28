@@ -118,7 +118,7 @@ const UserJobDetails = ({ display = "" }) => {
                     <div className="flex gap-2 w-full">
 
                         {/* ---------- company logo ---------- */}
-                        <div>
+                        <div className="min-w-fit">
                             <img className="w-20 h-20 object-cover" src={jobDetails?.company?.logo || defaultLogo} onError={(e) => { e.currentTarget.src = defaultLogo; }} alt="" />
                         </div>
 

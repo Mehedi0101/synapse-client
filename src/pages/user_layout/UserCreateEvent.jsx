@@ -32,6 +32,32 @@ const UserCreateEvent = () => {
     // ---------- react hooks ----------
     const navigate = useNavigate();
 
+    // ---------- Company Logo State ----------
+    const [eventBannerFile, setEventBannerFile] = useState(null);
+
+    // ---------- Upload logo function ----------
+    const uploadEventBanner = async (file) => {
+        if (!file) return null;
+
+        const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+        const uploadPreset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
+
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("upload_preset", uploadPreset);
+        formData.append("folder", "synapse/event-banners");
+
+        try {
+            const response = await axios.post(
+                `https://api.cloudinary.com/v1_1/${cloudName}/upload`,
+                formData
+            );
+            return response.data.secure_url;
+        } catch {
+            return null;
+        }
+    };
+
     // ---------- form states ----------
     const [eventType, setEventType] = useState("Online");
     const [selectedAudience, setSelectedAudience] = useState([]);
@@ -75,6 +101,18 @@ const UserCreateEvent = () => {
             if (result.isConfirmed) {
                 const toastId = toast.loading("Creating Event...");
 
+                // ---------- upload event banner when uploading ----------
+                let uploadedBannerUrl = "";
+
+                if (eventBannerFile) {
+                    uploadedBannerUrl = await uploadEventBanner(eventBannerFile);
+
+                    if (!uploadedBannerUrl) {
+                        toast.error("Banner upload failed", { id: toastId });
+                        return;
+                    }
+                }
+
                 const form = e.target;
 
                 // ---------- event data ----------
@@ -87,7 +125,7 @@ const UserCreateEvent = () => {
                     audience: selectedAudience,
                     date: selectedDate,
                     timeRange: { start: startTime, end: endTime },
-                    banner: form.eventBanner.value,
+                    banner: uploadedBannerUrl,
                     description: form.description.value,
                 };
 
@@ -174,12 +212,52 @@ const UserCreateEvent = () => {
                             )}
 
                             {/* ---------- event banner (optional) ---------- */}
-                            <input
+                            {/* <input
                                 type="text"
                                 name="eventBanner"
                                 placeholder="Event Banner URL (optional)"
                                 className="border-b border-slate-400 outline-none"
-                            />
+                            /> */}
+
+                            <div className="lg:col-span-2 mt-2">
+                                <div
+                                    className="mt-2 border-2 border-dashed border-slate-400 rounded-lg p-6 text-center cursor-pointer
+                                    hover:border-purple-600 hover:bg-purple-50 transition-colors duration-200"
+                                    onDragOver={(e) => e.preventDefault()}
+                                    onDrop={(e) => {
+                                        e.preventDefault();
+                                        const file = e.dataTransfer.files[0];
+                                        if (!file || !file.type.startsWith("image/")) {
+                                            toast.error("Only image files are allowed!");
+                                            return;
+                                        }
+                                        setEventBannerFile(file);
+                                    }}
+                                    onClick={() => document.getElementById("banner-file-input").click()}
+                                >
+                                    <span className="text-lg text-slate-500">📁 Upload Event Banner</span>
+                                    <p className="text-sm text-slate-400 mt-1">
+                                        Click or drag an image here
+                                    </p>
+
+                                    {eventBannerFile && (
+                                        <p className="mt-2 text-sm text-slate-600">
+                                            {eventBannerFile.name}
+                                        </p>
+                                    )}
+
+                                    <input
+                                        id="banner-file-input"
+                                        type="file"
+                                        accept="image/*"
+                                        className="hidden"
+                                        onChange={(e) => {
+                                            const file = e.target.files[0];
+                                            if (file) setEventBannerFile(file);
+                                        }}
+                                    />
+                                </div>
+                            </div>
                         </div>
                     </div>
 

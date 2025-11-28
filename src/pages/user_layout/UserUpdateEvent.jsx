@@ -43,6 +43,32 @@ const UserUpdateEvent = () => {
     const [endTime, setEndTime] = useState("");
     const [eventData, setEventData] = useState({});
 
+    // ---------- Event Banner State ----------
+    const [eventBannerFile, setEventBannerFile] = useState(null);
+
+    // ---------- Update Event Banner Function ----------
+    const updateEventBanner = async (file) => {
+        if (!file) return null;
+
+        const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+        const uploadPreset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
+
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("upload_preset", uploadPreset);
+        formData.append("folder", "synapse/event-banner");
+
+        try {
+            const response = await axios.post(
+                `https://api.cloudinary.com/v1_1/${cloudName}/upload`,
+                formData
+            );
+            return response.data.secure_url;
+        } catch {
+            return null;
+        }
+    };
+
     // ---------- fetch existing event ----------
     useEffect(() => {
 
@@ -73,29 +99,6 @@ const UserUpdateEvent = () => {
                 navigate("/error");
             }
         }
-        // axios
-        //     .get(`http://localhost:5000/events/details/${id}`, {
-        //         params: { userId: userDetails?._id },
-        //     })
-        //     .then((res) => {
-        //         if (res.data) {
-
-        //             // ---------- set fetched data to form states ----------
-        //             setEventData(res.data);
-        //             setEventType(res.data.type);
-        //             setSelectedAudience(res.data.audience || []);
-        //             setSelectedDate(new Date(res.data.date));
-        //             setStartTime(res.data.timeRange?.start || "");
-        //             setEndTime(res.data.timeRange?.end || "");
-        //         } else {
-
-        //             // ---------- navigate to error page ----------
-        //             navigate("/error");
-        //         }
-        //     })
-
-        //     // ---------- navigate to error page ----------
-        //     .catch(() => navigate("/error"));
 
         fetchEventDetails();
 
@@ -139,6 +142,18 @@ const UserUpdateEvent = () => {
             if (result.isConfirmed) {
                 const toastId = toast.loading("Updating Event...");
 
+                // ---------- Upload logo only when submitting ----------
+                let finalBannerUrl = eventData?.banner
+
+                if (eventBannerFile) {
+                    const uploaded = await updateEventBanner(eventBannerFile);
+                    if (!uploaded) {
+                        toast.error("Banner update failed", { id: toastId });
+                        return;
+                    }
+                    finalBannerUrl = uploaded;
+                }
+
                 const form = e.target;
 
                 // ---------- updated event data ----------
@@ -150,7 +165,7 @@ const UserUpdateEvent = () => {
                     audience: selectedAudience,
                     date: selectedDate,
                     timeRange: { start: startTime, end: endTime },
-                    banner: form.eventBanner.value,
+                    banner: finalBannerUrl,
                     description: form.description.value,
                 };
 
@@ -244,13 +259,53 @@ const UserUpdateEvent = () => {
                             )}
 
                             {/* ---------- event banner (optional) ---------- */}
-                            <input
+                            {/* <input
                                 type="text"
                                 name="eventBanner"
                                 defaultValue={eventData?.banner}
                                 placeholder="Event Banner URL (optional)"
                                 className="border-b border-slate-400 outline-none"
-                            />
+                            /> */}
+
+                            <div className="lg:col-span-2 mt-2">
+                                <div
+                                    className="mt-2 border-2 border-dashed border-slate-400 rounded-lg p-6 text-center cursor-pointer
+                                    hover:border-purple-600 hover:bg-purple-50 transition-colors duration-200"
+                                    onDragOver={(e) => e.preventDefault()}
+                                    onDrop={(e) => {
+                                        e.preventDefault();
+                                        const file = e.dataTransfer.files[0];
+                                        if (!file || !file.type.startsWith("image/")) {
+                                            toast.error("Only image files are allowed!");
+                                            return;
+                                        }
+                                        setEventBannerFile(file);
+                                    }}
+                                    onClick={() => document.getElementById("event-file-input").click()}
+                                >
+                                    <span className="text-lg text-slate-500">📁 Update Event Banner</span>
+                                    <p className="text-sm text-slate-400 mt-1">
+                                        Click or drag an image here
+                                    </p>
+
+                                    {eventBannerFile && (
+                                        <p className="mt-2 text-sm text-slate-600">
+                                            {eventBannerFile.name}
+                                        </p>
+                                    )}
+
+                                    <input
+                                        id="event-file-input"
+                                        type="file"
+                                        accept="image/*"
+                                        className="hidden"
+                                        onChange={(e) => {
+                                            const file = e.target.files[0];
+                                            if (file) setEventBannerFile(file);
+                                        }}
+                                    />
+                                </div>
+                            </div>
                         </div>
                     </div>
 
