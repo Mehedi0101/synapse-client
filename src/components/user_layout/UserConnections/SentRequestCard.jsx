@@ -25,6 +25,7 @@ const SentRequestCard = ({ req, refetchSentRequests, refetchPeopleYouMayConnect 
         // ---------- loading toast ----------
         const toastId = toast.loading('Cancelling Request...');
 
+        // ---------- post request to remove a connection request to database ----------
         try {
             const token = await user.getIdToken();
 

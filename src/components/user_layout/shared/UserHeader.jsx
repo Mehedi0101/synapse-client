@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useContext } from "react";
 import { IoIosNotificationsOutline } from "react-icons/io";
 import { MdOutlineLogout, MdOutlineNotifications, MdOutlineSearch } from "react-icons/md";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import defaultUser from "../../../assets/default_user.jpg";
 import { CgProfile } from "react-icons/cg";
 import AuthContext from "../../../contexts/AuthContext";
@@ -14,14 +14,16 @@ import Swal from "sweetalert2";
 
 const UserHeader = ({ searchBar = "", display = "" }) => {
 
-    // ---------- user details and logout from auth provider ----------
+    // ---------- hooks ----------
     const { userDetails, logout, user } = useContext(AuthContext);
+    const navigate = useNavigate();
 
     // ---------- avatar dropdown status ----------
     const [open, setOpen] = useState(false);
 
-    // ---------- notification status ----------
+    // ---------- notification and search text states ----------
     const [notificationOpen, setNotificationOpen] = useState(false);
+    const [searchText, setSearchText] = useState("");
 
     // ---------- hooks ----------
     const dropdownRef = useRef(null);
@@ -126,7 +128,15 @@ const UserHeader = ({ searchBar = "", display = "" }) => {
                     className="-ml-5 pl-6 py-2.5 w-full outline-none focus:ring-0 focus:outline-none"
                     type="text"
                     placeholder="Search..."
+                    value={searchText}
+                    onChange={(e) => setSearchText(e.target.value)}
+                    onKeyDown={(e) => {
+                        if (e.key === "Enter" && searchText.trim()) {
+                            navigate(`/search/${encodeURIComponent(searchText.trim())}`);
+                        }
+                    }}
                 />
+
             </div>
 
             {/* ---------- Notification + User Section ---------- */}

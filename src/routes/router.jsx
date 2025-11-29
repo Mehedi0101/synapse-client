@@ -43,6 +43,7 @@ import UserChatPage from "../pages/user_layout/UserChatPage";
 import UserChangePassword from "../pages/user_layout/UserChangePassword";
 import UserDeleteAccount from "../pages/user_layout/UserDeleteAccount";
 import ForbiddenPage from "../pages/shared/ForbiddenPage";
+import UserSearchResult from "../pages/user_layout/UserSearchResult";
 
 
 const router = createBrowserRouter([
@@ -185,6 +186,11 @@ const router = createBrowserRouter([
                 // ---------- delete account ----------
                 path: 'delete-account',
                 Component: UserDeleteAccount
+            },
+            {
+                // ---------- search result ----------
+                path: 'search/:keyword',
+                Component: UserSearchResult
             }
         ]
     },
