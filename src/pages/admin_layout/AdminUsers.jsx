@@ -54,27 +54,34 @@ const AdminUsers = () => {
             showCancelButton: true,
             confirmButtonColor: "#6f16d7",
             cancelButtonColor: "#d33",
-        }).then((result) => {
+        }).then(async (result) => {
 
             // ---------- after confirmation ----------
             if (result.isConfirmed) {
                 const toastId = toast.loading("Updating role...");
 
-                axios
-                    .patch(`http://localhost:5000/users/${userId}`, { role: newRole })
-                    .then((data) => {
-                        if (data.data?.acknowledged) {
-                            toast.success("Role updated", { id: toastId });
-                            refetchUsers();
-                        } else {
-                            toast.error("Failed to update role", { id: toastId });
-                            resetSelect(currentRole);
+                try {
+                    const token = await user.getIdToken();
+
+                    const { data } = await axios.patch(`http://localhost:5000/users/${userId}`, { role: newRole }, {
+                        headers: {
+                            authorization: `Bearer ${token}`
                         }
                     })
-                    .catch(() => {
-                        toast.error("Something went wrong", { id: toastId });
+
+                    if (data?.acknowledged) {
+                        toast.success("Role updated", { id: toastId });
+                        refetchUsers();
+                    }
+                    else {
+                        toast.error("Failed to update role", { id: toastId });
                         resetSelect(currentRole);
-                    });
+                    }
+                }
+                catch {
+                    toast.error("Failed to update role", { id: toastId });
+                    resetSelect(currentRole);
+                }
             } else {
 
                 // ---------- if cancelled, reset to current role ----------

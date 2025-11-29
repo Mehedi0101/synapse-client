@@ -67,7 +67,7 @@ const UserUpdateJobPost = () => {
 
             try {
                 const token = await user.getIdToken();
-                const { data } = await axios.get(`https://synapse-server-flax.vercel.app/jobs/details/${id}`, {
+                const { data } = await axios.get(`http://localhost:5000/jobs/details/${id}`, {
                     headers: {
                         authorization: `Bearer ${token}`
                     }
@@ -189,7 +189,7 @@ const UserUpdateJobPost = () => {
                 // ---------- patch requrest to server ----------
                 try {
                     const token = await user.getIdToken();
-                    const { data } = await axios.patch(`https://synapse-server-flax.vercel.app/jobs/${id}`, jobData, {
+                    const { data } = await axios.patch(`http://localhost:5000/jobs/${id}`, jobData, {
                         headers: {
                             authorization: `Bearer ${token}`
                         }
