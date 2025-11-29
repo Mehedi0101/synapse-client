@@ -12,7 +12,7 @@ const UserAllConnections = () => {
     const { userDetails, user } = useContext(AuthContext);
 
     // ---------- for fetching my posts ----------
-    const { data: myConnections = [], isPending } = useQuery({
+    const { data: myConnections = [], isPending, refetch: refetchMyConnections } = useQuery({
         queryKey: ["connected-users", userDetails?._id],
         queryFn: async () => {
             const token = await user.getIdToken();
@@ -48,7 +48,7 @@ const UserAllConnections = () => {
                             <ConnectedUsersCardSkeleton></ConnectedUsersCardSkeleton>
                             :
                             myConnections.length > 0 ?
-                                myConnections.map(connection => <MyConnectionCard key={connection._id} connection={connection}></MyConnectionCard>)
+                                myConnections.map(connection => <MyConnectionCard key={connection._id} connection={connection} refetch={refetchMyConnections}></MyConnectionCard>)
                                 :
                                 <div className="min-h-80 flex justify-center items-center text-base sm:text-lg font-bold text-center">
                                     You haven't connected with anyone yet

@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import defaultUser from "../../../assets/default_user.jpg";
-import { useContext, useState } from "react";
-import GrayButton from "../../shared/buttons/GrayButton";
+import { useContext } from "react";
 import RedButton from "../../shared/buttons/RedButton";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -10,11 +9,10 @@ import Swal from "sweetalert2";
 import AuthContext from "../../../contexts/AuthContext";
 
 
-const MyConnectionCard = ({ connection }) => {
+const MyConnectionCard = ({ connection, refetch }) => {
 
     const { userDetails, user } = useContext(AuthContext);
 
-    const [clicked, setClicked] = useState(false);
     const connectionDate = format(new Date(connection.createdAt), "MMMM d, yyyy");
 
     const handleRemoveConnection = () => {
@@ -54,7 +52,7 @@ const MyConnectionCard = ({ connection }) => {
 
                     if (data?.acknowledged) {
                         toast.success('Removed', { id: toastId });
-                        setClicked(true);
+                        refetch();
                     }
                     else {
                         toast.error('Something went wrong', { id: toastId });
@@ -101,21 +99,12 @@ const MyConnectionCard = ({ connection }) => {
             </div>
 
             <div className="w-full min-[400px]:w-fit">
-                {
-                    clicked ?
-                        // ---------- if clicked then show the disabled gray button ----------
-                        <GrayButton
-                            text="Removed"
-                            className="w-full text-sm"
-                        ></GrayButton>
-                        :
-                        // ---------- if not clicked then show the remove button ----------
-                        <RedButton
-                            text="Remove"
-                            className="w-full text-sm"
-                            clickFunction={handleRemoveConnection}
-                        />
-                }
+                {/* // ---------- remove button ---------- */}
+                <RedButton
+                    text="Remove"
+                    className="w-full text-sm"
+                    clickFunction={handleRemoveConnection}
+                />
             </div>
         </div>
     );

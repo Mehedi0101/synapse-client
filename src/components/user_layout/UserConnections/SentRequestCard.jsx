@@ -1,8 +1,7 @@
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import defaultUser from "../../../assets/default_user.jpg";
 import axios from "axios";
 import toast from "react-hot-toast";
-import GrayButton from "../../shared/buttons/GrayButton";
 import RedButton from "../../shared/buttons/RedButton";
 import { formatDistanceToNow } from "date-fns";
 import { Link } from "react-router-dom";
@@ -13,9 +12,6 @@ import AuthContext from "../../../contexts/AuthContext";
 const SentRequestCard = ({ req, refetchSentRequests, refetchPeopleYouMayConnect }) => {
 
     const { userDetails, user } = useContext(AuthContext);
-
-    // ---------- button status ----------
-    const [clicked, setClicked] = useState(false);
 
     // ---------- time when request was sent ----------
     let timeAgo = formatDistanceToNow(new Date(req.createdAt), { addSuffix: true });
@@ -37,7 +33,6 @@ const SentRequestCard = ({ req, refetchSentRequests, refetchPeopleYouMayConnect 
 
             if (data?.acknowledged) {
                 toast.success('Request Cancelled', { id: toastId });
-                setClicked(true);
                 refetchSentRequests();
                 refetchPeopleYouMayConnect();
             }
@@ -88,21 +83,12 @@ const SentRequestCard = ({ req, refetchSentRequests, refetchPeopleYouMayConnect 
                     {timeAgo}
                 </p>
 
-                {
-                    clicked ?
-                        // ---------- if clicked then show the disabled gray button ----------
-                        <GrayButton
-                            text="Request Cancelled"
-                            className="w-full text-sm"
-                        ></GrayButton>
-                        :
-                        // ---------- if not clicked then show the cancel button ----------
-                        <RedButton
-                            text="Cancel Request"
-                            className="w-full text-sm"
-                            clickFunction={() => { handleCancelRequest(); }}
-                        />
-                }
+                {/* // ---------- cancel button ---------- */}
+                <RedButton
+                    text="Cancel Request"
+                    className="w-full text-sm"
+                    clickFunction={() => { handleCancelRequest(); }}
+                />
             </div>
         </motion.div>
     );

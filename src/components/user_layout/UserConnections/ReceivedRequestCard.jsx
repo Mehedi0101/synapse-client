@@ -1,8 +1,7 @@
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import defaultUser from "../../../assets/default_user.jpg";
 import axios from "axios";
 import toast from "react-hot-toast";
-import GrayButton from "../../shared/buttons/GrayButton";
 import RedButton from "../../shared/buttons/RedButton";
 import { formatDistanceToNow } from "date-fns";
 import PurpleButton from "../../shared/buttons/PurpleButton";
@@ -16,7 +15,6 @@ const ReceivedRequestCard = ({ req, refetchReceivedRequests, refetchPeopleYouMay
     const { userDetails, user } = useContext(AuthContext);
 
     // ---------- button status ----------
-    const [requestStatus, setRequestStatus] = useState("pending");
     let timeAgo = formatDistanceToNow(new Date(req.createdAt), { addSuffix: true });
     timeAgo = timeAgo.replace("less than a minute ago", "Just now");
 
@@ -36,7 +34,6 @@ const ReceivedRequestCard = ({ req, refetchReceivedRequests, refetchPeopleYouMay
 
             if (data?.acknowledged) {
                 toast.success('Accepted', { id: toastId });
-                setRequestStatus("accepted");
                 refetchReceivedRequests();
             }
             else {
@@ -64,7 +61,6 @@ const ReceivedRequestCard = ({ req, refetchReceivedRequests, refetchPeopleYouMay
 
             if (data?.acknowledged) {
                 toast.success('Cancelled', { id: toastId });
-                setRequestStatus("cancelled");
                 refetchReceivedRequests();
                 refetchPeopleYouMayConnect();
             }
@@ -115,41 +111,18 @@ const ReceivedRequestCard = ({ req, refetchReceivedRequests, refetchPeopleYouMay
                     {timeAgo}
                 </p>
 
-                {/* ---------- if request status is pending then show accept and cancel button ---------- */}
-                {
-                    requestStatus === "pending" &&
-                    <div className="flex flex-col min-[300px]:flex-row gap-2">
-                        <PurpleButton text="Accept"
-                            className="text-sm"
-                            clickFunction={() => { handleAcceptRequest(); }}
-                        />
-                        <RedButton
-                            text="Cancel"
-                            className="text-sm"
-                            clickFunction={() => { handleCancelRequest(); }}
-                        />
-                    </div>
-                }
-                {/* ---------- if request status is accepted then show the gray button (disabled) ---------- */}
-                {
-                    requestStatus === "accepted" &&
-                    <div className="flex gap-2">
-                        <GrayButton
-                            text="Accepted"
-                            className="w-full text-sm"
-                        ></GrayButton>
-                    </div>
-                }
-                {/* ---------- if request status is cancelled then show the gray button (disabled) ---------- */}
-                {
-                    requestStatus === "cancelled" &&
-                    <div className="flex gap-2">
-                        <GrayButton
-                            text="Cancelled"
-                            className="w-full text-sm"
-                        ></GrayButton>
-                    </div>
-                }
+                {/* ---------- accept and cancel button ---------- */}
+                <div className="flex flex-col min-[300px]:flex-row gap-2">
+                    <PurpleButton text="Accept"
+                        className="text-sm"
+                        clickFunction={() => { handleAcceptRequest(); }}
+                    />
+                    <RedButton
+                        text="Cancel"
+                        className="text-sm"
+                        clickFunction={() => { handleCancelRequest(); }}
+                    />
+                </div>
             </div>
         </motion.div >
     );

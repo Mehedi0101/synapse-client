@@ -1,10 +1,9 @@
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import defaultUser from "../../../assets/default_user.jpg";
 import PurpleButton from "../../shared/buttons/PurpleButton";
 import AuthContext from "../../../contexts/AuthContext";
 import axios from "axios";
 import toast from "react-hot-toast";
-import GrayButton from "../../shared/buttons/GrayButton";
 import { Link } from "react-router-dom";
 // eslint-disable-next-line no-unused-vars
 import { motion } from "motion/react";
@@ -12,9 +11,6 @@ import { motion } from "motion/react";
 const ConnectionCard = ({ user, refetchPeopleYouMayConnect, refetchSentRequests }) => {
     // ---------- user data from auth provider ----------
     const { userDetails, user: auth } = useContext(AuthContext);
-
-    // ---------- button status ----------
-    const [clicked, setClicked] = useState(false);
 
     const handleConnect = async () => {
         // ---------- loading toast ----------
@@ -38,7 +34,6 @@ const ConnectionCard = ({ user, refetchPeopleYouMayConnect, refetchSentRequests 
 
             if (data?.acknowledged) {
                 toast.success('Request Sent', { id: toastId });
-                setClicked(true);
                 refetchPeopleYouMayConnect();
                 refetchSentRequests();
             }
@@ -84,21 +79,11 @@ const ConnectionCard = ({ user, refetchPeopleYouMayConnect, refetchSentRequests 
             </p>
 
             {/* ---------- Connection Button ---------- */}
-            {
-                clicked ?
-                    // ---------- if clicked then show the disabled gray button ----------
-                    <GrayButton
-                        text="Request Sent"
-                        className="w-full text-sm"
-                    ></GrayButton>
-                    :
-                    // ---------- if not clicked then show the connect button ----------
-                    <PurpleButton
-                        text="Connect"
-                        className="w-full text-sm"
-                        clickFunction={() => { handleConnect() }}
-                    />
-            }
+            <PurpleButton
+                text="Connect"
+                className="w-full text-sm"
+                clickFunction={() => { handleConnect() }}
+            />
 
         </motion.div>
     );
